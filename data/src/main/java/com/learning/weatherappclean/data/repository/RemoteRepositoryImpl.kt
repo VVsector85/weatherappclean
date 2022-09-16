@@ -12,8 +12,6 @@ import com.learning.weatherappclean.domain.repository.RemoteRepository
 
 class RemoteRepositoryImpl (private val weatherApi: WeatherApi) :RemoteRepository {
     override suspend fun getWeatherData(location:WeatherCard): WeatherCard {
-
-
         return mapWeatherDataToDomain(weatherApi.getWeather(accessKey = API_KEY,city = location.location,units = WEATHER_UNITS))
 
 
@@ -25,5 +23,9 @@ class RemoteRepositoryImpl (private val weatherApi: WeatherApi) :RemoteRepositor
     private fun mapWeatherDataToDomain(response: Weather):WeatherCard{
          return WeatherCard(location = response.location.name, temperature = response.current.temperature)
     }
+
+
+
+
 
 }
