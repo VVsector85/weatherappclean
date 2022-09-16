@@ -1,4 +1,5 @@
 package com.learning.weatherappclean.domain.model
 
-class AutocompletePrediction(tempString:String) {
+data class AutocompletePrediction(val searchString:String, val predictions: List<String> = listOf()) {
+
 }

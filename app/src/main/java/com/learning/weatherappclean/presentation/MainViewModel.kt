@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.learning.weatherappclean.domain.model.AutocompletePrediction
 import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.domain.usecase.GetAutocompletePredictionsUseCase
 import com.learning.weatherappclean.domain.usecase.GetWeatherCardDataUseCase
 import com.learning.weatherappclean.domain.usecase.SaveWeatherCardsUseCase
 import com.learning.weatherappclean.domain.usecase.LoadWeatherCardsUseCase
@@ -15,9 +17,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor (private val loadWeatherCardsUseCase : LoadWeatherCardsUseCase,
-                                         private val saveWeatherCardsUseCase : SaveWeatherCardsUseCase,
-                                         private val getWeatherCardDataUseCase: GetWeatherCardDataUseCase):ViewModel(){
+class MainViewModel @Inject constructor (
+    private val loadWeatherCardsUseCase : LoadWeatherCardsUseCase,
+    private val saveWeatherCardsUseCase : SaveWeatherCardsUseCase,
+    private val getWeatherCardDataUseCase: GetWeatherCardDataUseCase,
+    private val getAutocompletePredictionsUseCase: GetAutocompletePredictionsUseCase
+):ViewModel(){
 
 
     private val resultLiveMutable = MutableLiveData<String>()
@@ -37,12 +42,26 @@ class MainViewModel @Inject constructor (private val loadWeatherCardsUseCase : L
           try{
               Log.d("my_tag","try")
               resultLiveMutable.postValue( getWeatherCardDataUseCase.execute(WeatherCard("Paris")).toString())
-          }catch (ex: Exception){
-              Log.d("my_tag",ex.toString())
+          }catch (e: Exception){
+              Log.d("my_tag",e.toString())
           }
 
         }
     }
+
+    fun getPredictions(){
+        viewModelScope.launch(IO) {
+            try{
+                Log.d("my_tag","try")
+                resultLiveMutable.postValue( getAutocompletePredictionsUseCase.execute(AutocompletePrediction("Par")).predictions.toString())
+            }catch (e: Exception){
+                Log.d("my_tag",e.toString())
+            }
+
+        }
+    }
+
+
 
 
 init {

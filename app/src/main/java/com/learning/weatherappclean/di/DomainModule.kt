@@ -2,6 +2,7 @@ package com.learning.weatherappclean.di
 
 import com.learning.weatherappclean.domain.repository.LocalRepository
 import com.learning.weatherappclean.domain.repository.RemoteRepository
+import com.learning.weatherappclean.domain.usecase.GetAutocompletePredictionsUseCase
 import com.learning.weatherappclean.domain.usecase.GetWeatherCardDataUseCase
 import com.learning.weatherappclean.domain.usecase.SaveWeatherCardsUseCase
 import com.learning.weatherappclean.domain.usecase.LoadWeatherCardsUseCase
@@ -29,8 +30,12 @@ class DomainModule {
         return GetWeatherCardDataUseCase(remoteRepository=remoteRepository)
     }
 
- /*   val getWeatherCardsUseCase = GetWeatherCardsUseCase(userRepository)
-    val addWeatherCardUseCase = AddWeatherCardUseCase(userRepository)*/
+    @Provides
+    fun provideGetAutocompletePredictionsUseCase (remoteRepository: RemoteRepository): GetAutocompletePredictionsUseCase {
+        return GetAutocompletePredictionsUseCase(remoteRepository=remoteRepository)
+    }
+
+
 
 
 

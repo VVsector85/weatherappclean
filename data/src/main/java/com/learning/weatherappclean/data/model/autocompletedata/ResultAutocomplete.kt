@@ -3,7 +3,7 @@ package com.learning.weatherappclean.data.model.autocompletedata
 
 import com.google.gson.annotations.SerializedName
 
-data class ResultWs(
+data class ResultAutocomplete(
     @SerializedName("country")
     val country: String,
     @SerializedName("lat")

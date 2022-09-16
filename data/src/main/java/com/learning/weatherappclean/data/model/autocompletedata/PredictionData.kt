@@ -3,9 +3,9 @@ package com.learning.weatherappclean.data.model.autocompletedata
 
 import com.google.gson.annotations.SerializedName
 
-data class AutocompletePrediction(
+data class PredictionData(
     @SerializedName("request")
     val request: Request,
     @SerializedName("results")
-    val results: List<ResultWs>
+    val results: List<ResultAutocomplete>
 )

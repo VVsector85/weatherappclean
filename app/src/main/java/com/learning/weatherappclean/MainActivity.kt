@@ -90,6 +90,13 @@ Text("Get data")
        ) {
            Text("Get data from API")
        }
+       Button(
+           onClick = { vm.getPredictions() }, Modifier
+               .fillMaxWidth(0.8f)
+               .align(Alignment.CenterHorizontally)
+       ) {
+           Text("Get Autocomplete")
+       }
    }
 }
 
