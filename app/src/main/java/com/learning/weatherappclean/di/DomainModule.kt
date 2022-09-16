@@ -1,6 +1,8 @@
 package com.learning.weatherappclean.di
 
 import com.learning.weatherappclean.domain.repository.LocalRepository
+import com.learning.weatherappclean.domain.repository.RemoteRepository
+import com.learning.weatherappclean.domain.usecase.GetWeatherCardDataUseCase
 import com.learning.weatherappclean.domain.usecase.SaveWeatherCardsUseCase
 import com.learning.weatherappclean.domain.usecase.LoadWeatherCardsUseCase
 import dagger.Module
@@ -20,6 +22,11 @@ class DomainModule {
     @Provides
     fun provideSaveWeatherCardsUseCase (localRepository:LocalRepository):SaveWeatherCardsUseCase{
     return SaveWeatherCardsUseCase(localRepository = localRepository)
+    }
+
+    @Provides
+    fun provideGetWeatherCardDataUseCase (remoteRepository: RemoteRepository):GetWeatherCardDataUseCase{
+        return GetWeatherCardDataUseCase(remoteRepository=remoteRepository)
     }
 
  /*   val getWeatherCardsUseCase = GetWeatherCardsUseCase(userRepository)

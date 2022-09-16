@@ -83,6 +83,13 @@ Text("Get data")
                .align(Alignment.CenterHorizontally)){
            Text("Put data")
        }
+       Button(
+           onClick = { vm.getWeather() }, Modifier
+               .fillMaxWidth(0.8f)
+               .align(Alignment.CenterHorizontally)
+       ) {
+           Text("Get data from API")
+       }
    }
 }
 

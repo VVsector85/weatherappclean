@@ -1,8 +1,8 @@
-package com.learning.weatherappclean.data.storage.sharedprefs
+package com.learning.weatherappclean.data.local_source.sharedprefs
 
 import android.content.Context
-import com.learning.weatherappclean.data.storage.LocalStorage
-import com.learning.weatherappclean.data.storage.model.WeatherCardData
+import com.learning.weatherappclean.data.local_source.LocalStorage
+import com.learning.weatherappclean.data.model.WeatherCardData
 
 private const val SHARED_PREFS_WEATHER_CARD = "shared_refs_weather_card"
 private const val KEY_LOCATION_SET = "location_set"

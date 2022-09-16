@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.storage.model
+package com.learning.weatherappclean.data.model
 
 class WeatherCardData(val content : MutableSet<String>) {
 

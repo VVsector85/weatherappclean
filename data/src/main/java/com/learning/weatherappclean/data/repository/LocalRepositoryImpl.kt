@@ -1,9 +1,8 @@
 package com.learning.weatherappclean.data.repository
 
 
-import com.learning.weatherappclean.data.storage.LocalStorage
-import com.learning.weatherappclean.data.storage.model.WeatherCardData
-import com.learning.weatherappclean.domain.model.AddWeatherCardParams
+import com.learning.weatherappclean.data.local_source.LocalStorage
+import com.learning.weatherappclean.data.model.WeatherCardData
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.repository.LocalRepository
 
@@ -27,14 +26,13 @@ class LocalRepositoryImpl(private val localStorage: LocalStorage) : LocalReposit
 
 
     private fun mapToStorage(saveWeatherCardsList: List<WeatherCard>):WeatherCardData{
-        var list: MutableList<String> = mutableListOf()
+        val list: MutableList<String> = mutableListOf()
         saveWeatherCardsList.forEach{list.add(it.location)}
-
         return WeatherCardData(content = list.toMutableSet())
     }
     private fun mapToDomain(weatherCardData:WeatherCardData):List<WeatherCard>{
-        var list: MutableList<WeatherCard> = mutableListOf()
-            weatherCardData.content.forEach { list.add(WeatherCard(location = it))}
+        val list: MutableList<WeatherCard> = mutableListOf()
+            weatherCardData.content.forEach{list.add(WeatherCard(location = it))}
         return list
     }
 }

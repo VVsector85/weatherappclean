@@ -1,6 +1,5 @@
 package com.learning.weatherappclean.domain.usecase
 
-import com.learning.weatherappclean.domain.model.AddWeatherCardParams
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.repository.LocalRepository
 

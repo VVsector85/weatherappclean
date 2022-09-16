@@ -1,4 +1,4 @@
 package com.learning.weatherappclean.domain.model
 
-class AutocompletePrediction {
+class AutocompletePrediction(tempString:String) {
 }
