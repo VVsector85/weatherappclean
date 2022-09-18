@@ -89,5 +89,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.5.2'
     kapt "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.4.2"
 
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.26.3-beta"
+
 
 }

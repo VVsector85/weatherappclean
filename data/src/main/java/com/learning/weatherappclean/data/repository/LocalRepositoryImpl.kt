@@ -27,8 +27,8 @@ class LocalRepositoryImpl(private val localStorage: LocalStorage) : LocalReposit
 
     private fun mapToStorage(saveWeatherCardsList: List<WeatherCard>):WeatherCardData{
         val list: MutableList<String> = mutableListOf()
-        saveWeatherCardsList.forEach{list.add(it.location)}
-        return WeatherCardData(content = list.toMutableSet())
+        saveWeatherCardsList.forEach{list.add("${it.location }, ${it.country}"   )}
+        return WeatherCardData(content = list.toSet())
     }
     private fun mapToDomain(weatherCardData:WeatherCardData):List<WeatherCard>{
         val list: MutableList<WeatherCard> = mutableListOf()

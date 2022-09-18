@@ -25,35 +25,58 @@ class MainViewModel @Inject constructor (
 ):ViewModel(){
 
 
-    private val resultLiveMutable = MutableLiveData<String>()
+    private val loadingState = MutableLiveData<Boolean>()
+    private val weatherCardsMutableList = MutableLiveData<List<WeatherCard>>()
+    private val prediction = MutableLiveData<List<String>>()
 
-    fun getResult(): LiveData<String> {
-        return resultLiveMutable
+
+    init {
+            refreshCards()
     }
-    fun save(text:String){
-        resultLiveMutable.value = saveWeatherCardsUseCase.execute(listOf(WeatherCard(location = text))).toString()
+
+
+
+    fun getList(): LiveData<List<WeatherCard>> = weatherCardsMutableList
+    fun getLoadingState(): LiveData<Boolean> =  loadingState
+
+
+
+    fun deleteCard(index:Int){
+       val list =  weatherCardsMutableList.value?.toMutableList()?: emptyList<WeatherCard>().toMutableList()
+        list.removeAt(index)
+        weatherCardsMutableList.value = list.toList()
+        saveWeatherCardsUseCase.execute(list.toList())
     }
-    fun load (){
-        val weatherCards :List <WeatherCard> = loadWeatherCardsUseCase.execute()
-        resultLiveMutable.value = weatherCards.toString()
-    }
-    fun getWeather(){
+
+    fun addCard(location:String){
+        var card = WeatherCard("")
+        loadingState.value = true
         viewModelScope.launch(IO) {
-          try{
-              Log.d("my_tag","try")
-              resultLiveMutable.postValue( getWeatherCardDataUseCase.execute(WeatherCard("Paris")).toString())
-          }catch (e: Exception){
-              Log.d("my_tag",e.toString())
-          }
+           try {
+               card = getWeatherCardDataUseCase.execute(WeatherCard(location))
+           }catch (e:Exception){
+               Log.d("my_tag",e.toString())
+           }
+
+            val list = weatherCardsMutableList.value?.toMutableList() ?: emptyList<WeatherCard>().toMutableList()
+                list.add(card)
+                weatherCardsMutableList.postValue(list)
+                saveWeatherCardsUseCase.execute(list)
+                loadingState.postValue(false)
 
         }
     }
 
-    fun getPredictions(){
+
+
+
+
+    fun getPredictions(text:String){
         viewModelScope.launch(IO) {
             try{
-                Log.d("my_tag","try")
-                resultLiveMutable.postValue( getAutocompletePredictionsUseCase.execute(AutocompletePrediction("Par")).predictions.toString())
+                Log.d("my_tag","autocomplete query")
+                prediction.postValue(getAutocompletePredictionsUseCase.execute(AutocompletePrediction(text)).predictions)
+                Log.d("my_tag",prediction.value.toString())
             }catch (e: Exception){
                 Log.d("my_tag",e.toString())
             }
@@ -61,10 +84,24 @@ class MainViewModel @Inject constructor (
         }
     }
 
+ fun refreshCards(){
+     loadingState.value = true
 
+    val emptyCards = loadWeatherCardsUseCase.execute()
+    val filledList = mutableListOf<WeatherCard>()
+    viewModelScope.launch(IO) {
 
-
-init {
-    Log.d("my_tag", "View model created")
+        try {
+            Log.d("my_tag","refresh cards query")
+            emptyCards.forEach { filledList.add(getWeatherCardDataUseCase.execute(it)) }
+        }catch (e :Exception){
+            Log.d("my_tag",e.toString())
+        }
+        weatherCardsMutableList.postValue(filledList)
+        loadingState.postValue(false)
+    }
 }
+
+
+
 }

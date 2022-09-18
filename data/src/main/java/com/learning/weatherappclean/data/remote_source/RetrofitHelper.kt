@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 import java.util.concurrent.TimeUnit
 
 object RetrofitHelper {
@@ -15,6 +16,7 @@ object RetrofitHelper {
         Retrofit.Builder()
             .client(getOkHttpClient())
             .baseUrl(BASE_URL)
+           /* .addConverterFactory(MoshiConverterFactory.create())*/
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(WeatherApi::class.java)
