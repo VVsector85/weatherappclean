@@ -22,7 +22,10 @@ data class WeatherCard(
 
     val localtime: String= "",
     val timezoneId: String= "",
-    val utcOffset: String= ""
+    val utcOffset: String= "",
+
+    val error: Boolean = false,
+    val errorMsg: String=""
 
 
 

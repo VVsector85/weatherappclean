@@ -2,6 +2,7 @@ package com.learning.weatherappclean
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -27,6 +28,7 @@ import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.ui.theme.WeatherAppCleanTheme
 import com.learning.weatherappclean.presentation.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 @AndroidEntryPoint
@@ -59,9 +61,13 @@ class MainActivity : ComponentActivity() {
 fun Greeting(vm:MainViewModel,owner: LifecycleOwner) {
     val loadingState = remember { mutableStateOf(true) }
     val textLocation = remember { mutableStateOf("") }
+    val textError = remember { mutableStateOf("") }
     val weatherCardList = remember { mutableStateOf(emptyList<WeatherCard>()) }
     vm.getList().observe(owner){weatherCardList.value =it}
     vm.getLoadingState().observe(owner){loadingState.value =it}
+    vm.getError().observe(owner){textError.value = it
+
+    }
 
    Column{
        TextField(value = textLocation.value ,  onValueChange = { value ->
@@ -71,7 +77,7 @@ fun Greeting(vm:MainViewModel,owner: LifecycleOwner) {
            Modifier
                .fillMaxWidth(0.8f)
                .align(Alignment.CenterHorizontally))
-
+       Text(text = textError.value)
        Button(
            onClick = { vm.addCard(textLocation.value) }, Modifier
                .fillMaxWidth(0.8f)

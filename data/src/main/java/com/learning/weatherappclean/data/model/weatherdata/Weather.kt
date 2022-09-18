@@ -2,12 +2,16 @@ package com.learning.weatherappclean.data.model.weatherdata
 
 
 import com.google.gson.annotations.SerializedName
+import com.learning.weatherappclean.data.model.apierror.Error
+import com.squareup.moshi.Json
 
 data class Weather(
-    @SerializedName("current")
+    @field:Json( name ="current")
     val current: Current,
-    @SerializedName("location")
+    @field:Json( name ="location")
     val location: Location,
-    @SerializedName("request")
-    val request: Request
+    @field:Json( name ="request")
+    val request: Request,
+
+
 )

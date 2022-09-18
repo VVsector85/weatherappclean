@@ -1,7 +1,9 @@
-/*
 package com.learning.weatherappclean.data.remote_source
 
+import android.util.Log
 import com.learning.weatherappclean.data.model.apierror.ErrorResponse
+import com.learning.weatherappclean.data.model.weatherdata.Weather
+import com.squareup.moshi.Moshi
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,12 +27,17 @@ abstract class BaseRepository() {
                 // function that will return response
                 // wrapped in Retrofit's Response class
                 val response: Response<T> = apiToBeCalled()
-
+                Log.d ("my_tag", "response code: "+response.code())
                 if (response.isSuccessful) {
                     // In case of success response we
                     // are returning Resource.Success object
                     // by passing our data in it.
+                    Log.d ("my_tag", "response raw: ")
+
+
+
                     Resource.Success(data = response.body()!!)
+
                 } else {
                     // parsing api's own custom json error
                     // response in ExampleErrorResponse pojo
@@ -57,8 +64,7 @@ abstract class BaseRepository() {
 
     // If you don't wanna handle api's own
     // custom error response then ignore this function
-    */
-/*private fun convertErrorBody(errorBody: ResponseBody?): ErrorResponse? {
+private fun convertErrorBody(errorBody: ResponseBody?): ErrorResponse? {
         return try {
             errorBody?.source()?.let {
                 val moshiAdapter = Moshi.Builder().build().adapter(ErrorResponse::class.java)
@@ -67,6 +73,29 @@ abstract class BaseRepository() {
         } catch (exception: Exception) {
             null
         }
-    }*//*
+    }
 
-}*/
+    private fun convertBodyToWeather(response: ResponseBody): Weather? {
+        return try {
+            response.toString().let {
+                val moshiAdapter = Moshi.Builder().build().adapter(Weather::class.java)
+                moshiAdapter.fromJson(it)
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+    private fun convertBodyToError(response: ResponseBody): ErrorResponse? {
+        return try {
+            response.toString().let {
+                val moshiAdapter = Moshi.Builder().build().adapter(ErrorResponse::class.java)
+                moshiAdapter.fromJson(it)
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+
+
+
+}

@@ -7,11 +7,8 @@ import com.learning.weatherappclean.domain.repository.RemoteRepository
 class GetAutocompletePredictionsUseCase (private val remoteRepository: RemoteRepository) {
 
     suspend fun execute(searchString: AutocompletePrediction): AutocompletePrediction {
-        return if (searchString.searchString.length >= 3) {
-            remoteRepository.getAutocompletePredictions(searchString)
-        } else {
 
-            AutocompletePrediction("")
-        }
+          return  remoteRepository.getAutocompletePredictions(searchString)
+
     }
 }

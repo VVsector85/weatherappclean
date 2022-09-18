@@ -2,36 +2,37 @@ package com.learning.weatherappclean.data.model.weatherdata
 
 
 import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 
 data class Current(
-    @SerializedName("cloudcover")
+    @field:Json( name ="cloudcover")
     val cloudcover: String,
-    @SerializedName("feelslike")
+    @field:Json( name ="feelslike")
     val feelslike: String,
-    @SerializedName("humidity")
+    @field:Json( name ="humidity")
     val humidity: String,
-    @SerializedName("observation_time")
+    @field:Json( name ="observation_time")
     val observationTime: String,
-    @SerializedName("precip")
+    @field:Json( name ="precip")
     val precip: String,
-    @SerializedName("pressure")
+    @field:Json( name ="pressure")
     val pressure: String,
-    @SerializedName("temperature")
+    @field:Json( name ="temperature")
     val temperature: String,
-    @SerializedName("uv_index")
+    @field:Json( name ="uv_index")
     val uvIndex: String,
-    @SerializedName("visibility")
+    @field:Json( name ="visibility")
     val visibility: String,
-    @SerializedName("weather_code")
+    @field:Json( name ="weather_code")
     val weatherCode: String,
-    @SerializedName("weather_descriptions")
+    @field:Json( name ="weather_descriptions")
     val weatherDescriptions: List<String>,
-    @SerializedName("weather_icons")
+    @field:Json( name ="weather_icons")
     val weatherIcons: List<String>,
-    @SerializedName("wind_degree")
+    @field:Json( name ="wind_degree")
     val windDegree: String,
-    @SerializedName("wind_dir")
+    @field:Json( name ="wind_dir")
     val windDir: String,
-    @SerializedName("wind_speed")
+    @field:Json( name ="wind_speed")
     val windSpeed: String
 )

@@ -2,24 +2,25 @@ package com.learning.weatherappclean.data.model.weatherdata
 
 
 import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 
 data class Location(
-    @SerializedName("country")
+    @field:Json( name ="country")
     val country: String,
-    @SerializedName("lat")
+    @field:Json( name ="lat")
     val lat: String,
-    @SerializedName("localtime")
+    @field:Json( name ="localtime")
     val localtime: String,
-    @SerializedName("localtime_epoch")
+    @field:Json( name ="localtime_epoch")
     val localtimeEpoch: Int,
-    @SerializedName("lon")
+    @field:Json( name ="lon")
     val lon: String,
-    @SerializedName("name")
+    @field:Json( name ="name")
     val name: String,
-    @SerializedName("region")
+    @field:Json( name ="region")
     val region: String,
-    @SerializedName("timezone_id")
+    @field:Json( name ="timezone_id")
     val timezoneId: String,
-    @SerializedName("utc_offset")
+    @field:Json( name ="utc_offset")
     val utcOffset: String
 )

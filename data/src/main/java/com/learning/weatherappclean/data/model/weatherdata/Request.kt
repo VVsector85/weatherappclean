@@ -2,14 +2,15 @@ package com.learning.weatherappclean.data.model.weatherdata
 
 
 import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 
 data class Request(
-    @SerializedName("language")
+    @field:Json( name ="language")
     val language: String,
-    @SerializedName("query")
+    @field:Json( name ="query")
     val query: String,
-    @SerializedName("type")
+    @field:Json( name ="type")
     val type: String,
-    @SerializedName("unit")
+    @field:Json( name ="unit")
     val unit: String
 )
