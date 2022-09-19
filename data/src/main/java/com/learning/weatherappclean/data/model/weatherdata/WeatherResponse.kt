@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.learning.weatherappclean.data.model.apierror.Error
 import com.squareup.moshi.Json
 
-data class Weather(
+data class WeatherResponse(
     @field:Json( name ="current")
     val current: Current,
     @field:Json( name ="location")

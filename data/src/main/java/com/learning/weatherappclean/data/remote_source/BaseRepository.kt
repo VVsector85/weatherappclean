@@ -2,7 +2,7 @@ package com.learning.weatherappclean.data.remote_source
 
 import android.util.Log
 import com.learning.weatherappclean.data.model.apierror.ErrorResponse
-import com.learning.weatherappclean.data.model.weatherdata.Weather
+import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
 import com.squareup.moshi.Moshi
 
 import kotlinx.coroutines.Dispatchers
@@ -75,26 +75,7 @@ private fun convertErrorBody(errorBody: ResponseBody?): ErrorResponse? {
         }
     }
 
-    private fun convertBodyToWeather(response: ResponseBody): Weather? {
-        return try {
-            response.toString().let {
-                val moshiAdapter = Moshi.Builder().build().adapter(Weather::class.java)
-                moshiAdapter.fromJson(it)
-            }
-        } catch (exception: Exception) {
-            null
-        }
-    }
-    private fun convertBodyToError(response: ResponseBody): ErrorResponse? {
-        return try {
-            response.toString().let {
-                val moshiAdapter = Moshi.Builder().build().adapter(ErrorResponse::class.java)
-                moshiAdapter.fromJson(it)
-            }
-        } catch (exception: Exception) {
-            null
-        }
-    }
+
 
 
 

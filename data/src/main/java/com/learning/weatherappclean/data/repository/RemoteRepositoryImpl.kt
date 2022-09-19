@@ -1,23 +1,19 @@
 package com.learning.weatherappclean.data.repository
 
 
-import android.gesture.Prediction
 import android.util.Log
 import com.learning.weatherappclean.data.model.apierror.ErrorResponse
-import com.learning.weatherappclean.data.model.autocompletedata.PredictionData
-import com.learning.weatherappclean.data.model.autocompletedata.ResultAutocomplete
+import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
 import com.learning.weatherappclean.data.util.Constants.API_KEY
 import com.learning.weatherappclean.data.util.Constants.WEATHER_UNITS
-import com.learning.weatherappclean.data.model.weatherdata.Weather
-import com.learning.weatherappclean.data.remote_source.BaseRepository
-import com.learning.weatherappclean.data.remote_source.Resource
+import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
 import com.learning.weatherappclean.data.remote_source.WeatherApi
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 import com.squareup.moshi.Moshi
-import okhttp3.ResponseBody
 import retrofit2.Response
+import kotlin.reflect.KClass
 
 
 class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepository {
@@ -30,14 +26,15 @@ class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepositor
                 city = location.location,
                 units = WEATHER_UNITS
             )
-        val resultWeather = convertBodyToWeather(response)
-        return if (resultWeather?.current!=null){
-            Log.d("my_tag", "resultWeather"+(resultWeather.current ==null)+resultWeather.toString())
-            mapWeatherDataToDomain(resultWeather)
+        val weatherResponse = convertBody<WeatherResponse>(response)
+        return if (weatherResponse?.current != null) {
+            //Log.d("my_tag", "resultWeather"+(weatherResponse.current ==null)+weatherResponse.toString())
+            mapToDomain(weatherResponse)
         } else {
-            val resultError = convertBodyToError(response)
-            Log.d("my_tag", "resultError"+resultError.toString())
-            mapWeatherDataToDomain(resultError!!)
+            val resultError = convertBody<ErrorResponse>(response)
+            //Log.d("my_tag", "resultError"+resultError.toString())
+            mapToDomain<WeatherCard>(resultError!!) as WeatherCard
+
         }
 
 
@@ -48,17 +45,19 @@ class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepositor
             accessKey = API_KEY,
             searchString = searchString.searchString
         )
-        val resultAutocomplete = convertBodyToAutocomplete(response)
-        Log.d("my_tag", "autocomplete after conversion $resultAutocomplete")
-        return if (resultAutocomplete?.predictionData != null) {
-           mapAutocompletePredictionDataToDomain(resultAutocomplete)
+        val autocompleteResponse = convertBody<AutocompleteResponse>(response)
+        Log.d("my_tag", "autocomplete after conversion $autocompleteResponse")
+        return if (autocompleteResponse?.predictionData != null) {
+            mapToDomain(autocompleteResponse)
         } else {
-            val resultError = convertBodyToError(response)
-            mapAutocompletePredictionDataToDomain(resultError!!)
+            val errorResponse = convertBody<ErrorResponse>(response)
+            mapToDomain<AutocompletePrediction>(errorResponse!!) as AutocompletePrediction
+
         }
+
     }
 
-    private fun mapWeatherDataToDomain(response: Weather): WeatherCard {
+    private fun mapToDomain(response: WeatherResponse): WeatherCard {
         return WeatherCard(
             location = response.location.name,
             temperature = response.current.temperature,
@@ -87,18 +86,27 @@ class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepositor
             )
     }
 
-    private fun mapWeatherDataToDomain(response: ErrorResponse): WeatherCard {
-        return WeatherCard(
-            location = "none",
-            error = true,
-            errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}"
-        )
+
+    private inline fun <reified T> mapToDomain(response: ErrorResponse): Any? {
+        return when (T::class) {
+            WeatherCard::class -> WeatherCard(
+                location = "none",
+                error = true,
+                errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}"
+            )
+            AutocompletePrediction::class -> AutocompletePrediction(
+
+                error = true,
+                errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}"
+            )
+            else -> null
+        }
     }
 
-    private fun mapAutocompletePredictionDataToDomain(response: ResultAutocomplete): AutocompletePrediction {
+    private fun mapToDomain(response: AutocompleteResponse): AutocompletePrediction {
         val tempList: MutableList<String> = mutableListOf()
         response.predictionData.forEach {
-           Log.d("my_tag","prediction item ${it.name}, ${it.country}")
+            Log.d("my_tag", "prediction item ${it.name}, ${it.country}")
             tempList.add("${it.name}, ${it.country}")
         }
 
@@ -108,21 +116,12 @@ class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepositor
         )
     }
 
-    private fun mapAutocompletePredictionDataToDomain(response: ErrorResponse): AutocompletePrediction {
-        return AutocompletePrediction(
 
-            error = true,
-            errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}"
-        )
-    }
-
-
-    private fun convertBodyToAutocomplete(response: Response<String>): ResultAutocomplete? {
+    private inline fun <reified T> convertBody(response: Response<String>): T? {
         return try {
-            Log.d("my_tag", "convert to autocomplete "+response.body())
+            Log.d("my_tag", "convert to error " + response.body())
             response.body().let {
-                val moshiAdapter =
-                    Moshi.Builder().build().adapter(ResultAutocomplete::class.java)
+                val moshiAdapter = Moshi.Builder().build().adapter(T::class.java)
                 moshiAdapter.fromJson(it)
             }
         } catch (exception: Exception) {
@@ -130,41 +129,8 @@ class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepositor
         }
     }
 
-    private fun convertBodyToWeather(response: Response<String>): Weather? {
-        return try {
-            Log.d("my_tag", "convert to weather "+response.body())
-            response.body().let {
-                val moshiAdapter = Moshi.Builder().build().adapter(Weather::class.java)
-                moshiAdapter.fromJson(it)
-            }
-        } catch (exception: Exception) {
-            null
-        }
-    }
-
-    /*private fun convertBodyToWeather(response: Response<String>): Weather? {
-        val moshiAdapter = Moshi.Builder().build().adapter(Weather::class.java)
-        return moshiAdapter.fromJson(response.body())
-
-    }*/
 
 
-
-
-
-
-
-    private fun convertBodyToError(response: Response<String>): ErrorResponse? {
-        return try {
-            Log.d("my_tag", "convert to error "+response.body())
-            response.body().let {
-                val moshiAdapter = Moshi.Builder().build().adapter(ErrorResponse::class.java)
-                moshiAdapter.fromJson(it)
-            }
-        } catch (exception: Exception) {
-            null
-        }
-    }
 }
 
 

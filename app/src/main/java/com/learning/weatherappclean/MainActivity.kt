@@ -2,33 +2,22 @@ package com.learning.weatherappclean
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.LifecycleOwner
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshState
-import com.learning.weatherappclean.domain.model.WeatherCard
 
 import com.learning.weatherappclean.presentation.ui.theme.WeatherAppCleanTheme
 import com.learning.weatherappclean.presentation.MainViewModel
+import com.learning.weatherappclean.presentation.ui.WeatherList
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 @AndroidEntryPoint
@@ -50,7 +39,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting (vm,this)
+                    MainScreen (vm,this)
                 }
             }
         }
@@ -58,17 +47,15 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(vm:MainViewModel,owner: LifecycleOwner) {
-    val loadingState = remember { mutableStateOf(true) }
+fun MainScreen(vm:MainViewModel, owner: LifecycleOwner) {
+
     val textLocation = remember { mutableStateOf("") }
     val textError = remember { mutableStateOf("") }
-    val weatherCardList = remember { mutableStateOf(emptyList<WeatherCard>()) }
-    vm.getList().observe(owner){weatherCardList.value =it}
-    vm.getLoadingState().observe(owner){loadingState.value =it}
+
     vm.getError().observe(owner){textError.value = it
 
     }
-
+R.drawable.ic_alster
    Column{
        TextField(value = textLocation.value ,  onValueChange = { value ->
            textLocation.value = value
@@ -85,49 +72,14 @@ fun Greeting(vm:MainViewModel,owner: LifecycleOwner) {
        ) {
            Text("Add card")
        }
-
-       SwipeRefresh(
-           state = SwipeRefreshState(loadingState.value),
-           onRefresh = {vm.refreshCards()}
-       ){
-
-       LazyColumn(
-           modifier = Modifier.align(Alignment.CenterHorizontally),
-           contentPadding = PaddingValues(bottom = 10.dp),
-           reverseLayout = true,
-
-           ) {
-           itemsIndexed(weatherCardList.value) { index, item ->
-
-
-               Card(
-                   modifier = Modifier
-                       .fillMaxWidth(0.9f)
-                       .height(80.dp)
-                       .padding(horizontal = 6.dp, vertical = 12.dp),
-                   //elevation = 4.dp,
-                   backgroundColor = Color.LightGray
-
-               ){
-                   Row(){
-                       Box(modifier = Modifier.fillMaxSize(0.7f)){ Text("${item.location}, ${item.temperature}")}
-                       Box(){Button(onClick = { vm.deleteCard(index) }) {
-                           Text("X")
-                       }}
-
-
-
-
-
-                   }
-               }
-           }}
-
-
-
-
-   }}
+WeatherList(modifier = Modifier.align(Alignment.CenterHorizontally), vm = vm, owner =owner )
+     }
 }
+
+
+
+
+
 
 /*
 @Preview(showBackground = true)
