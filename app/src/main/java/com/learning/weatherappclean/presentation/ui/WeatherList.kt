@@ -3,78 +3,58 @@ package com.learning.weatherappclean.presentation.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshState
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.MainViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.*
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun WeatherList (modifier: Modifier, vm:MainViewModel, owner: LifecycleOwner){
-   val weatherCardList = remember { mutableStateOf(emptyList<WeatherCard>()) }
-   vm.getList().observe(owner){weatherCardList.value =it}
-   val loadingState = remember { mutableStateOf(true) }
-   vm.getLoadingState().observe(owner){loadingState.value =it}
-   SwipeRefresh(
-      state = SwipeRefreshState(loadingState.value),
-      onRefresh = {vm.refreshCards()}
-   ){
-
-      LazyColumn(
-         modifier = modifier,
-         contentPadding = PaddingValues(bottom = 10.dp),
-         reverseLayout = true,
-
-         ) {
-         itemsIndexed(weatherCardList.value) { index, item ->
-
-//Text(item.location)
-            CardWeather(
-               modifier =
-               Modifier
-                  .fillMaxWidth(0.9f)
-
-                  .height(165.dp)
-                  .padding(horizontal = 6.dp, vertical = 12.dp),
-
-
-            item,vm,index)/*{
-               Row(){
-                  Box(modifier = Modifier.fillMaxSize(0.7f)){ Text("${item.location}, ${item.temperature}")}
-                  Box(){Button(onClick = { vm.deleteCard(index) }) {
-                     Text("X")
-                  }}
+fun WeatherList(padding:PaddingValues, vm: MainViewModel, owner: LifecycleOwner) {
+    val weatherCardList = remember { mutableStateOf(emptyList<WeatherCard>()) }
+    vm.getList().observe(owner) { weatherCardList.value = it }
+    val loadingState = rememberSwipeRefreshState(isRefreshing = false)
+    vm.getLoadingState().observe(owner) { loadingState.isRefreshing = it }
+    val listState = rememberLazyListState()
 
 
 
+    SwipeRefresh(
+        state = loadingState,
+        onRefresh = { vm.refreshCards() }
+
+    ) {
+        vm.getScrollToFirst().observe(owner) { CoroutineScope(Dispatchers.Main).launch {listState.scrollToItem(weatherCardList.value.size)} }
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(bottom = 50.dp),
+            reverseLayout = true,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            userScrollEnabled = true,
+            state = listState
+
+            ) {
+
+            itemsIndexed(weatherCardList.value) { index, item ->
+
+                CardWeather(content = item,vm = vm,index = index)
+
+            }
+        }
 
 
-               }
-            }*/
-         }}
-
-
-
-
-   }
+    }
 
 
 }

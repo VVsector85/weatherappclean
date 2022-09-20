@@ -13,7 +13,6 @@ import com.learning.weatherappclean.domain.usecase.SaveWeatherCardsUseCase
 import com.learning.weatherappclean.domain.usecase.LoadWeatherCardsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,7 +29,7 @@ class MainViewModel @Inject constructor (
     private val weatherCardsMutableList = MutableLiveData<List<WeatherCard>>()
     private val prediction = MutableLiveData<List<String>>()
     private val errorMessage = MutableLiveData<String>()
-
+    private val scrollToFirst = MutableLiveData<Int>()
 
     init {
             refreshCards()
@@ -40,12 +39,14 @@ class MainViewModel @Inject constructor (
     fun getError(): LiveData<String> = errorMessage
     fun getList(): LiveData<List<WeatherCard>> = weatherCardsMutableList
     fun getLoadingState(): LiveData<Boolean> =  loadingState
+    fun getScrollToFirst(): LiveData<Int> = scrollToFirst
 
 
 
     fun deleteCard(index:Int){
        val list =  weatherCardsMutableList.value?.toMutableList()?: emptyList<WeatherCard>().toMutableList()
         list.removeAt(index)
+        list.forEachIndexed { ind, it -> it.number=ind }
         weatherCardsMutableList.value = list.toList()
         saveWeatherCardsUseCase.execute(list.toList())
     }
@@ -62,14 +63,27 @@ class MainViewModel @Inject constructor (
             if (!card.error) {
                 val list = weatherCardsMutableList.value?.toMutableList()
                     ?: emptyList<WeatherCard>().toMutableList()
-                list.add(card)
-                weatherCardsMutableList.postValue(list)
-                saveWeatherCardsUseCase.execute(list)
-            }else{errorMessage.postValue(card.errorMsg)
-            delay(3000)
-                errorMessage.postValue("")
-            }
-                loadingState.postValue(false)
+
+              if (list.find { it.location == card.location}==null) {
+                  list.add(card)
+
+
+                  list.forEachIndexed { index, it -> it.number=index }
+                  weatherCardsMutableList.postValue(list)
+                  saveWeatherCardsUseCase.execute(list)
+              }else{
+
+                  errorMessage.postValue("${card.location} is already on the list")
+              }
+
+              } else {
+                errorMessage.postValue(card.errorMsg)
+              }
+
+            loadingState.postValue(false)
+
+
+            scrollToFirst.postValue(weatherCardsMutableList.value?.size?:1)
 
         }
     }
@@ -95,8 +109,7 @@ class MainViewModel @Inject constructor (
     }
 
  fun refreshCards(){
-     loadingState.value = true
-
+    loadingState.value = true
     val emptyCards = loadWeatherCardsUseCase.execute()
     val filledList = mutableListOf<WeatherCard>()
     viewModelScope.launch(IO) {
@@ -104,7 +117,8 @@ class MainViewModel @Inject constructor (
         try {
             Log.d("my_tag","refresh cards query")
             emptyCards.forEach {
-               var t = getWeatherCardDataUseCase.execute(it)
+
+               val t = getWeatherCardDataUseCase.execute(it)
                if (!t.error) { filledList.add(t) }else{Log.d("my_tag", t.errorMsg)}
             }
         }catch (e :Exception){
@@ -112,6 +126,9 @@ class MainViewModel @Inject constructor (
         }
         weatherCardsMutableList.postValue(filledList)
         loadingState.postValue(false)
+       // if ((weatherCardsMutableList.value?.size?:0)>0){scrollToFirst.postValue(weatherCardsMutableList.value?.size?:1)}
+        scrollToFirst.postValue(weatherCardsMutableList.value?.size?:1)
+
     }
 }
 

@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/DATA/Android/Learning/weatherAppClean/app/src/main/res/drawable-v24/ic_alster.xml" value="0.1365" />
+        <entry key="..\:/DATA/Android/Learning/weatherAppClean/app/src/main/res/drawable-v24/ic_closebutton_cross.xml" value="0.1365" />
+        <entry key="..\:/DATA/Android/Learning/weatherAppClean/app/src/main/res/drawable-v24/ic_plus.xml" value="0.1" />
       </map>
     </option>
   </component>
