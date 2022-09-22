@@ -2,12 +2,10 @@ package com.learning.weatherapp.network
 
 import com.learning.weatherappclean.data.util.Constants
 import com.learning.weatherappclean.data.util.Constants.BASE_URL
-import com.learning.weatherappclean.data.remote_source.WeatherApi
+import com.learning.weatherappclean.data.souce.remote.WeatherApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 import java.util.concurrent.TimeUnit

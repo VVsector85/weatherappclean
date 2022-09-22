@@ -1,11 +1,14 @@
 package com.learning.weatherappclean.presentation
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
+import com.learning.weatherappclean.domain.model.Request
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.usecase.GetAutocompletePredictionsUseCase
 import com.learning.weatherappclean.domain.usecase.GetWeatherCardDataUseCase
@@ -17,121 +20,117 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor (
-    private val loadWeatherCardsUseCase : LoadWeatherCardsUseCase,
-    private val saveWeatherCardsUseCase : SaveWeatherCardsUseCase,
+class MainViewModel @Inject constructor(
+    private val loadWeatherCardsUseCase: LoadWeatherCardsUseCase,
+    private val saveWeatherCardsUseCase: SaveWeatherCardsUseCase,
     private val getWeatherCardDataUseCase: GetWeatherCardDataUseCase,
     private val getAutocompletePredictionsUseCase: GetAutocompletePredictionsUseCase
-):ViewModel(){
+) : ViewModel() {
 
 
     private val loadingState = MutableLiveData<Boolean>()
     private val weatherCardsMutableList = MutableLiveData<List<WeatherCard>>()
-    private val prediction = MutableLiveData<List<String>>()
-    private val errorMessage = MutableLiveData<String>()
+    private val prediction = MutableLiveData<List<AutocompletePrediction.Predictions>>()
+    private val errorMessage = mutableStateOf("")
     private val scrollToFirst = MutableLiveData<Int>()
 
     init {
-            refreshCards()
+        refreshCards()
     }
 
 
-    fun getError(): LiveData<String> = errorMessage
+    fun getError(): MutableState<String> = errorMessage
     fun getList(): LiveData<List<WeatherCard>> = weatherCardsMutableList
-    fun getLoadingState(): LiveData<Boolean> =  loadingState
+    fun getLoadingState(): LiveData<Boolean> = loadingState
     fun getScrollToFirst(): LiveData<Int> = scrollToFirst
+    fun getPredictions(): LiveData<List<AutocompletePrediction.Predictions>> = prediction
 
 
-
-    fun deleteCard(index:Int){
-       val list =  weatherCardsMutableList.value?.toMutableList()?: emptyList<WeatherCard>().toMutableList()
+    fun deleteCard(index: Int) {
+        val list = weatherCardsMutableList.value?.toMutableList()
+            ?: emptyList<WeatherCard>().toMutableList()
         list.removeAt(index)
-        list.forEachIndexed { ind, it -> it.number=ind }
+        list.forEachIndexed { ind, it -> it.number = ind }
         weatherCardsMutableList.value = list.toList()
         saveWeatherCardsUseCase.execute(list.toList())
     }
 
-    fun addCard(location:String){
+    fun addCard(location: String) {
         var card = WeatherCard("")
         loadingState.value = true
         viewModelScope.launch(IO) {
-           try {
-               card = getWeatherCardDataUseCase.execute(WeatherCard(location))
-           }catch (e:Exception){
-               Log.d("my_tag",e.toString())
-           }
+            try {
+                card = getWeatherCardDataUseCase.execute(Request(location))
+            } catch (e: Exception) {
+                Log.d("my_tag", e.toString())
+            }
             if (!card.error) {
                 val list = weatherCardsMutableList.value?.toMutableList()
                     ?: emptyList<WeatherCard>().toMutableList()
+                if (list.find { it.location == card.location&&it.country == card.country  } == null) {
+                    list.add(card)
+                    list.forEachIndexed { index, it -> it.number = index }
+                    weatherCardsMutableList.postValue(list)
+                    saveWeatherCardsUseCase.execute(list)
+                } else {
+                    errorMessage.value =("${card.location}, ${card.country} is already on the list")
+                }
 
-              if (list.find { it.location == card.location}==null) {
-                  list.add(card)
-
-
-                  list.forEachIndexed { index, it -> it.number=index }
-                  weatherCardsMutableList.postValue(list)
-                  saveWeatherCardsUseCase.execute(list)
-              }else{
-
-                  errorMessage.postValue("${card.location} is already on the list")
-              }
-
-              } else {
-                errorMessage.postValue(card.errorMsg)
-              }
+            } else {
+                errorMessage.value = (card.errorMsg)
+            }
 
             loadingState.postValue(false)
 
 
-            scrollToFirst.postValue(weatherCardsMutableList.value?.size?:1)
+            scrollToFirst.postValue(weatherCardsMutableList.value?.size ?: 1)
 
         }
     }
 
 
-
-
-
-    fun getPredictions(text:String){
-        if (text.length<3) return
+    fun retrievePredictions(text: String) {
+        if (text.length < 3) {
+            prediction.value = emptyList()
+            return
+        }
         viewModelScope.launch(IO) {
-            try{
-                Log.d("my_tag","autocomplete query")
-                val predictionData = getAutocompletePredictionsUseCase.execute(AutocompletePrediction(text))
-                if (!predictionData.error)
+
+            Log.d("my_tag", "autocomplete query")
+            val predictionData =
+                getAutocompletePredictionsUseCase.execute(Request(text))
+            if (!predictionData.error)
                 prediction.postValue(predictionData.predictions)
-                Log.d("my_tag",prediction.value.toString())
-            }catch (e: Exception){
-                Log.d("my_tag", "Get predictions $e")
-            }
+            Log.d("my_tag", prediction.value.toString())
+
 
         }
     }
 
- fun refreshCards(){
-    loadingState.value = true
-    val emptyCards = loadWeatherCardsUseCase.execute()
-    val filledList = mutableListOf<WeatherCard>()
-    viewModelScope.launch(IO) {
+    fun refreshCards() {
+        loadingState.value = true
+        val emptyCards = loadWeatherCardsUseCase.execute()
+        val filledList = mutableListOf<WeatherCard>()
+        viewModelScope.launch(IO) {
 
-        try {
-            Log.d("my_tag","refresh cards query")
+
+            Log.d("my_tag", "refresh cards query")
             emptyCards.forEach {
 
-               val t = getWeatherCardDataUseCase.execute(it)
-               if (!t.error) { filledList.add(t) }else{Log.d("my_tag", t.errorMsg)}
+                val t = getWeatherCardDataUseCase.execute(Request(it.location))
+                if (!t.error) {
+                    filledList.add(t)
+                } else {
+                    Log.d("my_tag", t.errorMsg)
+                }
             }
-        }catch (e :Exception){
-            Log.d("my_tag", "refresh cards:$e")
+
+            weatherCardsMutableList.postValue(filledList)
+            loadingState.postValue(false)
+            scrollToFirst.postValue(weatherCardsMutableList.value?.size ?: 1)
+
         }
-        weatherCardsMutableList.postValue(filledList)
-        loadingState.postValue(false)
-       // if ((weatherCardsMutableList.value?.size?:0)>0){scrollToFirst.postValue(weatherCardsMutableList.value?.size?:1)}
-        scrollToFirst.postValue(weatherCardsMutableList.value?.size?:1)
-
     }
-}
-
 
 
 }

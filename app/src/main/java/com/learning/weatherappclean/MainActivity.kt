@@ -30,6 +30,7 @@ import androidx.lifecycle.LifecycleOwner
 
 import com.learning.weatherappclean.presentation.ui.theme.WeatherAppCleanTheme
 import com.learning.weatherappclean.presentation.MainViewModel
+import com.learning.weatherappclean.presentation.ui.TextWithDropMenu
 import com.learning.weatherappclean.presentation.ui.WeatherList
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +46,7 @@ class MainActivity : ComponentActivity() {
         Log.d("my_tag", "activity destroyed")
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("my_tag", "activity created")
@@ -57,6 +59,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+
                     MainScreen(vm, this)
                 }
             }
@@ -65,12 +68,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+@ExperimentalMaterialApi
 fun MainScreen(vm: MainViewModel, owner: LifecycleOwner) {
 
-    val textLocation = remember { mutableStateOf("") }
-    val textError = remember { mutableStateOf("") }
+
+    //val textError = remember { mutableStateOf("") }
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-    vm.getError().observe(owner) {textError.value = it}
+        //vm.getError().observe(owner) { textError.value = it }
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -85,59 +90,13 @@ fun MainScreen(vm: MainViewModel, owner: LifecycleOwner) {
                     fontSize = 30.sp,
                 )
 
-
-
-                TextField(value = textLocation.value, onValueChange = { value ->
-                    textLocation.value = value
-                    //vm.getPredictions(textLocation.value)
-                },
+                TextWithDropMenu(
                     modifier = Modifier
-                        .fillMaxWidth(0.9f).align(Alignment.CenterHorizontally) .padding(vertical = 10.dp),
-
-                    textStyle = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done,
-                        keyboardType = KeyboardType.Text
-                    ),
-
-
-
-
-                leadingIcon = {
-                    Text(text = "Location", modifier = Modifier.padding(10.dp))
-                },
-                trailingIcon = {
-
-                    Button(
-                        onClick = {
-                            vm.addCard(textLocation.value)
-                            textLocation.value = ""
-                        },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = androidx.compose.ui.graphics.Color.White),
-                        shape = CircleShape,
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .size(50.dp)
-                    ) {
-                    Icon(
-
-                        painter = painterResource(id = R.drawable.ic_plus),
-                        contentDescription = "Add city",
-                        tint = androidx.compose.ui.graphics.Color.Black,
-                        modifier = Modifier
-                            .size(25.dp, 25.dp)
-                            .padding(0.dp)
-
-
-                    )
-
-                }
-                }
-                            )
-                Text(text = "ERROR MESSAGE "+textError.value)
-
-
+                        .fillMaxWidth(0.9f)
+                        .align(Alignment.CenterHorizontally)
+                        .padding(vertical = 10.dp), vm = vm, owner
+                )
+                Text(text = "ERROR MESSAGE " + vm.getError().value)
 
             }
 
@@ -164,24 +123,14 @@ fun MainScreen(vm: MainViewModel, owner: LifecycleOwner) {
                 )
             }
         }
-    ){
-            padding ->
+    ) { padding ->
 
-            WeatherList(padding =padding,vm = vm, owner = owner)
+        WeatherList(padding = padding, vm = vm, owner = owner)
 
     }
 
 
-
-
-
-
-
-
 }
-
-
-
 
 
 /*

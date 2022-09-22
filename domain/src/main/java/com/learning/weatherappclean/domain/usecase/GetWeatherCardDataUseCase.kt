@@ -1,12 +1,13 @@
 package com.learning.weatherappclean.domain.usecase
 
+import com.learning.weatherappclean.domain.model.Request
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 
 class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) {
 
-    suspend fun execute(location: WeatherCard): WeatherCard {
-        val weatherCard = remoteRepository.getWeatherData(location)
+    suspend fun execute(request: Request): WeatherCard {
+        val weatherCard = remoteRepository.getWeatherData(request)
 /**This condition was in the task so I consider it as a part of business logic.
 That is why it is in the domain module
 No actual colours specified specified here, just enums*/

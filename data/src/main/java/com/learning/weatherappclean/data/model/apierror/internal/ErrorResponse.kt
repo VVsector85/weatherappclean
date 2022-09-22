@@ -1,6 +1,5 @@
-package com.learning.weatherappclean.data.model.apierror
+package com.learning.weatherappclean.data.model.apierror.internal
 
-import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 
 

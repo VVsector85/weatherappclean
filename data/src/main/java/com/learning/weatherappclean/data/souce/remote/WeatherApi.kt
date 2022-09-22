@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.remote_source
+package com.learning.weatherappclean.data.souce.remote
 
 
 import retrofit2.Response
