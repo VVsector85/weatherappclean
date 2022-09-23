@@ -15,7 +15,12 @@ import com.learning.weatherappclean.domain.usecase.GetWeatherCardDataUseCase
 import com.learning.weatherappclean.domain.usecase.SaveWeatherCardsUseCase
 import com.learning.weatherappclean.domain.usecase.LoadWeatherCardsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Delay
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,29 +33,30 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val loadingState = MutableLiveData<Boolean>()
-    private val weatherCardsMutableList = MutableLiveData<List<WeatherCard>>()
-    private val prediction = MutableLiveData<List<AutocompletePrediction.Predictions>>()
-    private val errorMessage = mutableStateOf("")
-    private val scrollToFirst = MutableLiveData<Int>()
+    private val loadingState = MutableStateFlow(true)
+    private val weatherCardsMutableList = MutableStateFlow(emptyList<WeatherCard>())
+    private val prediction = MutableStateFlow(emptyList<AutocompletePrediction.Predictions>())
 
+    private val scrollToFirst = MutableStateFlow(false)
+    private val errorMessage = MutableStateFlow("")
     init {
         refreshCards()
     }
 
 
-    fun getError(): MutableState<String> = errorMessage
-    fun getList(): LiveData<List<WeatherCard>> = weatherCardsMutableList
-    fun getLoadingState(): LiveData<Boolean> = loadingState
-    fun getScrollToFirst(): LiveData<Int> = scrollToFirst
-    fun getPredictions(): LiveData<List<AutocompletePrediction.Predictions>> = prediction
+
+    val getError: StateFlow<String> get() = errorMessage.asStateFlow()
+    val getScrollToFirst: StateFlow<Boolean> get()= scrollToFirst.asStateFlow()
+    val getList: StateFlow<List<WeatherCard>> get()= weatherCardsMutableList.asStateFlow()
+    val getLoadingState: StateFlow<Boolean> get()= loadingState.asStateFlow()
+    val getPredictions: StateFlow<List<AutocompletePrediction.Predictions>> get()= prediction.asStateFlow()
 
 
     fun deleteCard(index: Int) {
-        val list = weatherCardsMutableList.value?.toMutableList()
-            ?: emptyList<WeatherCard>().toMutableList()
+        val list = weatherCardsMutableList.value.toMutableList()
         list.removeAt(index)
         list.forEachIndexed { ind, it -> it.number = ind }
+        scrollToFirst.value = (false)
         weatherCardsMutableList.value = list.toList()
         saveWeatherCardsUseCase.execute(list.toList())
     }
@@ -65,26 +71,26 @@ class MainViewModel @Inject constructor(
                 Log.d("my_tag", e.toString())
             }
             if (!card.error) {
-                val list = weatherCardsMutableList.value?.toMutableList()
-                    ?: emptyList<WeatherCard>().toMutableList()
+                val list = weatherCardsMutableList.value.toMutableList()
+
                 if (list.find { it.location == card.location&&it.country == card.country  } == null) {
                     list.add(card)
                     list.forEachIndexed { index, it -> it.number = index }
-                    weatherCardsMutableList.postValue(list)
+                    weatherCardsMutableList.value = list
                     saveWeatherCardsUseCase.execute(list)
                 } else {
                     errorMessage.value =("${card.location}, ${card.country} is already on the list")
                 }
 
             } else {
-                errorMessage.value = (card.errorMsg)
+                errorMessage.value = card.errorMsg
+                loadingState.value = false
+                delay(10000)
+                errorMessage.value = ""
             }
 
-            loadingState.postValue(false)
-
-
-            scrollToFirst.postValue(weatherCardsMutableList.value?.size ?: 1)
-
+            loadingState.value = false
+            scrollToFirst.value = true
         }
     }
 
@@ -100,7 +106,7 @@ class MainViewModel @Inject constructor(
             val predictionData =
                 getAutocompletePredictionsUseCase.execute(Request(text))
             if (!predictionData.error)
-                prediction.postValue(predictionData.predictions)
+                prediction.value = predictionData.predictions
             Log.d("my_tag", prediction.value.toString())
 
 
@@ -125,9 +131,9 @@ class MainViewModel @Inject constructor(
                 }
             }
 
-            weatherCardsMutableList.postValue(filledList)
-            loadingState.postValue(false)
-            scrollToFirst.postValue(weatherCardsMutableList.value?.size ?: 1)
+            weatherCardsMutableList.value = filledList
+            loadingState.value = false
+            scrollToFirst.value = true
 
         }
     }

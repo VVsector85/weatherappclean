@@ -24,7 +24,7 @@ data class WeatherCard(
     val timezoneId: String= "",
     val utcOffset: String= "",
 
-/*    var cardColorOption: CardColorOption = CardColorOption.DEFAULT,*/
+    var cardColorOption: CardColorOption = CardColorOption.DEFAULT,
 
     val error: Boolean = false,
     val errorMsg: String="",

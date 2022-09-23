@@ -1,5 +1,6 @@
 package com.learning.weatherappclean
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -7,35 +8,32 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
-
-import com.learning.weatherappclean.presentation.ui.theme.WeatherAppCleanTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.learning.weatherappclean.presentation.MainViewModel
-import com.learning.weatherappclean.presentation.ui.TextWithDropMenu
+import com.learning.weatherappclean.presentation.ui.DropDown
+import com.learning.weatherappclean.presentation.ui.TextLocation
 import com.learning.weatherappclean.presentation.ui.WeatherList
+import com.learning.weatherappclean.presentation.ui.theme.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -46,21 +44,31 @@ class MainActivity : ComponentActivity() {
         Log.d("my_tag", "activity destroyed")
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("my_tag", "activity created")
 
         setContent {
 
+
+
+
+
+
             WeatherAppCleanTheme {
+
+                val systemUiController = rememberSystemUiController()
+                systemUiController.setSystemBarsColor(
+                    color = MaterialTheme.colors.background
+                )
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
 
-                    MainScreen(vm, this)
+                    MainScreen(vm)
                 }
             }
         }
@@ -68,15 +76,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-@ExperimentalMaterialApi
-fun MainScreen(vm: MainViewModel, owner: LifecycleOwner) {
 
-
-    //val textError = remember { mutableStateOf("") }
+fun MainScreen(vm: MainViewModel) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-        //vm.getError().observe(owner) { textError.value = it }
-
-
+    val textLocation = remember { mutableStateOf("") }
+    val expanded = remember {mutableStateOf(false)}
+    val errorMsg = vm.getError.collectAsState()
+    val predictionsList = vm.getPredictions.collectAsState()
+    val weatherCardList = vm.getList.collectAsState()
+    val loadingState = vm.getLoadingState.collectAsState()
+    val scrollToFirst = vm.getScrollToFirst.collectAsState()
+    val iconModifier = if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {Modifier
+        .size(30.dp)
+        .padding(4.dp)}else{Modifier
+        .size(55.dp)
+        .padding(8.dp)}
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -90,46 +104,41 @@ fun MainScreen(vm: MainViewModel, owner: LifecycleOwner) {
                     fontSize = 30.sp,
                 )
 
-                TextWithDropMenu(
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .align(Alignment.CenterHorizontally)
-                        .padding(vertical = 10.dp), vm = vm, owner
-                )
-                Text(text = "ERROR MESSAGE " + vm.getError().value)
-
             }
-
         },
-
-
         drawerContent = { Text(text = "drawerContent") },
-
-
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFEEEEEE)),
+                    .background(MaterialTheme.colors.background),
+
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_alster),
                     contentDescription = "Alster logo",
-                    modifier = Modifier
-                        .size(60.dp, 50.dp)
-                        .padding(8.dp),
-                    tint = androidx.compose.ui.graphics.Color.Black
+                    modifier = iconModifier,
+                    tint = MaterialTheme.colors.onSurface
                 )
             }
         }
     ) { padding ->
 
-        WeatherList(padding = padding, vm = vm, owner = owner)
+        WeatherList(padding = padding, vm = vm,weatherCardList=weatherCardList,loadingState=loadingState,scrollToFirst=scrollToFirst)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextLocation(vm = vm, expanded = expanded, textLocation = textLocation)
+            if (errorMsg.value!="")Box(modifier = Modifier.fillMaxWidth().background(Color.Red).padding(0.dp).align(Alignment.CenterHorizontally)) {
+                Text(modifier = Modifier.align(Alignment.Center), text =  errorMsg.value, color = Color.White, fontWeight = FontWeight.Bold)
+            }
 
+
+            DropDown(expanded= expanded, textLocation = textLocation, predictionsList = predictionsList)
+        }
     }
-
-
 }
 
 
