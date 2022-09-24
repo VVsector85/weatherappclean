@@ -1,26 +1,25 @@
 package com.learning.weatherappclean.data.repository
 
 
-import android.util.Log
+import com.learning.weatherappclean.data.util.Mapper
+import com.learning.weatherappclean.data.util.Parser
 import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
 import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
 import com.learning.weatherappclean.data.util.Constants.API_KEY
 import com.learning.weatherappclean.data.util.Constants.WEATHER_UNITS
 import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
-import com.learning.weatherappclean.data.souce.remote.BaseRepository
 import com.learning.weatherappclean.data.souce.remote.Resource
 import com.learning.weatherappclean.data.souce.remote.WeatherApi
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
 import com.learning.weatherappclean.domain.model.Request
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.repository.RemoteRepository
-import com.squareup.moshi.Moshi
+import javax.inject.Inject
 
 
-class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepository,BaseRepository() {
-    //val m=Mapper()
+class RemoteRepositoryImpl @Inject constructor (private val weatherApi: WeatherApi) : RemoteRepository, BaseRepository() {
+
     override suspend fun getWeatherData(request: Request): WeatherCard {
-        Log.d("my_tag", "weather query")
         val response =
         safeApiCall {
             weatherApi.getWeather(
@@ -28,19 +27,14 @@ class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepositor
                 city = request.request,
                 units = WEATHER_UNITS
             ) }
-
+        if (response is Resource.Error) return WeatherCard(location = "",error = true, errorType = "IO", errorMsg = response.message?:"error")
         val weatherResponse = Parser().convertBody<WeatherResponse>(response)
         return if (weatherResponse?.current != null) {
-            //Log.d("my_tag", "resultWeather"+(weatherResponse.current ==null)+weatherResponse.toString())
             Mapper().mapToDomain(weatherResponse)
         } else {
             val resultError = Parser().convertBody<ErrorResponse>(response)
-            //Log.d("my_tag", "resultError"+resultError.toString())
             Mapper().mapToDomain<WeatherCard>(resultError!!) as WeatherCard
-
         }
-
-
     }
 
     override suspend fun getAutocompletePredictions(request:Request): AutocompletePrediction {
@@ -50,11 +44,8 @@ class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepositor
                     accessKey = API_KEY,
                     searchString = request.request)
             }
-
-
-
+        if (response is Resource.Error) return AutocompletePrediction(error = true, errorType = "IO", errorMsg = response.message?:"error")
         val autocompleteResponse = Parser().convertBody<AutocompleteResponse>(response)
-        Log.d("my_tag", "autocomplete after conversion $autocompleteResponse")
         return if (autocompleteResponse?.predictionData != null) {
             Mapper().mapToDomain(autocompleteResponse)
         } else {
@@ -64,11 +55,6 @@ class RemoteRepositoryImpl(private val weatherApi: WeatherApi) : RemoteRepositor
         }
 
     }
-
-
-
-
-
 
 }
 

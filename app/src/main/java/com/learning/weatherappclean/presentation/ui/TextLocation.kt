@@ -28,15 +28,14 @@ import com.learning.weatherappclean.presentation.ui.theme.textField
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TextLocation(
+    modifier: Modifier,
     vm: MainViewModel,
     expanded: MutableState<Boolean>,
     textLocation: MutableState<String>
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     TextField(
-        modifier = Modifier
-            .fillMaxWidth(0.9f)
-            .alpha(1f),
+        modifier = modifier,
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.textField,
             focusedIndicatorColor = Color.LightGray,
@@ -60,16 +59,15 @@ fun TextLocation(
             expanded.value = true
         },
         maxLines = 3,
-        textStyle = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold),
+        textStyle = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
         leadingIcon = {
-            Text(text = "Location", modifier = Modifier.padding(10.dp))
+            Text(text = "Location:", modifier = Modifier.padding(start = 10.dp, end = 5.dp))
         },
         trailingIcon = {
             Card(
                 modifier = Modifier
-                    .padding(0.dp)
-                    .fillMaxWidth(0.2f)
-                    .height (60.dp)
+                    .padding(end = 10.dp)
+                    .size(50.dp,50.dp)
                     .clickable {
                         vm.addCard(textLocation.value)
                         keyboardController?.hide()
@@ -83,7 +81,7 @@ fun TextLocation(
                     contentDescription = "Add city",
                     modifier = Modifier
                         .size(25.dp, 25.dp)
-                        .padding(15.dp),
+                        .padding(10.dp),
                     tint = MaterialTheme.colors.onTextField,
 
 

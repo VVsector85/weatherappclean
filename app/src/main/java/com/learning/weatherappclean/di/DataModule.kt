@@ -1,7 +1,6 @@
 package com.learning.weatherappclean.di
 
 import android.content.Context
-import com.learning.weatherapp.network.RetrofitHelper
 import com.learning.weatherappclean.data.souce.remote.WeatherApi
 import com.learning.weatherappclean.data.repository.LocalRepositoryImpl
 import com.learning.weatherappclean.data.souce.local.LocalStorage
@@ -30,12 +29,6 @@ class DataModule {
     @Singleton
     fun provideLocalRepository (localStorage: LocalStorage):LocalRepository{
         return LocalRepositoryImpl(localStorage = localStorage)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRemoteSource(): WeatherApi {
-        return RetrofitHelper.getRetrofit()
     }
 
     @Provides

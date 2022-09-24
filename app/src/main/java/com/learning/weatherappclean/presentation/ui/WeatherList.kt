@@ -2,11 +2,13 @@ package com.learning.weatherappclean.presentation.ui
 
 import android.content.ClipData
 import android.content.res.Configuration
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
@@ -33,51 +35,49 @@ fun WeatherList(
     scrollToFirst: State<Boolean>
 ) {
     val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
     SwipeRefresh(
-        modifier = Modifier.padding(top = 80.dp),
+        modifier = Modifier.padding(top = 10.dp),
         state = rememberSwipeRefreshState(isRefreshing = loadingState.value),
         onRefresh = { vm.refreshCards() }
     ) {
         if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Adaptive(260.dp),
 
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(bottom = 50.dp),
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(bottom = 50.dp),
 
-                        //horizontalAlignment =  Alignment.CenterHorizontally,
-               // verticalAlignment =  Alignment.CenterVertically,
-                        userScrollEnabled = true,
-                        //state = listState
-                    ) {
-                        if (scrollToFirst.value) CoroutineScope(Dispatchers.Main).launch {
-                            listState.scrollToItem(
-                                weatherCardList.value.size
-                            )
-                        }
+                //horizontalAlignment =  Alignment.CenterHorizontally,
+                // verticalAlignment =  Alignment.CenterVertically,
+                userScrollEnabled = true,
+                state = gridState
+            ) {
+                if (scrollToFirst.value) CoroutineScope(Dispatchers.Main).launch {
+                    gridState.scrollToItem(0)
+                }
 
-                        items(weatherCardList.value.size) { index->
+                items(weatherCardList.value.size) { index ->
 
-                            Row(modifier = Modifier.fillMaxWidth()) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
 
 
-                                    CardWeather(
-                                        modifier = Modifier
+                        CardWeather(
+                            modifier = Modifier
 
-                                            .fillMaxWidth(1f)
-                                            .padding(horizontal = 10.dp, vertical = 10.dp)
-                                            .height(130.dp),
+                                .fillMaxWidth(1f)
+                                .padding(horizontal = 10.dp, vertical = 10.dp)
+                                .height(130.dp),
 
-                                        content = weatherCardList.value.asReversed()[index],
-                                        vm = vm,
-                                        index = weatherCardList.value.size-index-1
-                                    )
+                            content = weatherCardList.value.asReversed()[index],
+                            vm = vm,
+                            index = weatherCardList.value.size - index - 1
+                        )
 
 
-
-                            }
-                        }
                     }
+                }
+            }
 
 
         } else {
@@ -91,9 +91,7 @@ fun WeatherList(
 
             ) {
                 if (scrollToFirst.value) CoroutineScope(Dispatchers.Main).launch {
-                    listState.scrollToItem(
-                        weatherCardList.value.size
-                    )
+                    listState.scrollToItem(weatherCardList.value.size)
                 }
                 itemsIndexed(weatherCardList.value) { index, item ->
                     CardWeather(

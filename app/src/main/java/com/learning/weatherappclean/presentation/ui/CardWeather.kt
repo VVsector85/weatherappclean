@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.domain.model.CardColorOption
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.MainViewModel
+import com.learning.weatherappclean.presentation.provideIcon
 import com.learning.weatherappclean.presentation.ui.theme.*
 import java.util.*
 
@@ -48,7 +49,7 @@ fun CardWeather(
             {
                 Column(modifier = Modifier.align(Alignment.Center)) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_alster),
+                        painter = painterResource(id = provideIcon(content.weatherCode.toInt(),content.isNightIcon)),
                         contentDescription = "",
                         modifier = Modifier
                             .padding(20.dp)

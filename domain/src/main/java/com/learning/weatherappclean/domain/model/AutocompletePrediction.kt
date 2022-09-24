@@ -3,6 +3,7 @@ package com.learning.weatherappclean.domain.model
 data class AutocompletePrediction(val searchString:String="",
                                   val predictions: List<Predictions> = listOf(),
                                   val error: Boolean = false,
+                                  val errorType: String="",
                                   val errorMsg:String = ""
                                   ) {
 

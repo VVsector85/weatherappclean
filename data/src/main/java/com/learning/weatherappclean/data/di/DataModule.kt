@@ -1,24 +1,28 @@
-package com.learning.weatherapp.network
+package com.learning.weatherappclean.data.di
 
-import com.learning.weatherappclean.data.util.Constants
-import com.learning.weatherappclean.data.util.Constants.BASE_URL
 import com.learning.weatherappclean.data.souce.remote.WeatherApi
+import com.learning.weatherappclean.data.util.Constants
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
-
 import java.util.concurrent.TimeUnit
 
-object RetrofitHelper {
-
-    fun getRetrofit(): WeatherApi =
+@Module
+@InstallIn(SingletonComponent::class)
+class DataModule {
+@Provides
+    fun provideRetrofit(): WeatherApi =
         Retrofit.Builder()
             .client(getOkHttpClient())
-            .baseUrl(BASE_URL)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             /*.addConverterFactory(MoshiConverterFactory.create())*/
-           /* .addConverterFactory(GsonConverterFactory.create())*/
+            /* .addConverterFactory(GsonConverterFactory.create())*/
             .build()
             .create(WeatherApi::class.java)
 
@@ -31,4 +35,7 @@ object RetrofitHelper {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .build()
+
+
+
 }

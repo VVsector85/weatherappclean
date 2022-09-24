@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.repository
+package com.learning.weatherappclean.data.util
 
 import android.util.Log
 import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
@@ -24,6 +24,7 @@ internal class Mapper {
             windDegree = response.current.windDegree,
             windDir = response.current.windDir,
             windSpeed = response.current.windSpeed,
+            isNightIcon = response.current.weatherIcons[0].contains("night"),
 
             country = response.location.country,
             region = response.location.region,
@@ -44,11 +45,14 @@ internal class Mapper {
             WeatherCard::class -> WeatherCard(
                 location = "none",
                 error = true,
-                errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}"
+                errorType = "INTERNAL",
+                errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}",
+
             )
             AutocompletePrediction::class -> AutocompletePrediction(
 
                 error = true,
+                errorType = "INTERNAL",
                 errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}"
             )
             else -> null

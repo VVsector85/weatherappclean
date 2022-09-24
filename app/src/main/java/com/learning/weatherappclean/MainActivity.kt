@@ -39,23 +39,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val vm: MainViewModel by viewModels()
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("my_tag", "activity destroyed")
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("my_tag", "activity created")
-
         setContent {
-
-
-
-
-
-
             WeatherAppCleanTheme {
 
                 val systemUiController = rememberSystemUiController()
@@ -80,31 +67,79 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(vm: MainViewModel) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val textLocation = remember { mutableStateOf("") }
-    val expanded = remember {mutableStateOf(false)}
+    val expanded = remember { mutableStateOf(false) }
     val errorMsg = vm.getError.collectAsState()
     val predictionsList = vm.getPredictions.collectAsState()
     val weatherCardList = vm.getList.collectAsState()
     val loadingState = vm.getLoadingState.collectAsState()
     val scrollToFirst = vm.getScrollToFirst.collectAsState()
-    val iconModifier = if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {Modifier
-        .size(30.dp)
-        .padding(4.dp)}else{Modifier
-        .size(55.dp)
-        .padding(8.dp)}
+    val iconModifier =
+        if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Modifier
+                .size(30.dp)
+                .padding(4.dp)
+        } else {
+            Modifier
+                .size(55.dp)
+                .padding(8.dp)
+        }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "How is the weather in...",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 18.dp),
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp,
-                )
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "How is the weather in...",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 5.dp, bottom = 5.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 18.sp,
+                    )
+
+                    TextLocation(
+                        modifier = Modifier.fillMaxWidth(0.9f),
+                        vm = vm,
+                        expanded = expanded,
+                        textLocation = textLocation
+                    )
+
+                }
+
+
+            } else {
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = "How is the weather in...",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 18.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 30.sp,
+                    )
+                    TextLocation(
+                        modifier = Modifier.fillMaxWidth(0.9f),
+                        vm = vm,
+                        expanded = expanded,
+                        textLocation = textLocation
+                    )
+
+                }
+
 
             }
+
         },
         drawerContent = { Text(text = "drawerContent") },
         bottomBar = {
@@ -125,18 +160,35 @@ fun MainScreen(vm: MainViewModel) {
         }
     ) { padding ->
 
-        WeatherList(padding = padding, vm = vm,weatherCardList=weatherCardList,loadingState=loadingState,scrollToFirst=scrollToFirst)
+        WeatherList(
+            padding = padding,
+            vm = vm,
+            weatherCardList = weatherCardList,
+            loadingState = loadingState,
+            scrollToFirst = scrollToFirst
+        )
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextLocation(vm = vm, expanded = expanded, textLocation = textLocation)
-            if (errorMsg.value!="")Box(modifier = Modifier.fillMaxWidth().background(Color.Red).padding(0.dp).align(Alignment.CenterHorizontally)) {
-                Text(modifier = Modifier.align(Alignment.Center), text =  errorMsg.value, color = Color.White, fontWeight = FontWeight.Bold)
+            if (errorMsg.value != "") Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Red)
+                    .padding(0.dp)
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = errorMsg.value,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
             }
-
-
-            DropDown(expanded= expanded, textLocation = textLocation, predictionsList = predictionsList)
+            DropDown(
+                expanded = expanded,
+                textLocation = textLocation,
+                predictionsList = predictionsList
+            )
         }
     }
 }

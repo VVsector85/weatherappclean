@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.repository
+package com.learning.weatherappclean.data.util
 
 import android.util.Log
 import com.learning.weatherappclean.data.souce.remote.Resource

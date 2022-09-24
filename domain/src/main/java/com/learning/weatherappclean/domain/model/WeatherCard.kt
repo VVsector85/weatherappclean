@@ -24,9 +24,12 @@ data class WeatherCard(
     val timezoneId: String= "",
     val utcOffset: String= "",
 
+    val isNightIcon: Boolean = false,
+
     var cardColorOption: CardColorOption = CardColorOption.DEFAULT,
 
     val error: Boolean = false,
+    val errorType: String="",
     val errorMsg: String="",
     var number:Int = 0
 
