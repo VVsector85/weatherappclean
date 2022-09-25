@@ -1,7 +1,7 @@
 package com.learning.weatherappclean.data.model.weatherdata
 
 
-import com.google.gson.annotations.SerializedName
+
 import com.squareup.moshi.Json
 
 data class Current(

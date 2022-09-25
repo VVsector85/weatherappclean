@@ -6,7 +6,6 @@ import com.learning.weatherappclean.data.util.Parser
 import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
 import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
 import com.learning.weatherappclean.data.util.Constants.API_KEY
-import com.learning.weatherappclean.data.util.Constants.WEATHER_UNITS
 import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
 import com.learning.weatherappclean.data.souce.remote.Resource
 import com.learning.weatherappclean.data.souce.remote.WeatherApi
@@ -25,9 +24,9 @@ class RemoteRepositoryImpl @Inject constructor (private val weatherApi: WeatherA
             weatherApi.getWeather(
                 accessKey = API_KEY,
                 city = request.request,
-                units = WEATHER_UNITS
+                units = request.units
             ) }
-        if (response is Resource.Error) return WeatherCard(location = "",error = true, errorType = "IO", errorMsg = response.message?:"error")
+        if (response is Resource.Error) return WeatherCard(location = "",error = true, errorType = response.type, errorMsg = response.message?:"error")
         val weatherResponse = Parser().convertBody<WeatherResponse>(response)
         return if (weatherResponse?.current != null) {
             Mapper().mapToDomain(weatherResponse)
@@ -44,7 +43,7 @@ class RemoteRepositoryImpl @Inject constructor (private val weatherApi: WeatherA
                     accessKey = API_KEY,
                     searchString = request.request)
             }
-        if (response is Resource.Error) return AutocompletePrediction(error = true, errorType = "IO", errorMsg = response.message?:"error")
+        if (response is Resource.Error) return AutocompletePrediction(error = true, errorType = response.type, errorMsg = response.message?:"error")
         val autocompleteResponse = Parser().convertBody<AutocompleteResponse>(response)
         return if (autocompleteResponse?.predictionData != null) {
             Mapper().mapToDomain(autocompleteResponse)

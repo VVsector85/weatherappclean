@@ -13,6 +13,7 @@ internal class Mapper {
         return WeatherCard(
             location = response.location.name,
             temperature = response.current.temperature,
+            units = response.request.unit,
             cloudCover = response.current.cloudcover,
             feelsLike = response.current.feelslike,
             humidity = response.current.humidity,
@@ -35,7 +36,7 @@ internal class Mapper {
             timezoneId = response.location.timezoneId,
             utcOffset = response.location.utcOffset,
 
-
+            errorType = null
             )
     }
 
@@ -68,7 +69,9 @@ internal class Mapper {
 
         return AutocompletePrediction(
             searchString = response.request.query,
-            predictions = tempList
+            predictions = tempList,
+            errorType = null
+
         )
     }
 

@@ -59,7 +59,7 @@ dependencies {
 
 
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.5.1'
+    implementation 'androidx.activity:activity-compose:1.6.0'
     // Compose Material Design
     implementation 'androidx.compose.material:material:1.2.1'
     // Animations
@@ -85,11 +85,20 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
     implementation 'com.google.dagger:hilt-android:2.40.5'
-    kapt "com.google.dagger:hilt-compiler:2.38.1" //2.38.1
-    implementation 'androidx.fragment:fragment-ktx:1.5.2'
+    kapt "com.google.dagger:hilt-compiler:2.40" //2.38.1
+   // implementation 'androidx.fragment:fragment-ktx:1.5.2'
     kapt "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.4.2"
 
     implementation "com.google.accompanist:accompanist-swiperefresh:0.26.3-beta"
-
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+
+
+  /*  implementation "androidx.wear.compose:compose-foundation:1.1.0-alpha06"
+
+    // For Wear Material Design UX guidelines and specifications
+    implementation "androidx.wear.compose:compose-material:1.1.0-alpha06"
+
+    // For integration between Wear Compose and Androidx Navigation libraries
+    implementation "androidx.wear.compose:compose-navigation:1.1.0-alpha06"
+*/
 }

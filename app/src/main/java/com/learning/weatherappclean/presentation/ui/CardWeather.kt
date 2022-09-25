@@ -1,7 +1,7 @@
 package com.learning.weatherappclean.presentation.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.horizontalScroll
 import com.learning.weatherappclean.R
 import androidx.compose.foundation.layout.*
 
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.domain.model.CardColorOption
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.MainViewModel
-import com.learning.weatherappclean.presentation.provideIcon
+import com.learning.weatherappclean.presentation.getIcon
 import com.learning.weatherappclean.presentation.ui.theme.*
 import java.util.*
 
@@ -49,7 +49,7 @@ fun CardWeather(
             {
                 Column(modifier = Modifier.align(Alignment.Center)) {
                     Icon(
-                        painter = painterResource(id = provideIcon(content.weatherCode.toInt(),content.isNightIcon)),
+                        painter = painterResource(id = getIcon(content.weatherCode.toInt(),content.isNightIcon)),
                         contentDescription = "",
                         modifier = Modifier
                             .padding(20.dp)
@@ -78,9 +78,10 @@ fun CardWeather(
                         color = MaterialTheme.colors.onCard,
                         modifier = Modifier.padding(
                             start = 20.dp,
+                            end = 10.dp,
                             top = 0.dp,
                             bottom = 0.dp
-                        ),
+                        ).horizontalScroll(state = ScrollState(0)),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -88,10 +89,11 @@ fun CardWeather(
                         text = content.country,
                         color = MaterialTheme.colors.onCard,
                         modifier = Modifier.padding(
+                            end = 10.dp,
                             start = 20.dp,
                             top = 0.dp,
                             bottom = 10.dp
-                        ),
+                        ).horizontalScroll(state = ScrollState(0)),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -100,10 +102,6 @@ fun CardWeather(
                     onClick = {
                         vm.deleteCard(index)
                     },
-                    /*colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.White,
-                        contentColor = Color.Black
-                    ),*/
                     shape = CircleShape,
                     contentPadding = PaddingValues(10.dp),
                     modifier = Modifier

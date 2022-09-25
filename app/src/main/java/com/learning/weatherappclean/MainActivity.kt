@@ -1,17 +1,15 @@
 package com.learning.weatherappclean
 
+
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
+
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
+
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,16 +22,17 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleOwner
+
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.learning.weatherappclean.presentation.MainViewModel
-import com.learning.weatherappclean.presentation.ui.DropDown
-import com.learning.weatherappclean.presentation.ui.TextLocation
-import com.learning.weatherappclean.presentation.ui.WeatherList
+import com.learning.weatherappclean.presentation.ui.*
+import com.learning.weatherappclean.presentation.ui.dragdrop.DragDropColumn
 import com.learning.weatherappclean.presentation.ui.theme.*
 import dagger.hilt.android.AndroidEntryPoint
+
 
 
 @AndroidEntryPoint
@@ -73,8 +72,12 @@ fun MainScreen(vm: MainViewModel) {
     val weatherCardList = vm.getList.collectAsState()
     val loadingState = vm.getLoadingState.collectAsState()
     val scrollToFirst = vm.getScrollToFirst.collectAsState()
+    val isLandscape  = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+
+
     val iconModifier =
-        if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (isLandscape) {
             Modifier
                 .size(30.dp)
                 .padding(4.dp)
@@ -85,9 +88,10 @@ fun MainScreen(vm: MainViewModel) {
         }
 
     Scaffold(
+        modifier = Modifier.fillMaxWidth(),
         scaffoldState = scaffoldState,
         topBar = {
-            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (isLandscape) {
 
 
                 Column(
@@ -141,7 +145,11 @@ fun MainScreen(vm: MainViewModel) {
             }
 
         },
-        drawerContent = { Text(text = "drawerContent") },
+        drawerContent = {
+
+            SettingsMenu()
+
+        },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -165,7 +173,9 @@ fun MainScreen(vm: MainViewModel) {
             vm = vm,
             weatherCardList = weatherCardList,
             loadingState = loadingState,
-            scrollToFirst = scrollToFirst
+            scrollToFirst = scrollToFirst,
+            isLandscape = isLandscape
+
         )
         Column(
             modifier = Modifier.fillMaxWidth(),

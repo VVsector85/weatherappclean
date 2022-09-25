@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(
     private val getAutocompletePredictionsUseCase: GetAutocompletePredictionsUseCase
 ) : ViewModel() {
     private val loadingState = MutableStateFlow(true)
-    private val weatherCardsMutableList = MutableStateFlow(emptyList<WeatherCard>())
+    private val weatherCardsList = MutableStateFlow(emptyList<WeatherCard>().toMutableList())
     private val prediction = MutableStateFlow(emptyList<AutocompletePrediction.Predictions>())
     private val scrollToFirst = MutableStateFlow(false)
     private val errorMessage = MutableStateFlow("")
@@ -38,21 +38,22 @@ class MainViewModel @Inject constructor(
 
     val getError: StateFlow<String> get() = errorMessage.asStateFlow()
     val getScrollToFirst: StateFlow<Boolean> get()= scrollToFirst.asStateFlow()
-    val getList: StateFlow<List<WeatherCard>> get()= weatherCardsMutableList.asStateFlow()
     val getLoadingState: StateFlow<Boolean> get()= loadingState.asStateFlow()
     val getPredictions: StateFlow<List<AutocompletePrediction.Predictions>> get()= prediction.asStateFlow()
+    val getList : StateFlow<List<WeatherCard>> = weatherCardsList.asStateFlow()
+
 
     fun deleteCard(index: Int) {
-        val list = weatherCardsMutableList.value.toMutableList()
+        val list = weatherCardsList.value.toMutableList()
         list.removeAt(index)
         list.forEachIndexed { ind, it -> it.number = ind }
         scrollToFirst.value = (false)
-        weatherCardsMutableList.value = list.toList()
-        saveRequestListUseCase.execute(list.toList())
+        weatherCardsList.value = list
+        saveRequestListUseCase.execute(list)
     }
 
     fun addCard(location: String) {
-        var card = WeatherCard("")
+        var card = WeatherCard(errorType = null)
         loadingState.value = true
         viewModelScope.launch(IO) {
             try {
@@ -61,12 +62,12 @@ class MainViewModel @Inject constructor(
                 Log.d("my_tag", e.toString())
             }
             if (!card.error) {
-                val list = weatherCardsMutableList.value.toMutableList()
+                val list = weatherCardsList.value.toMutableList()
 
                 if (list.find { it.location == card.location&&it.country == card.country  } == null) {
                     list.add(card)
                     list.forEachIndexed { index, it -> it.number = index }
-                    weatherCardsMutableList.value = list
+                    weatherCardsList.value = list
                     saveRequestListUseCase.execute(list)
                 } else {
                     errorMessage.value =("${card.location}, ${card.country} is already on the list")
@@ -116,9 +117,19 @@ class MainViewModel @Inject constructor(
                     errorMessage.value = ""
                 }
             }
-            weatherCardsMutableList.value = filledList
+            weatherCardsList.value = filledList
             loadingState.value = false
             scrollToFirst.value = true
         }
+    }
+
+    fun swapSections(a:Int,b:Int){
+        val list = weatherCardsList.value.reversed().toMutableList()
+        val x=list[a]
+        list[a] = list[b]
+        list[b] = x
+        weatherCardsList.value=list.asReversed()
+        list.forEachIndexed { index, it -> it.number = index }
+        saveRequestListUseCase.execute(weatherCardsList.value)
     }
 }

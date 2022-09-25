@@ -1,8 +1,9 @@
 package com.learning.weatherappclean.domain.model
 
 data class WeatherCard(
-    val location: String,
+    val location: String="",
     val temperature: String="",
+    val units:String="",
     val cloudCover: String= "",
     val feelsLike: String= "",
     val humidity: String= "",
@@ -29,7 +30,7 @@ data class WeatherCard(
     var cardColorOption: CardColorOption = CardColorOption.DEFAULT,
 
     val error: Boolean = false,
-    val errorType: String="",
+    val errorType:Any?,
     val errorMsg: String="",
     var number:Int = 0
 
