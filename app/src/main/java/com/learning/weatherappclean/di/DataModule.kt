@@ -3,11 +3,15 @@ package com.learning.weatherappclean.di
 import android.content.Context
 import com.learning.weatherappclean.data.souce.remote.WeatherApi
 import com.learning.weatherappclean.data.repository.LocalRepositoryImpl
-import com.learning.weatherappclean.data.souce.local.LocalStorage
-import com.learning.weatherappclean.data.souce.local.sharedprefs.SharedPrefsLocalStorage
+import com.learning.weatherappclean.data.souce.local.RequestsStorage
+import com.learning.weatherappclean.data.souce.local.sharedprefs.SharedPrefsRequestsStorage
 import com.learning.weatherappclean.data.repository.RemoteRepositoryImpl
+import com.learning.weatherappclean.data.repository.SettingsRepositoryImpl
+import com.learning.weatherappclean.data.souce.local.SettingsStorage
+import com.learning.weatherappclean.data.souce.local.sharedprefs.SharedPrefsSettingsStorage
 import com.learning.weatherappclean.domain.repository.LocalRepository
 import com.learning.weatherappclean.domain.repository.RemoteRepository
+import com.learning.weatherappclean.domain.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,14 +25,26 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideLocalStorage(@ApplicationContext context: Context):LocalStorage{
-        return SharedPrefsLocalStorage(context)
+    fun provideLocalStorage(@ApplicationContext context: Context):RequestsStorage{
+        return SharedPrefsRequestsStorage(context)
     }
 
     @Provides
     @Singleton
-    fun provideLocalRepository (localStorage: LocalStorage):LocalRepository{
-        return LocalRepositoryImpl(localStorage = localStorage)
+    fun provideLocalRepository (requestsStorage: RequestsStorage):LocalRepository{
+        return LocalRepositoryImpl(requestsStorage = requestsStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository (settingsStorage: SettingsStorage): SettingsRepository {
+        return SettingsRepositoryImpl(settingsStorage = settingsStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsStorage(@ApplicationContext context: Context):SettingsStorage{
+        return SharedPrefsSettingsStorage(context)
     }
 
     @Provides

@@ -6,14 +6,14 @@ import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 
 class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) {
-
+    /**This condition was in the task so I consider it as a part of business logic.
+    That is why it is in the domain module
+    No actual colours specified specified here, just enums*/
     suspend fun execute(request: Request): WeatherCard {
         val weatherCard = remoteRepository.getWeatherData(request)
-        val temperature = weatherCard.temperature.toInt()
-/**This condition was in the task so I consider it as a part of business logic.
-That is why it is in the domain module
-No actual colours specified specified here, just enums*/
+
         if (!weatherCard.error) {
+            val temperature = weatherCard.temperature.toInt()
             if (weatherCard.units == "m")  when (temperature) {
                 in Int.MIN_VALUE..0 -> weatherCard.cardColorOption = CardColorOption.BLUE
                 in 1..20 -> weatherCard.cardColorOption = CardColorOption.YELLOW

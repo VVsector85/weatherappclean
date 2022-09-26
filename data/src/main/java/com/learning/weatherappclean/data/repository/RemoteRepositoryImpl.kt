@@ -2,7 +2,7 @@ package com.learning.weatherappclean.data.repository
 
 
 import com.learning.weatherappclean.data.util.Mapper
-import com.learning.weatherappclean.data.util.Parser
+import com.learning.weatherappclean.data.util.JsonConverter
 import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
 import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
 import com.learning.weatherappclean.data.util.Constants.API_KEY
@@ -26,12 +26,12 @@ class RemoteRepositoryImpl @Inject constructor (private val weatherApi: WeatherA
                 city = request.request,
                 units = request.units
             ) }
-        if (response is Resource.Error) return WeatherCard(location = "",error = true, errorType = response.type, errorMsg = response.message?:"error")
-        val weatherResponse = Parser().convertBody<WeatherResponse>(response)
+        if (response is Resource.Error) return WeatherCard(error = true, errorType = response.type, errorMsg = response.message?:"error")
+        val weatherResponse = JsonConverter().convertFromJson<WeatherResponse>(response.data)
         return if (weatherResponse?.current != null) {
             Mapper().mapToDomain(weatherResponse)
         } else {
-            val resultError = Parser().convertBody<ErrorResponse>(response)
+            val resultError = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             Mapper().mapToDomain<WeatherCard>(resultError!!) as WeatherCard
         }
     }
@@ -44,11 +44,11 @@ class RemoteRepositoryImpl @Inject constructor (private val weatherApi: WeatherA
                     searchString = request.request)
             }
         if (response is Resource.Error) return AutocompletePrediction(error = true, errorType = response.type, errorMsg = response.message?:"error")
-        val autocompleteResponse = Parser().convertBody<AutocompleteResponse>(response)
+        val autocompleteResponse = JsonConverter().convertFromJson<AutocompleteResponse>(response.data)
         return if (autocompleteResponse?.predictionData != null) {
             Mapper().mapToDomain(autocompleteResponse)
         } else {
-            val errorResponse = Parser().convertBody<ErrorResponse>(response)
+            val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             Mapper().mapToDomain<AutocompletePrediction>(errorResponse!!) as AutocompletePrediction
 
         }

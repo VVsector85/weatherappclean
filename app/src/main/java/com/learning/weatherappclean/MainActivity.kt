@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 
@@ -87,6 +88,24 @@ fun MainScreen(vm: MainViewModel) {
                 .padding(8.dp)
         }
 
+    if (errorMsg.value != ""){
+
+        AlertDialog(
+            onDismissRequest = {
+                // openDialog.value = false
+            },
+            title = {
+                Text(text = "error")
+            },
+            text = {
+                Text(errorMsg.value)
+            },
+            confirmButton = {
+                // openDialog.value = false
+            }
+        )
+
+    }
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         scaffoldState = scaffoldState,
@@ -147,7 +166,7 @@ fun MainScreen(vm: MainViewModel) {
         },
         drawerContent = {
 
-            SettingsMenu()
+            SettingsMenu(vm)
 
         },
         bottomBar = {
@@ -181,7 +200,11 @@ fun MainScreen(vm: MainViewModel) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (errorMsg.value != "") Box(
+
+
+
+
+                /* if (errorMsg.value != "") Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Red)
@@ -193,7 +216,7 @@ fun MainScreen(vm: MainViewModel) {
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
-            }
+            }*/
             DropDown(
                 expanded = expanded,
                 textLocation = textLocation,

@@ -1,4 +1,4 @@
 package com.learning.weatherappclean.domain.model
 
-data class Request(val request : String, val units:String = "m") {
+data class Request(val request : String, var units:String = "m") {
 }

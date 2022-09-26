@@ -1,10 +1,15 @@
 package com.learning.weatherappclean.data.util
 
 import android.util.Log
+import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
 import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
 import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
+import com.learning.weatherappclean.data.model.requests.WeatherRequests
+import com.learning.weatherappclean.data.model.settings.SettingsData
 import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
+import com.learning.weatherappclean.domain.model.Request
+import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 
 internal class Mapper {
@@ -36,7 +41,7 @@ internal class Mapper {
             timezoneId = response.location.timezoneId,
             utcOffset = response.location.utcOffset,
 
-            errorType = null
+
             )
     }
 
@@ -46,14 +51,14 @@ internal class Mapper {
             WeatherCard::class -> WeatherCard(
                 location = "none",
                 error = true,
-                errorType = "INTERNAL",
+                errorType = ErrorType.API_ERROR,
                 errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}",
 
-            )
+                )
             AutocompletePrediction::class -> AutocompletePrediction(
 
                 error = true,
-                errorType = "INTERNAL",
+                errorType = ErrorType.API_ERROR,
                 errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}"
             )
             else -> null
@@ -63,17 +68,32 @@ internal class Mapper {
     internal fun mapToDomain(response: AutocompleteResponse): AutocompletePrediction {
         val tempList: MutableList<AutocompletePrediction.Predictions> = mutableListOf()
         response.predictionData.forEach {
-            Log.d("my_tag", "prediction item ${it.name}, ${it.country}")
-            tempList.add(AutocompletePrediction.Predictions(it.name,it.country,it.region))
+            tempList.add(AutocompletePrediction.Predictions(it.name, it.country, it.region))
         }
 
         return AutocompletePrediction(
             searchString = response.request.query,
             predictions = tempList,
-            errorType = null
-
         )
     }
 
+    internal fun mapToDomain(response: SettingsData): Settings =
+        Settings(
+            fahrenheit = response.fahrenheit,
+            newCardFirst = response.newCardFirst,
+            showFeelsLike = response.showFeelsLike,
+            showCountry = response.showCountry
+
+        )
+    internal fun mapToDomain(weatherRequests: WeatherRequests):List<Request>{
+        val list: MutableList<Request> = mutableListOf()
+        weatherRequests.content.forEach{ it ->list.add(Request(request =it))}
+        return list
+    }
+    internal fun mapToStorage(saveWeatherCardsList: List<WeatherCard>): WeatherRequests {
+        val list: MutableList<String> = mutableListOf()
+        saveWeatherCardsList.forEach{list.add("${it.location }, ${it.country}"   )}
+        return WeatherRequests(content = list)
+    }
 
 }

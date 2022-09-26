@@ -30,9 +30,9 @@ data class WeatherCard(
     var cardColorOption: CardColorOption = CardColorOption.DEFAULT,
 
     val error: Boolean = false,
-    val errorType:Any?,
+    val errorType:Any? = null,
     val errorMsg: String="",
-    var number:Int = 0
+
 
 
 

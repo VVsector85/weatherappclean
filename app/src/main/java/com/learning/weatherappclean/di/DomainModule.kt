@@ -2,10 +2,8 @@ package com.learning.weatherappclean.di
 
 import com.learning.weatherappclean.domain.repository.LocalRepository
 import com.learning.weatherappclean.domain.repository.RemoteRepository
-import com.learning.weatherappclean.domain.usecase.GetAutocompletePredictionsUseCase
-import com.learning.weatherappclean.domain.usecase.GetWeatherCardDataUseCase
-import com.learning.weatherappclean.domain.usecase.SaveRequestListUseCase
-import com.learning.weatherappclean.domain.usecase.LoadRequestListUseCase
+import com.learning.weatherappclean.domain.repository.SettingsRepository
+import com.learning.weatherappclean.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,7 +33,15 @@ class DomainModule {
         return GetAutocompletePredictionsUseCase(remoteRepository=remoteRepository)
     }
 
+    @Provides
+    fun provideLoadSettingsUseCase (settingsRepository: SettingsRepository):LoadSettingsUseCase{
+        return LoadSettingsUseCase(settingsRepository = settingsRepository)
+    }
 
+    @Provides
+    fun provideSaveSettingsUseCase (settingsRepository: SettingsRepository): SaveSettingsUseCase {
+        return SaveSettingsUseCase(settingsRepository = settingsRepository)
+    }
 
 
 

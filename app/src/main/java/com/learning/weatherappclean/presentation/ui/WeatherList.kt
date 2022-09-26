@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterialApi::class)
+
 @Composable
 
 
@@ -70,6 +70,7 @@ fun WeatherGrid(
     vm: MainViewModel,
     weatherCardList: State<List<WeatherCard>>,
     scrollToFirst: State<Boolean>
+
 ) {
 
     val gridState = rememberLazyGridState()
@@ -100,8 +101,8 @@ fun WeatherGrid(
                     .padding(horizontal = 0.dp, vertical = 0.dp)
                     .height(130.dp),
                 content = weatherCardList.value.reversed()[index],
-                vm = vm,
-                index = weatherCardList.value.size - index - 1
+                index = weatherCardList.value.size - index - 1,
+                delete = vm::deleteCard
             )
         }
     }
@@ -125,8 +126,8 @@ fun WeatherColumnWithDrag(
                 .padding(horizontal = 0.dp, vertical = 0.dp)
                 .height(130.dp),
             content = item,
-            vm = vm,
-            index =  weatherCardList.value.size - index - 1
+            index =  weatherCardList.value.size - index - 1,
+            delete = vm::deleteCard
         )
     }
 

@@ -26,8 +26,8 @@ import java.util.*
 fun CardWeather(
     modifier: Modifier,
     content: WeatherCard,
-    vm: MainViewModel,
-    index: Int
+    index: Int,
+    delete:(Index:Int)->Unit
 ) {
 
     val colour = when (content.cardColorOption) {
@@ -100,7 +100,7 @@ fun CardWeather(
                 }
                 Button(
                     onClick = {
-                        vm.deleteCard(index)
+                        delete(index)
                     },
                     shape = CircleShape,
                     contentPadding = PaddingValues(10.dp),
