@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -47,30 +48,41 @@ fun DropDown(
             ) {
                 itemsIndexed(predictionsList.value) { index, item ->
 
-                    Box(modifier = Modifier
-                        .background(MaterialTheme.colors.autocomplete)
-                        .fillMaxWidth()
-                        .clickable {
-                            textLocation.value = "${item.location}, ${item.country}"
-                            expanded.value = false  }  .padding(5.dp)
-                    )
-                    {
-                        Column(horizontalAlignment = Alignment.Start) {
-                            Text(
-                                text = item.location,
-                                modifier = Modifier.padding(vertical = 0.dp).padding(start = 10.dp),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colors.onAutocomplete
-                            )
-                            Text(
-                                text = "${item.country}",
-                                modifier = Modifier.padding(vertical = 0.dp).padding(start = 10.dp),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colors.onAutocomplete
-                            )
+                    Column(modifier = Modifier
+                        .background(MaterialTheme.colors.autocomplete.copy(alpha = 0.85f))){
+                        Box(modifier = Modifier
+                            /*.background(MaterialTheme.colors.autocomplete)*/
+                            .fillMaxWidth()
+                            .clickable {
+                                textLocation.value = "${item.location}, ${item.country}"
+                                expanded.value = false
+                            }
+                            .padding(5.dp)
+                        )
+                        {
+                            Column(horizontalAlignment = Alignment.Start) {
+                                Text(
+                                    text = item.location,
+                                    modifier = Modifier
+                                        .padding(vertical = 0.dp)
+                                        .padding(start = 10.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colors.onAutocomplete
+                                )
+                                Text(
+                                    text = item.country,
+                                    modifier = Modifier
+                                        .padding(vertical = 0.dp)
+                                        .padding(start = 10.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 10.sp,
+                                    color = MaterialTheme.colors.onAutocomplete
+                                )
+
+                            }
                         }
+                        Divider(startIndent = 8.dp, thickness = 1.dp)
                     }
                 }
             }

@@ -4,5 +4,5 @@ import com.learning.weatherappclean.data.model.requests.WeatherRequests
 
 interface RequestsStorage {
     fun save(weatherRequests: WeatherRequests): Boolean
-    fun get(): WeatherRequests
+    fun load(): WeatherRequests
 }

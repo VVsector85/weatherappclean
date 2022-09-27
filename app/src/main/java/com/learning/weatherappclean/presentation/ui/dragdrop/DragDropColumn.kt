@@ -25,7 +25,8 @@ import kotlinx.coroutines.launch
 fun <T : Any> DragDropColumn(
     items: List<T>,
     onSwap: (Int, Int) -> Unit,
-    scrollToFirst:State<Boolean>,
+    scrollToFirst:State<Pair<Boolean,Int>>,
+    stopScrollToFirst:() -> Unit,
     itemContent: @Composable LazyItemScope.(index: Int,item: T) -> Unit
 ) {
     var overscrollJob by remember { mutableStateOf<Job?>(null) }
@@ -75,8 +76,9 @@ fun <T : Any> DragDropColumn(
         contentPadding = PaddingValues(0.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        if (scrollToFirst.value) CoroutineScope(Dispatchers.Main).launch {
-        listState.scrollToItem(0)
+        if (scrollToFirst.value.first) CoroutineScope(Dispatchers.Main).launch {
+        listState.scrollToItem(scrollToFirst.value.second)
+            stopScrollToFirst()
     }
         itemsIndexed(items = items) { index, item ->
             DraggableItem(

@@ -1,6 +1,6 @@
 package com.learning.weatherappclean.di
 
-import com.learning.weatherappclean.domain.repository.LocalRepository
+import com.learning.weatherappclean.domain.repository.RequestsRepository
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 import com.learning.weatherappclean.domain.repository.SettingsRepository
 import com.learning.weatherappclean.domain.usecase.*
@@ -14,13 +14,13 @@ import dagger.hilt.android.components.ViewModelComponent
 class DomainModule {
 
     @Provides
-    fun provideLoadWeatherCardsUseCase (localRepository:LocalRepository):LoadRequestListUseCase{
-    return LoadRequestListUseCase(localRepository = localRepository)
+    fun provideLoadWeatherCardsUseCase (requestsRepository:RequestsRepository):LoadRequestListUseCase{
+    return LoadRequestListUseCase(requestsRepository = requestsRepository)
     }
 
     @Provides
-    fun provideSaveWeatherCardsUseCase (localRepository:LocalRepository): SaveRequestListUseCase {
-    return SaveRequestListUseCase(localRepository = localRepository)
+    fun provideSaveWeatherCardsUseCase (requestsRepository:RequestsRepository): SaveRequestListUseCase {
+    return SaveRequestListUseCase(requestsRepository = requestsRepository)
     }
 
     @Provides

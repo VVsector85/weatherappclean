@@ -17,7 +17,7 @@ class SharedPrefsRequestsStorage (context: Context): RequestsStorage {
         return true
     }
 
-    override fun get(): WeatherRequests =
+    override fun load(): WeatherRequests =
          JsonConverter().convertFromJson<WeatherRequests>(jsonString =  sharedPreferences.getString(KEY_REQUESTS,DEFAULT_REQUEST_LIST)?:DEFAULT_REQUEST_LIST)!!
 
 
