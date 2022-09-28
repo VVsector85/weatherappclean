@@ -4,6 +4,7 @@ package com.learning.weatherappclean.presentation.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,6 +20,7 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,15 +31,18 @@ import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.theme.autocomplete
 import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
 import com.learning.weatherappclean.presentation.ui.theme.onTextField
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun DropDown(
-    expanded:MutableState<Boolean>,
-    textLocation:MutableState<String>,
+    expanded:State<Boolean>,
+    vm:MainViewModel,
     predictionsList:State<List<AutocompletePrediction.Predictions>>
+
 ){
-    if (expanded.value && predictionsList.value.isNotEmpty()){
+    if (expanded.value)
         Column(
             modifier = Modifier
                 .requiredSizeIn(maxHeight = 200.dp)
@@ -54,9 +59,8 @@ fun DropDown(
                             /*.background(MaterialTheme.colors.autocomplete)*/
                             .fillMaxWidth()
                             .clickable {
-                                textLocation.value = "${item.location}, ${item.country}"
-                                expanded.value = false
-                            }
+                                vm.addCard("${item.location}, ${item.country}")
+                                             }
                             .padding(5.dp)
                         )
                         {
@@ -87,5 +91,5 @@ fun DropDown(
                 }
             }
         }
-    }
+
 }

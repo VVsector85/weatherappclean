@@ -1,7 +1,9 @@
 package com.learning.weatherappclean.presentation.ui
 
 import android.content.res.Configuration
+import android.graphics.Color.alpha
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 
@@ -11,6 +13,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -18,14 +22,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.presentation.MainViewModel
+import com.learning.weatherappclean.presentation.ui.theme.autocomplete
+import com.learning.weatherappclean.presentation.ui.theme.onTextField
 
 @Composable
 fun MainScreen(vm: MainViewModel) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-    val textLocation = remember { mutableStateOf("") }
-    val expanded = remember { mutableStateOf(false) }
+    val showTopBar = remember {
+        mutableStateOf(false)
+    }
+    val textLocation = remember { mutableStateOf("") }//to be deleted
+    val searchText = vm.getSearchText.collectAsState()
+    val expanded = vm.getExpanded.collectAsState()
     val errorMsg = vm.getError.collectAsState()
-    val predictionsList = vm.getPredictions.collectAsState()
+    val predictionsList = vm.getPredictions//.collectAsState()
     val weatherCardList = vm.getList.collectAsState()
     val isLoading = vm.getLoadingState.collectAsState()
     val scrollToFirst = vm.getScrollToFirst.collectAsState()
@@ -50,25 +60,44 @@ fun MainScreen(vm: MainViewModel) {
         modifier = Modifier.fillMaxWidth(),
         scaffoldState = scaffoldState,
         topBar = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (!isLandscape) Text(
-                    text = "How is the weather in...",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 18.dp),
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp,
-                )
-                TextLocation(
-                    modifier = Modifier.fillMaxWidth(0.9f),
-                    vm = vm,
-                    expanded = expanded,
-                    textLocation = textLocation
-                )
+
+            if (showTopBar.value) {
+                Box(modifier = Modifier.padding(start=5.dp,top=15.dp))
+                {
+                    Icon(
+                        painter = painterResource(id = com.google.android.material.R.drawable.material_ic_menu_arrow_up_black_24dp),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .size(50.dp)
+
+                            .clickable { showTopBar.value = !showTopBar.value
+                                vm.getExpanded.value = false}
+                            .background(MaterialTheme.colors.autocomplete.copy(alpha = 0f)),
+                        tint = MaterialTheme.colors.onTextField
+                    )
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (!isLandscape) Text(
+                        text = "How is the weather in...",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 18.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 25.sp,
+                    )
+                    TextLocation(
+                        modifier = Modifier.fillMaxWidth(if(isLandscape)0.75f else 0.9f),
+                        vm = vm,
+
+                        textSearch = searchText
+                    )
+                }
             }
+
         },
         drawerContent = {
             SettingsMenu(vm)
@@ -90,6 +119,7 @@ fun MainScreen(vm: MainViewModel) {
             }
         }
     ) { padding ->
+
         WeatherList(
             padding = padding,
             vm = vm,
@@ -101,14 +131,38 @@ fun MainScreen(vm: MainViewModel) {
             errorMsg = errorMsg,
             noRequests = noRequests
         )
+
+            if (!showTopBar.value)  Box(modifier = Modifier.padding(start=5.dp,top=15.dp))
+        {
+            Icon(
+                painter = painterResource(id = androidx.appcompat.R.drawable.abc_ic_search_api_material),
+                contentDescription = "",
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .size(50.dp)
+
+                    .clickable { showTopBar.value = !showTopBar.value
+                    }
+                    .background(MaterialTheme.colors.autocomplete.copy(alpha = 0.0f)),
+                tint = MaterialTheme.colors.autocomplete.copy(alpha = 0.8f)
+            )
+        }
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+
+
+
+
+
             DropDown(
                 expanded = expanded,
-                textLocation = textLocation,
-                predictionsList = predictionsList
+                //textSearch = textLocation,
+                vm = vm,
+                predictionsList = predictionsList.collectAsState(initial = emptyList()
+            )
             )
         }
     }

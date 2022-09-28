@@ -1,8 +1,10 @@
 package com.learning.weatherappclean.presentation
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
 
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
 import com.learning.weatherappclean.domain.model.Request
@@ -11,11 +13,10 @@ import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -32,11 +33,15 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     private val isLoading = MutableStateFlow(true)
     private val weatherCardsList = MutableStateFlow(emptyList<WeatherCard>())
-    private val prediction = MutableStateFlow(emptyList<AutocompletePrediction.Predictions>())
+        // private val prediction = MutableStateFlow(emptyList<AutocompletePrediction.Predictions>())
     private val scrollToFirst = MutableStateFlow(Pair(false, 0))
     private val errorMessage = MutableStateFlow("")
     private val settings = MutableStateFlow(Settings())
     private val noRequests = MutableStateFlow(false)
+    private val expanded = MutableStateFlow(false)
+
+    private val searchText = MutableStateFlow("")
+
     init {
         settings.value = loadSettingsUseCase.execute()
         refreshCards()
@@ -45,11 +50,29 @@ class MainViewModel @Inject constructor(
     val getError: StateFlow<String> get() = errorMessage.asStateFlow()
     val getScrollToFirst: StateFlow<Pair<Boolean, Int>> get() = scrollToFirst.asStateFlow()
     val getLoadingState: StateFlow<Boolean> get() = isLoading.asStateFlow()
-    val getPredictions: StateFlow<List<AutocompletePrediction.Predictions>> get() = prediction.asStateFlow()
+    val getPredictions: Flow<List<AutocompletePrediction.Predictions>> get() = predictions
     val getList: StateFlow<List<WeatherCard>> get() = weatherCardsList.asStateFlow()
     val getSettings: StateFlow<Settings> get() = settings.asStateFlow()
     val getNoRequests: StateFlow<Boolean> get() = noRequests.asStateFlow()
+    val getExpanded: MutableStateFlow<Boolean> get() = expanded
+    val getSearchText: MutableStateFlow<String> get() = searchText
 
+
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    private val predictions = searchText.debounce(AUTOCOMPLETE_QUERY_DELAY)
+        .distinctUntilChanged()
+        .flatMapLatest {
+            autocompleteQuery(it)
+        }
+
+    private suspend fun autocompleteQuery(query: String): Flow<List<AutocompletePrediction.Predictions>> {
+        if (query.length<3) {
+            return flowOf(emptyList())
+        }
+        Log.i("my_tag", "Autocomplete query: $query")
+        expanded.value = true
+        return flowOf(getAutocompletePredictionsUseCase.execute(Request(query)).predictions)
+    }
 
     fun deleteCard(index: Int) {
         val list = weatherCardsList.value.toMutableList()
@@ -75,6 +98,7 @@ class MainViewModel @Inject constructor(
 
 
     fun addCard(location: String) {
+        expanded.value = false
         isLoading.value = true
         viewModelScope.launch(IO) {
             val card = getWeatherCardDataUseCase.execute(
@@ -90,6 +114,8 @@ class MainViewModel @Inject constructor(
                         true,
                         if (settings.value.newCardFirst) 0 else weatherCardsList.value.size
                     )
+                    searchText.value = ""
+
                     saveRequestListUseCase.execute(list)
                 } else {
                     errorMessage.value =
@@ -99,6 +125,7 @@ class MainViewModel @Inject constructor(
                     errorMessage.value = ""
                 }
             } else {
+
                 errorMessage.value = card.errorMsg
                 isLoading.value = false
                 delay(ERROR_MESSAGE_DELAY)
@@ -110,23 +137,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun retrievePredictions(text: String) {
-        if (text.length < 3) {
-            prediction.value = emptyList()
-            return
-        }
-        viewModelScope.launch(IO) {
-            val predictionData =
-                getAutocompletePredictionsUseCase.execute(Request(text))
-            if (!predictionData.error) {
-                prediction.value = predictionData.predictions
-            } else {
-                isLoading.value = false
-            }
-        }
-    }
-
-    fun refreshCards() {
+      fun refreshCards() {
         isLoading.value = true
         val requestList = loadRequestListUseCase.execute()
         noRequests.tryEmit(requestList.isEmpty())
@@ -163,7 +174,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun swapSections(a: Int, b: Int) {
-        // scrollToFirst.value = Pair(false,0)
+
         val list = weatherCardsList.value.toMutableList()
         Collections.swap(list, a, b)
         weatherCardsList.tryEmit(list)
@@ -175,5 +186,7 @@ class MainViewModel @Inject constructor(
     }
 
 companion object{
-    private const val ERROR_MESSAGE_DELAY = 6000L}
+    private const val ERROR_MESSAGE_DELAY = 6000L
+    private const val AUTOCOMPLETE_QUERY_DELAY = 1500L
+}
 }
