@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +27,7 @@ import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.getIcon
 import com.learning.weatherappclean.presentation.ui.theme.*
+import kotlinx.coroutines.flow.collectLatest
 import java.util.*
 
 @Composable
@@ -39,7 +37,8 @@ fun CardWeather(
     index: Int,
     delete: (Index: Int) -> Unit,
     setShowDetails:(Boolean,Int)-> Unit,
-    settings: State<Settings>
+    settings: State<Settings>,
+vm:MainViewModel
 ) {
 
     val colour = when (content.cardColorOption) {
@@ -48,17 +47,20 @@ fun CardWeather(
         CardColorOption.YELLOW -> MaterialTheme.colors.warm
         else -> Color.LightGray
     }
-    val details = remember{ mutableStateOf(content.showDetails) }
 
+val details = remember {mutableStateOf(content.showDetails)
+}
+    LaunchedEffect(Unit) {
+        vm.getList.collectLatest { if (it.size>index) details.value = it[index].showDetails }
+       }
     Card(
-        modifier = modifier
+        modifier =  modifier
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
-                        details.value = !details.value
-                       content.showDetails = details.value
-                       setShowDetails(details.value,index)
-                    }
+                       details.value = !details.value
+                       setShowDetails(details.value, index)
+                    },
                 )
             },
         backgroundColor = colour,
@@ -157,7 +159,8 @@ fun CardWeather(
                 }
             }
 
-            if (details.value) Row(modifier = Modifier.fillMaxSize()) {
+            if (details.value&&  settings.value.detailsOnDoubleTap ) Row(modifier = Modifier.fillMaxSize()) {
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.35f)
@@ -166,12 +169,10 @@ fun CardWeather(
                     Column() {
 
                         weatherDetails(
-                            value = "${content.humidity}%",
-                            iconId = R.drawable.ic_droplet
+                            value = "${content.humidity}%",iconId = R.drawable.ic_droplet
                         )
                         weatherDetails(
-                            value = "${content.pressure}\nmbar",
-                            iconId = R.drawable.ic_pressure
+                            value = "${content.pressure}\nmbar", iconId = R.drawable.ic_pressure
                         )
                     }
                 }
@@ -181,7 +182,7 @@ fun CardWeather(
                         .padding(start = 20.dp)
                 ) {
                     Column() {
-                        weatherDetails(value = content.uvIndex, iconId = R.drawable.ic_sun)
+                        weatherDetails(value = content.uvIndex, iconId = R.drawable.ic_sun_uv)
                         weatherDetails(value = "${content.windSpeed}\nkm/h",iconId = R.drawable.ic_wind
                         )
                     }
@@ -194,7 +195,7 @@ fun CardWeather(
                     Column() {
                         weatherDetails(
                             value = "${content.feelsLike}\u00b0${if (content.units == "f") "F" else "C"}",
-                            iconId = R.drawable.ic_sun
+                            iconId = R.drawable.ic_temp_feels_like
                         )
                         weatherDetails(
                             value = "${content.cloudCover}%",

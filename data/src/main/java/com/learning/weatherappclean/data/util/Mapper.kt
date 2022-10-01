@@ -1,13 +1,12 @@
 package com.learning.weatherappclean.data.util
 
-import android.util.Log
 import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
 import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
 import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
 import com.learning.weatherappclean.data.model.requests.WeatherRequests
 import com.learning.weatherappclean.data.model.settings.SettingsData
 import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
-import com.learning.weatherappclean.domain.model.AutocompletePrediction
+import com.learning.weatherappclean.domain.model.Autocomplete
 import com.learning.weatherappclean.domain.model.Request
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
@@ -55,7 +54,7 @@ internal class Mapper {
                 errorMsg = "Error code: ${response.error.code}, ${response.error.type}, ${response.error.info}",
 
                 )
-            AutocompletePrediction::class -> AutocompletePrediction(
+            Autocomplete::class -> Autocomplete(
 
                 error = true,
                 errorType = ErrorType.API_ERROR,
@@ -65,13 +64,13 @@ internal class Mapper {
         }
     }
 
-    internal fun mapToDomain(response: AutocompleteResponse): AutocompletePrediction {
-        val tempList: MutableList<AutocompletePrediction.Predictions> = mutableListOf()
+    internal fun mapToDomain(response: AutocompleteResponse): Autocomplete {
+        val tempList: MutableList<Autocomplete.Predictions> = mutableListOf()
         response.predictionData.forEach {
-            tempList.add(AutocompletePrediction.Predictions(it.name, it.country, it.region))
+            tempList.add(Autocomplete.Predictions(it.name, it.country, it.region))
         }
 
-        return AutocompletePrediction(
+        return Autocomplete(
             searchString = response.request.query,
             predictions = tempList,
         )
@@ -81,8 +80,8 @@ internal class Mapper {
         Settings(
             fahrenheit = response.fahrenheit,
             newCardFirst = response.newCardFirst,
-            showFeelsLike = response.showFeelsLike,
-            showCountry = response.showCountry
+            detailsOnDoubleTap = response.detailsOnDoubleTap,
+            dragAndDropCards = response.detailsOnDoubleTap
 
         )
     internal fun mapToDomain(weatherRequests: WeatherRequests):List<Request>{

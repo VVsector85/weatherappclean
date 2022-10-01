@@ -2,9 +2,7 @@ package com.learning.weatherappclean.presentation.ui
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -14,32 +12,19 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focus.onFocusEvent
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleOwner
-import com.learning.weatherappclean.domain.model.AutocompletePrediction
-import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.domain.model.Autocomplete
 import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.theme.autocomplete
 import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
-import com.learning.weatherappclean.presentation.ui.theme.onTextField
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun DropDown(
     expanded:State<Boolean>,
     vm:MainViewModel,
-    predictionsList:State<List<AutocompletePrediction.Predictions>>
+    predictionsList:State<List<Autocomplete.Predictions>>
 
 ){
     if (expanded.value)

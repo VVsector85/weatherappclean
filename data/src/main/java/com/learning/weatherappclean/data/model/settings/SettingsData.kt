@@ -7,10 +7,12 @@ class SettingsData    (
     val fahrenheit : Boolean,
     @field:Json( name ="newCardFirst")
     val newCardFirst:Boolean,
-    @field:Json( name ="showFeelsLike")
-    val showFeelsLike:Boolean,
-    @field:Json( name ="showCountry")
-    val showCountry:Boolean
+    @field:Json( name ="detailsOnDoubleTap")
+    val detailsOnDoubleTap:Boolean,
+    @field:Json( name ="dragAndDropCards")
+    val dragAndDropCards:Boolean
+
+
 
 )
 

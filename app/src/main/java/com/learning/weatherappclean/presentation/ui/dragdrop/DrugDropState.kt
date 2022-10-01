@@ -13,6 +13,11 @@ import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * not my code, took it from here:
+ * https://stackoverflow.com/questions/64913067/reorder-lazycolumn-items-with-drag-drop
+ * */
+
 
 class DragDropState internal constructor(
     val state: LazyListState,

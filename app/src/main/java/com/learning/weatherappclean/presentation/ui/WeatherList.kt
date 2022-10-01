@@ -1,5 +1,6 @@
 package com.learning.weatherappclean.presentation.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -49,7 +50,7 @@ fun WeatherList(
         ) {
              ErrorMessage(errorMsg = errorMsg)
            if (weatherCardList.value.isEmpty()&&!isLoading.value)NoCards(vm=vm, noRequests = noRequests)
-            if (isLandscape)
+            if (isLandscape||!settings.value.dragAndDropCards)
                 WeatherGrid(
                     vm = vm,
                     weatherCardList = weatherCardList,
@@ -83,7 +84,7 @@ fun WeatherGrid(
     LazyVerticalGrid(
         columns = GridCells.Adaptive(290.dp),
         modifier = Modifier.fillMaxWidth(0.9f),
-        contentPadding = PaddingValues(bottom = 40.dp, top = 20.dp),
+        contentPadding = PaddingValues(bottom = 40.dp, top = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(
             space = 20.dp,
             alignment = Alignment.CenterHorizontally
@@ -105,7 +106,8 @@ fun WeatherGrid(
                 index = index,
                 delete = vm::deleteCard,
                 settings = settings,
-                setShowDetails = setShowDetails
+                setShowDetails = setShowDetails,
+            vm = vm
             )
         }
     }
@@ -124,17 +126,19 @@ fun WeatherColumnWithDrag(
         items = weatherCardList.value,
         onSwap = vm::swapSections,
         scrollToFirst = scrollToFirst,
-        stopScrollToFirst = vm::stopScrollToFirst
+        stopScrollToFirst = vm::stopScrollToFirst,
+        contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
     ) { index, item ->
         CardWeather(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(horizontal = 0.dp, vertical = 0.dp),
+                .fillMaxWidth(0.9f),
+                // .padding(horizontal = 0.dp, vertical = 0.dp),
             content = item,
             index = index,
             delete = vm::deleteCard,
             settings = settings,
-            setShowDetails = setShowDetails
+            setShowDetails = setShowDetails,
+        vm = vm
         )
     }
 }

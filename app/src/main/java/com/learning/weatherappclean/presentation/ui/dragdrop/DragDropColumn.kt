@@ -20,6 +20,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+/**
+ * not my code, took it from here:
+ * https://stackoverflow.com/questions/64913067/reorder-lazycolumn-items-with-drag-drop
+ * */
+
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T : Any> DragDropColumn(
@@ -27,6 +33,7 @@ fun <T : Any> DragDropColumn(
     onSwap: (Int, Int) -> Unit,
     scrollToFirst:State<Pair<Boolean,Int>>,
     stopScrollToFirst:() -> Unit,
+    contentPadding:PaddingValues,
     itemContent: @Composable LazyItemScope.(index: Int,item: T) -> Unit
 ) {
     var overscrollJob by remember { mutableStateOf<Job?>(null) }
@@ -73,7 +80,7 @@ fun <T : Any> DragDropColumn(
                 )
             },
         state = listState,
-        contentPadding = PaddingValues(0.dp),
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         if (scrollToFirst.value.first) CoroutineScope(Dispatchers.Main).launch {

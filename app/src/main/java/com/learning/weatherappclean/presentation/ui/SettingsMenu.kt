@@ -15,20 +15,13 @@ import com.learning.weatherappclean.presentation.MainViewModel
 import kotlin.reflect.KProperty1
 
 @Composable
-fun SettingsMenu(vm:MainViewModel) {
-    val settings = vm.getSettings.collectAsState()
+fun SettingsMenu(vm:MainViewModel, settings:State<Settings>) {
+
     val checkedStateUnits = remember { mutableStateOf(settings.value.fahrenheit) }
     val checkedStateAtTop = remember { mutableStateOf(settings.value.newCardFirst) }
-    val checkedStateFeelsLike = remember { mutableStateOf(settings.value.showFeelsLike) }
-    val checkedStateShowCountry = remember { mutableStateOf(settings.value.showCountry) }
-    val newSettings = remember { mutableStateOf(settings.value)}
+    val checkedStateShowDetails = remember { mutableStateOf(settings.value.detailsOnDoubleTap) }
+    val checkedStateDragAndDrop = remember { mutableStateOf(settings.value.dragAndDropCards) }
 
-fun setV()   {
-
-
-
-
-}
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -41,12 +34,11 @@ fun setV()   {
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium
         )
-        Divider(startIndent = 8.dp, thickness = 2.dp)
+        Divider(startIndent = 8.dp, thickness = 3.dp)
         MenuSwitchItem(text ="Fahrenheit",details = "default temperature scale is Celsius",checkedState = checkedStateUnits,setValue =vm::saveSettings,field =Settings::fahrenheit)
         MenuSwitchItem(text ="Add at the top",details ="Show new added weather card at the top of the list",checkedState = checkedStateAtTop,setValue =vm::saveSettings,field =Settings::newCardFirst)
-        MenuSwitchItem(text ="Show \"feels like\"",checkedState = checkedStateFeelsLike,setValue =vm::saveSettings,field =Settings::showFeelsLike)
-        Divider(startIndent = 8.dp, thickness = 1.dp)
-        MenuSwitchItem(text ="Show country",checkedState = checkedStateShowCountry, setValue = vm::saveSettings,field =Settings::showCountry)
+        MenuSwitchItem(text ="Show details", details = "Show additional weather information on double tap on the card",checkedState = checkedStateShowDetails,setValue =vm::saveSettings,field =Settings::detailsOnDoubleTap)
+        MenuSwitchItem(text ="Drag and Drop", details = "Allows to swap weather cards by dragging them (available in portrait screen orientation)" ,checkedState = checkedStateDragAndDrop, setValue = vm::saveSettings,field =Settings::dragAndDropCards)
 
 
 

@@ -17,6 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.zIndex
 
+/**
+ * not my code, took it from here:
+ * https://stackoverflow.com/questions/64913067/reorder-lazycolumn-items-with-drag-drop
+ * */
+
+
 @Composable
 fun rememberDragDropState(
     lazyListState: LazyListState,
@@ -59,6 +65,7 @@ fun LazyItemScope.DraggableItem(
             .zIndex(1f)
             .graphicsLayer {
                 translationY = current
+
             }
     } else if (index == dragDropState.previousIndexOfDraggedItem) {
         Modifier

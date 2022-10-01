@@ -8,15 +8,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -38,12 +34,20 @@ import kotlinx.coroutines.delay
 fun TextLocation(
     modifier: Modifier,
     vm: MainViewModel,
-    textSearch: State<String>
-) {
+    textSearch: State<String>,
 
+) {
+    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     TextField(
-        modifier = modifier.onFocusEvent{ vm.getExpanded.value = false },
+        modifier = modifier
+            .onFocusEvent(){ vm.setExpanded (false) }
+            .focusRequester(focusRequester)
+            .onFocusChanged {  if (it.isCaptured) vm.setShowSearch(false)},
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.textField,
             focusedIndicatorColor = Color.LightGray,
@@ -53,6 +57,7 @@ fun TextLocation(
             onSearch = {
                 keyboardController?.hide()
                 vm.addCard(textSearch.value)
+
             }
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -68,7 +73,7 @@ fun TextLocation(
         leadingIcon = {
             Text(text = "Location:", modifier = Modifier.padding(start = 10.dp, end = 5.dp))
         },
-        trailingIcon = {
+        /*trailingIcon = {
             Card(
                 modifier = Modifier
                     .padding(end = 10.dp)
@@ -89,6 +94,6 @@ fun TextLocation(
                     tint = MaterialTheme.colors.onTextField,
                     )
             }
-        }
+        }*/
     )
 }
