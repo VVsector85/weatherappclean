@@ -22,30 +22,28 @@ import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
 
 @Composable
 fun DropDown(
-    expanded:State<Boolean>,
-    vm:MainViewModel,
-    predictionsList:State<List<Autocomplete.Predictions>>
+    expanded: State<Boolean>,
+    vm: MainViewModel,
+    predictionsList: State<List<Autocomplete.Predictions>>
 
-){
+) {
     if (expanded.value)
         Column(
             modifier = Modifier
-                .requiredSizeIn(maxHeight = 200.dp)
+                .requiredSizeIn(maxHeight = 270.dp)
                 .fillMaxWidth(0.9f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LazyColumn(
             ) {
                 itemsIndexed(predictionsList.value) { index, item ->
-
-                    Column(modifier = Modifier
-                        .background(MaterialTheme.colors.autocomplete.copy(alpha = 0.85f))){
+                    Column(
+                        modifier = Modifier
+                            .background(MaterialTheme.colors.autocomplete.copy(alpha = 0.85f))
+                    ) {
                         Box(modifier = Modifier
-                            /*.background(MaterialTheme.colors.autocomplete)*/
                             .fillMaxWidth()
-                            .clickable {
-                                vm.addCard("${item.location}, ${item.country}")
-                                             }
+                            .clickable { vm.addCard(/*"${item.lat}, ${item.lon}"*/location ="${item.location}, ${item.country}, ${item.region}", prediction = item) }
                             .padding(5.dp)
                         )
                         {
@@ -53,22 +51,21 @@ fun DropDown(
                                 Text(
                                     text = item.location,
                                     modifier = Modifier
-                                        .padding(vertical = 0.dp)
+                                        .padding(top = 2.dp)
                                         .padding(start = 10.dp),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp,
                                     color = MaterialTheme.colors.onAutocomplete
                                 )
                                 Text(
-                                    text = item.country,
+                                    text = "${item.country}, ${item.region}",
                                     modifier = Modifier
-                                        .padding(vertical = 0.dp)
+                                        .padding(bottom = 2.dp)
                                         .padding(start = 10.dp),
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 10.sp,
+                                    fontSize = 12.sp,
                                     color = MaterialTheme.colors.onAutocomplete
                                 )
-
                             }
                         }
                         Divider(startIndent = 8.dp, thickness = 1.dp)
@@ -76,5 +73,4 @@ fun DropDown(
                 }
             }
         }
-
 }

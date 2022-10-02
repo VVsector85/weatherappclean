@@ -36,7 +36,7 @@ fun WeatherList(
     noRequests:State<Boolean>
 ) {
     SwipeRefresh(
-        modifier = Modifier.padding(top = 0.dp),
+        modifier = Modifier.padding(padding),
         state = rememberSwipeRefreshState(isRefreshing = isLoading.value),
         onRefresh = { vm.refreshCards() }
     ) {
@@ -44,7 +44,7 @@ fun WeatherList(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+               // .padding(padding)
                 .padding(top=10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -127,7 +127,7 @@ fun WeatherColumnWithDrag(
         onSwap = vm::swapSections,
         scrollToFirst = scrollToFirst,
         stopScrollToFirst = vm::stopScrollToFirst,
-        contentPadding = PaddingValues(bottom = 80.dp, top = 10.dp),
+        contentPadding = PaddingValues(bottom = 60.dp, top = 10.dp),
     ) { index, item ->
         CardWeather(
             modifier = Modifier

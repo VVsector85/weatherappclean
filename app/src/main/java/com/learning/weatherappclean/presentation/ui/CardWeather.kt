@@ -1,22 +1,21 @@
 package com.learning.weatherappclean.presentation.ui
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import com.learning.weatherappclean.R
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,9 +35,9 @@ fun CardWeather(
     content: WeatherCard,
     index: Int,
     delete: (Index: Int) -> Unit,
-    setShowDetails:(Boolean,Int)-> Unit,
+    setShowDetails: (Boolean, Int) -> Unit,
     settings: State<Settings>,
-vm:MainViewModel
+    vm: MainViewModel
 ) {
 
     val colour = when (content.cardColorOption) {
@@ -48,18 +47,23 @@ vm:MainViewModel
         else -> Color.LightGray
     }
 
-val details = remember {mutableStateOf(content.showDetails)
-}
+    val details = remember {
+        mutableStateOf(content.showDetails)
+    }
     LaunchedEffect(Unit) {
-        vm.getList.collectLatest { if (it.size>index) details.value = it[index].showDetails }
-       }
+        vm.getList.collectLatest { if (it.size > index) details.value = it[index].showDetails }
+    }
     Card(
-        modifier =  modifier
+        modifier = modifier
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
-                       details.value = !details.value
-                       setShowDetails(details.value, index)
+                        details.value = !details.value
+                        setShowDetails(details.value, index)
+                    },
+                    onTap = {
+                        vm.setShowSearch(false)
+                        vm.setExpanded(false)
                     },
                 )
             },
@@ -81,7 +85,7 @@ val details = remember {mutableStateOf(content.showDetails)
                                     content.isNightIcon
                                 )
                             ),
-                            contentDescription = "",
+                            contentDescription = content.weatherDescription,
                             modifier = Modifier
                                 .padding(20.dp)
                                 .size(70.dp, 70.dp),
@@ -125,7 +129,7 @@ val details = remember {mutableStateOf(content.showDetails)
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = content.country,
+                            text = "${content.country}${ if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else "" }",
                             color = MaterialTheme.colors.onCard,
                             modifier = Modifier
                                 .padding(
@@ -138,6 +142,7 @@ val details = remember {mutableStateOf(content.showDetails)
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
+
                     }
                     Button(
                         onClick = {
@@ -152,27 +157,29 @@ val details = remember {mutableStateOf(content.showDetails)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_closebutton_cross),
-                            contentDescription = "Close",
+                            contentDescription = stringResource(id = R.string.deleteWeatherCard),
                             modifier = Modifier.size(12.dp, 12.dp)
                         )
                     }
                 }
             }
 
-            if (details.value&&  settings.value.detailsOnDoubleTap ) Row(modifier = Modifier.fillMaxSize()) {
-
+            if (details.value && settings.value.detailsOnDoubleTap) Row(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.35f)
+                        .fillMaxWidth(0.33f)
                         .padding(start = 26.dp)
                 ) {
                     Column() {
-
-                        weatherDetails(
-                            value = "${content.humidity}%",iconId = R.drawable.ic_droplet
+                        WeatherDetails(
+                            value = "${content.humidity}%",
+                            iconId = R.drawable.ic_droplet,
+                            description = R.string.humidity
                         )
-                        weatherDetails(
-                            value = "${content.pressure}\nmbar", iconId = R.drawable.ic_pressure
+                        WeatherDetails(
+                            value = "${content.pressure}\nmbar",
+                            iconId = R.drawable.ic_pressure,
+                            description = R.string.pressure
                         )
                     }
                 }
@@ -182,8 +189,15 @@ val details = remember {mutableStateOf(content.showDetails)
                         .padding(start = 20.dp)
                 ) {
                     Column() {
-                        weatherDetails(value = content.uvIndex, iconId = R.drawable.ic_sun_uv)
-                        weatherDetails(value = "${content.windSpeed}\nkm/h",iconId = R.drawable.ic_wind
+                        WeatherDetails(
+                            value = content.uvIndex,
+                            iconId = R.drawable.ic_sun_uv,
+                            description = R.string.uvIndex
+                        )
+                        WeatherDetails(
+                            value = "${content.windSpeed}\n${if (content.units == "f") "mil" else "km"}/h",
+                            iconId = R.drawable.ic_wind,
+                            description = R.string.windSpeed
                         )
                     }
                 }
@@ -193,13 +207,14 @@ val details = remember {mutableStateOf(content.showDetails)
                         .padding(start = 20.dp)
                 ) {
                     Column() {
-                        weatherDetails(
+                        WeatherDetails(
                             value = "${content.feelsLike}\u00b0${if (content.units == "f") "F" else "C"}",
-                            iconId = R.drawable.ic_temp_feels_like
+                            iconId = R.drawable.ic_temp_feels_like, description = R.string.feelsLike
                         )
-                        weatherDetails(
+                        WeatherDetails(
                             value = "${content.cloudCover}%",
-                            iconId = R.drawable.ic_overcast)
+                            iconId = R.drawable.ic_overcast, description = R.string.cloudCover
+                        )
                     }
                 }
             }
@@ -209,29 +224,31 @@ val details = remember {mutableStateOf(content.showDetails)
 
 
 @Composable
-fun weatherDetails(
+fun WeatherDetails(
 
     value: String,
-    iconId: Int
-) {
+    iconId: Int,
+    description: Int
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 8.dp)) {
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
 
         Row() {
             Icon(
                 painter = painterResource(
                     id = iconId
                 ),
-                contentDescription = "",
+                contentDescription = stringResource(id = description),
                 modifier = Modifier
                     .padding(0.dp)
                     .size(30.dp, 30.dp)
                     .align(Alignment.CenterVertically),
                 tint = MaterialTheme.colors.onCard
             )
-
             Text(
                 modifier = Modifier
                     .padding(start = 10.dp)
@@ -241,12 +258,6 @@ fun weatherDetails(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
-
         }
-
-
-        // Text(modifier = Modifier.align(Alignment.CenterEnd),text = value,color = MaterialTheme.colors.onCard,fontWeight = FontWeight.Bold)
     }
-
-
 }

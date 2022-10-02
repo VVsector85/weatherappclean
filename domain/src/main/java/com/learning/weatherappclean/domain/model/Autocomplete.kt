@@ -10,6 +10,8 @@ data class Autocomplete(val searchString:String="",
     data class Predictions(
         val location:String,
         val country:String,
-        val region:String
+        val region:String,
+        val lat:String,
+        val lon:String
     )
 }

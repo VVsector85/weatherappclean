@@ -3,6 +3,7 @@ package com.learning.weatherappclean.presentation.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -23,7 +24,7 @@ fun ErrorMessage(errorMsg: State<String>) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = errorMsg.value,
-            color = Color.Red,
+            color =  MaterialTheme.colors.onError,
             fontWeight = FontWeight.Bold
         )
     }

@@ -1,3 +1,42 @@
 <resources>
     <string name="app_name">weatherappclean</string>
+
+    <string name="settings">Settings</string>
+
+    <string name="imperial">Imperial units</string>
+    <string name="imperialDescription">The default units are metric (Celsius for temperature, kilometers per hour for wind speed).</string>
+
+    <string name="addAtTop">Add at the top</string>
+    <string name="addAtTopDescription">Show new added weather card at the top of the list</string>
+
+    <string name="showDetails">Show details</string>
+    <string name="showDetailsDescription">Show additional weather information on double tap on the card</string>
+
+    <string name="dragAndDrop">Drag and Drop</string>
+    <string name="dragAndDropDescription">Allow swapping weather cards by dragging them (available in portrait screen orientation)</string>
+
+
+    <string name="isOnTheList">is already on the list</string>
+    <string name="noCardsLoaded">"No weather cards were loaded.\n Tap \"Refresh\" to load cards"</string>
+    <string name="noItemsToShow">No items to show.\nAdd locations</string>
+
+    <string name="howIsTheWeather">How is the weather in…</string>
+    <string name="tryAgain">Try again</string>
+
+    <string name="alsterLogo">Alster logo</string>
+
+
+
+
+    <string name="location">Location:</string>
+
+    <string name="deleteWeatherCard">Delete weather card</string>
+    <string name="humidity">Humidity</string>
+    <string name="uvIndex">UV index</string>
+    <string name="feelsLike">Temperature feels like</string>
+    <string name="pressure">Atmospheric pressure</string>
+    <string name="windSpeed">Wind speed</string>
+    <string name="cloudCover">Cloud cover</string>
+    <string name="searchLocation">Search location</string>
+
 </resources>

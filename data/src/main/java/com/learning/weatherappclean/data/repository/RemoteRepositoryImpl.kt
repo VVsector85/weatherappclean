@@ -25,7 +25,7 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
             safeApiCall {
                 weatherApi.getWeather(
                     accessKey = API_KEY,
-                    city = request.request,
+                    city = request.query,
                     units = request.units
                 )
             }
@@ -50,7 +50,7 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
             safeApiCall {
                 weatherApi.getAutocomplete(
                     accessKey = API_KEY,
-                    searchString = request.request
+                    searchString = request.query
                 )
             }
         if (response is Resource.Error) return Autocomplete(

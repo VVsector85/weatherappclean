@@ -3,7 +3,8 @@ package com.learning.weatherappclean.data.util
 import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
 import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
 import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
-import com.learning.weatherappclean.data.model.requests.WeatherRequests
+import com.learning.weatherappclean.data.model.requests.CardQuery
+import com.learning.weatherappclean.data.model.requests.WeatherQuery
 import com.learning.weatherappclean.data.model.settings.SettingsData
 import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
 import com.learning.weatherappclean.domain.model.Autocomplete
@@ -16,6 +17,11 @@ internal class Mapper {
     internal fun mapToDomain(response: WeatherResponse): WeatherCard {
         return WeatherCard(
             location = response.location.name,
+            country = response.location.country,
+            region = response.location.region,
+            lat = response.location.lat,
+            lon = response.location.lon,
+
             temperature = response.current.temperature,
             units = response.request.unit,
             cloudCover = response.current.cloudcover,
@@ -30,11 +36,10 @@ internal class Mapper {
             windDir = response.current.windDir,
             windSpeed = response.current.windSpeed,
             isNightIcon = response.current.weatherIcons[0].contains("night"),
+            weatherDescription = response.current.weatherDescriptions[0],
 
-            country = response.location.country,
-            region = response.location.region,
-            lat = response.location.lat,
-            lon = response.location.lon,
+
+
 
             localtime = response.location.localtime,
             timezoneId = response.location.timezoneId,
@@ -67,7 +72,7 @@ internal class Mapper {
     internal fun mapToDomain(response: AutocompleteResponse): Autocomplete {
         val tempList: MutableList<Autocomplete.Predictions> = mutableListOf()
         response.predictionData.forEach {
-            tempList.add(Autocomplete.Predictions(it.name, it.country, it.region))
+            tempList.add(Autocomplete.Predictions(it.name, it.country, it.region,it.lat,it.lon))
         }
 
         return Autocomplete(
@@ -84,15 +89,18 @@ internal class Mapper {
             dragAndDropCards = response.detailsOnDoubleTap
 
         )
-    internal fun mapToDomain(weatherRequests: WeatherRequests):List<Request>{
+    internal fun mapToDomain(weatherQuery: WeatherQuery):List<Request>{
         val list: MutableList<Request> = mutableListOf()
-        weatherRequests.content.forEach{ it ->list.add(Request(request =it))}
+        weatherQuery.content.forEach{list.add(Request(query = it.location, lat = it.lat, lon = it.lon, showDetails = it.isDetailed))}
         return list
     }
-    internal fun mapToStorage(saveWeatherCardsList: List<WeatherCard>): WeatherRequests {
-        val list: MutableList<String> = mutableListOf()
-        saveWeatherCardsList.forEach{list.add("${it.location }, ${it.country}"   )}
-        return WeatherRequests(content = list)
+    internal fun mapToStorage(saveWeatherCardsList: List<WeatherCard>): WeatherQuery {
+        val list: MutableList<CardQuery> = mutableListOf()
+        //saveWeatherCardsList.forEach{list.add(/*"${ it.lat }, ${ it.lon }"*/"${it.location }, ${it.country}, ${it.region}")}
+        saveWeatherCardsList.forEach{list.add(
+            CardQuery(location = "${it.location }, ${it.country}, ${it.region}",lat = it.lat,lon = it.lon, isDetailed =  it.showDetails)
+        )}
+        return WeatherQuery(content = list)
     }
 
 }

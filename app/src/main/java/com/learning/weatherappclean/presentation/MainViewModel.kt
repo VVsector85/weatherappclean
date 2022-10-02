@@ -1,9 +1,10 @@
 package com.learning.weatherappclean.presentation
 
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.learning.weatherappclean.R
+
 
 import com.learning.weatherappclean.domain.model.Autocomplete
 import com.learning.weatherappclean.domain.model.Request
@@ -33,7 +34,7 @@ class MainViewModel @Inject constructor(
     private val isLoading = MutableStateFlow(true)
     private val weatherCardsList = MutableStateFlow(emptyList<WeatherCard>())
 
-    // private val prediction = MutableStateFlow(emptyList<AutocompletePrediction.Predictions>())
+
     private val scrollToFirst = MutableStateFlow(Pair(false, 0))
     private val errorMessage = MutableStateFlow("")
     private val settings = MutableStateFlow(Settings())
@@ -68,7 +69,6 @@ class MainViewModel @Inject constructor(
         if (query.length < AUTOCOMPLETE_QUERY_MIN_CHARS) {
             return flowOf(emptyList())
         }
-        Log.i("my_tag", "Autocomplete query: $query")
         expanded.value = true
         return flowOf(getAutocompletePredictionsUseCase.execute(Request(query)).predictions)
     }
@@ -77,13 +77,13 @@ class MainViewModel @Inject constructor(
         val list = weatherCardsList.value.toMutableList()
         list.removeAt(index)
         if (list.isEmpty()) noRequests.value = true
-        weatherCardsList.update {list }
+        weatherCardsList.update { list }
         saveRequestListUseCase.execute(list)
     }
 
 
     fun saveSettings(value: Boolean, field: KProperty1<Settings, *>) {
-         when (field) {
+        when (field) {
             Settings::fahrenheit -> settings.update { it.copy(fahrenheit = value) }
             Settings::newCardFirst -> settings.update { it.copy(newCardFirst = value) }
             Settings::dragAndDropCards -> settings.update { it.copy(dragAndDropCards = value) }
@@ -94,16 +94,24 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun addCard(location: String) {
+    fun addCard(location: String, prediction: Autocomplete.Predictions?) {
         expanded.value = false
         isLoading.value = true
         viewModelScope.launch(IO) {
             val card = getWeatherCardDataUseCase.execute(
-                Request(request = location, units = if (settings.value.fahrenheit) "f" else "m")
+                Request(
+                    query = location,
+                    units = if (settings.value.fahrenheit) "f" else "m",
+                    lat = prediction?.lat ?: "",
+                    lon = prediction?.lon?:"",
+                    location = prediction?.location?:"",
+                    country = prediction?.country?:"",
+                    region = prediction?.region?:"",
+                )
             )
             if (!card.error) {
                 val list = weatherCardsList.value.toMutableList()
-                if (list.find { it.location == card.location && it.country == card.country } == null) {
+                if (list.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
                     if (settings.value.newCardFirst) list.add(0, card) else list.add(card)
                     noRequests.emit(false)
                     weatherCardsList.emit(list)
@@ -115,8 +123,9 @@ class MainViewModel @Inject constructor(
                     saveRequestListUseCase.execute(list)
                     showSearch.emit(false)
                 } else {
+                    // TODO:  
                     errorMessage.value =
-                        ("${card.location}, ${card.country} is already on the list")
+                        "${card.location}, ${card.country}, ${card.region}" + R.string.isOnTheList
                     isLoading.value = false
                     delay(ERROR_MESSAGE_DELAY)
                     errorMessage.value = ""
@@ -144,6 +153,7 @@ class MainViewModel @Inject constructor(
             run breaking@{
                 requestList.forEach {
                     it.units = if (settings.value.fahrenheit) "f" else "m"
+
                     val t = getWeatherCardDataUseCase.execute(it)
                     if (!t.error) {
                         tempCardList.add(t)
@@ -168,11 +178,14 @@ class MainViewModel @Inject constructor(
     fun setShowDetails(boolean: Boolean, index: Int) {
         val list = weatherCardsList.value
         list[index].showDetails = boolean
-       weatherCardsList.value = list
+        weatherCardsList.value = list
+        saveRequestListUseCase.execute(list)
     }
+
     fun setShowSearch(boolean: Boolean) {
         showSearch.update { boolean }
     }
+
     fun setExpanded(boolean: Boolean) {
         expanded.update { boolean }
     }

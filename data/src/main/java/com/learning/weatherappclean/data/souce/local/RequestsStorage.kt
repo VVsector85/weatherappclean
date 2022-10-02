@@ -1,8 +1,8 @@
 package com.learning.weatherappclean.data.souce.local
 
-import com.learning.weatherappclean.data.model.requests.WeatherRequests
+import com.learning.weatherappclean.data.model.requests.WeatherQuery
 
 interface RequestsStorage {
-    fun save(weatherRequests: WeatherRequests): Boolean
-    fun load(): WeatherRequests
+    fun save(weatherQuery: WeatherQuery): Boolean
+    fun load(): WeatherQuery
 }

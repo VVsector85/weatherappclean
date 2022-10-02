@@ -1,24 +1,28 @@
 package com.learning.weatherappclean.data.souce.local.sharedprefs
 
 import android.content.Context
+import android.util.Log
+import com.learning.weatherappclean.data.model.requests.CardQuery
 import com.learning.weatherappclean.data.souce.local.RequestsStorage
-import com.learning.weatherappclean.data.model.requests.WeatherRequests
+import com.learning.weatherappclean.data.model.requests.WeatherQuery
 import com.learning.weatherappclean.data.util.JsonConverter
+import com.learning.weatherappclean.data.util.Mapper
 
-private const val SHARED_PREFS_WEATHER_CARDS = "shared_refs_weather_cards_11"
+private const val SHARED_PREFS_WEATHER_CARDS = "shared_refs_weather_cards"
 private const val KEY_REQUESTS = "requests"
-private const val DEFAULT_REQUEST_LIST = """{"content": ["Athens","Kharkiv","Stockholm"]}"""
+private const val DEFAULT_REQUEST_LIST = """{"content":[{"location":"Stockholm","lat":"59.333","lon":"18.050","isDetailed":false}]}"""
+
 class SharedPrefsRequestsStorage (context: Context): RequestsStorage {
 
     private val sharedPreferences = context.getSharedPreferences(SHARED_PREFS_WEATHER_CARDS, Context.MODE_PRIVATE)
 
-    override fun save(weatherRequests: WeatherRequests): Boolean {
-        sharedPreferences.edit().putString(KEY_REQUESTS,JsonConverter().convertToJson(weatherRequests)).apply()
+    override fun save(weatherQuery: WeatherQuery): Boolean {
+        sharedPreferences.edit().putString(KEY_REQUESTS,JsonConverter().convertToJson(weatherQuery)).apply()
         return true
     }
 
-    override fun load(): WeatherRequests =
-         JsonConverter().convertFromJson<WeatherRequests>(jsonString =  sharedPreferences.getString(KEY_REQUESTS,DEFAULT_REQUEST_LIST)?:DEFAULT_REQUEST_LIST)!!
+    override fun load(): WeatherQuery =
+         JsonConverter().convertFromJson<WeatherQuery>(jsonString =  sharedPreferences.getString(KEY_REQUESTS,DEFAULT_REQUEST_LIST)?:DEFAULT_REQUEST_LIST)!!
 
 
 }

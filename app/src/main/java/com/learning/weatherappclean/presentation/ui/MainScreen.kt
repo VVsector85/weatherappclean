@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.BlendMode.Companion.Color
 
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,11 +28,11 @@ import com.learning.weatherappclean.presentation.ui.theme.onTextField
 @Composable
 fun MainScreen(vm: MainViewModel) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-    val showSearch =vm.getShowSearch.collectAsState()
+    val showSearch = vm.getShowSearch.collectAsState()
     val searchText = vm.getSearchText.collectAsState()
     val expanded = vm.getExpanded.collectAsState()
     val errorMsg = vm.getError.collectAsState()
-    val predictionsList = vm.getPredictions//.collectAsState()
+    val predictionsList = vm.getPredictions.collectAsState(initial = emptyList())
     val weatherCardList = vm.getList.collectAsState()
     val isLoading = vm.getLoadingState.collectAsState()
     val scrollToFirst = vm.getScrollToFirst.collectAsState()
@@ -40,24 +41,13 @@ fun MainScreen(vm: MainViewModel) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
 
-    val iconModifier =
-        if (isLandscape) {
-            Modifier
-                .size(30.dp)
-                .padding(4.dp)
-        } else {
-            Modifier
-                .size(55.dp)
-                .padding(8.dp)
-        }
-
 
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         scaffoldState = scaffoldState,
         topBar = {
-            Box(modifier = Modifier.fillMaxWidth()) {
-              if (!showSearch.value)  Button(
+           /* Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                if (!showSearch.value) Button(
                     onClick = {
                         vm.setShowSearch(true)
                         vm.setExpanded(false)
@@ -68,55 +58,42 @@ fun MainScreen(vm: MainViewModel) {
                         .align(Alignment.TopEnd)
                         .size(50.dp),
                     shape = CircleShape,
-                    //colors = ButtonDefaults.buttonColors(backgroundColor = androidx.compose.ui.graphics.Color.Cyan.copy(alpha = 0.3f))
                 )
                 {
                     Icon(
                         painter = painterResource(id = com.google.android.material.R.drawable.abc_ic_search_api_material),
-                        contentDescription = "",
+                        contentDescription = stringResource(id = R.string.searchLocation),
                         modifier = Modifier
-
                             .size(35.dp),
-
-
-                            //.background(MaterialTheme.colors.autocomplete.copy(alpha = 0f)),
                         tint = MaterialTheme.colors.onTextField
                     )
                 }
             }
-
-
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top=10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 if (showSearch.value)
                     TextLocation(
-                        modifier = Modifier.fillMaxWidth(if (isLandscape) 0.75f else 0.9f),
-                        vm = vm,
-
-                        textSearch = searchText
-                    )else if (!isLandscape) Row() {
-
-
-                    Text(
-                        text = "How is the weather in...",
                         modifier = Modifier
-
-                            .padding(top = 16.dp, bottom = 18.dp),
+                            .fillMaxWidth(if (isLandscape) 0.75f else 0.9f)
+                            .height(60.dp)
+                            .padding(0.dp),
+                        vm = vm,
+                        textSearch = searchText
+                    ) else if (!isLandscape)
+                    Text(
+                        text = stringResource(id = R.string.howIsTheWeather),
+                        modifier = Modifier
+                            .padding(top = 10.dp, bottom = 15.dp),
                         textAlign = TextAlign.Center,
                         fontSize = 25.sp,
                     )
 
-
-                }
-            }
-
-
+            }*/
         },
         drawerContent = {
-            SettingsMenu(vm = vm,settings = settings)
+            SettingsMenu(vm = vm, settings = settings)
         },
         bottomBar = {
             Box(
@@ -128,16 +105,26 @@ fun MainScreen(vm: MainViewModel) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_alster),
-                    contentDescription = "Alster logo",
-                    modifier = iconModifier,
+                    contentDescription = stringResource(id = R.string.alsterLogo),
+                    modifier = if (isLandscape) {
+                        Modifier
+                            .size(30.dp)
+                            .padding(4.dp)
+                    } else {
+                        Modifier
+                            .size(55.dp)
+                            .padding(8.dp)
+                    },
                     tint = MaterialTheme.colors.onSurface
                 )
             }
         }
     ) { padding ->
 
+
+
         WeatherList(
-            padding = padding,
+            padding = if (showSearch.value||!isLandscape) PaddingValues (top = 80.dp) else padding,
             vm = vm,
             weatherCardList = weatherCardList,
             isLoading = isLoading,
@@ -147,43 +134,64 @@ fun MainScreen(vm: MainViewModel) {
             errorMsg = errorMsg,
             noRequests = noRequests
         )
-
-        if (!showSearch.value) Box(modifier = Modifier.padding(start = 5.dp, top = 15.dp))
-        {
-
-            /* Button( modifier = Modifier
-
-                 .size(50.dp).padding(0.dp),
-
-                 onClick = {showTopBar.value = !showTopBar.value  },
-                 shape = RoundedCornerShape(50),
-                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.autocomplete.copy(alpha = 0.3f))
-
-             )
-             {
-                 Icon(
-                     painter = painterResource(id = androidx.appcompat.R.drawable.abc_ic_search_api_material),
-                     contentDescription = "",
-
-                   //  tint = MaterialTheme.colors.autocomplete.copy(alpha = 0.8f)
-                 )
-             }
- */
-
+        Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+            if (!showSearch.value) Button(
+                onClick = {
+                    vm.setShowSearch(true)
+                    vm.setExpanded(false)
+                },
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(if (isLandscape)Alignment.TopStart else Alignment.TopEnd)
+                    .size(50.dp),
+                shape = CircleShape,
+            )
+            {
+                Icon(
+                    painter = painterResource(id = com.google.android.material.R.drawable.abc_ic_search_api_material),
+                    contentDescription = stringResource(id = R.string.searchLocation),
+                    modifier = Modifier
+                        .size(35.dp),
+                    tint = MaterialTheme.colors.onTextField
+                )
+            }
         }
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
+
+
         ) {
+            /*Column(
+                modifier = Modifier.fillMaxWidth().padding(top=10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {*/
+                if (showSearch.value)
+                    TextLocation(
+                        modifier = Modifier
+                            .fillMaxWidth(if (isLandscape) 0.75f else 0.9f)
+                            .height(60.dp)
+                            .padding(bottom = 0.dp),
+                        vm = vm,
+                        textSearch = searchText
+                    ) else if (!isLandscape)
+                    Text(
+                        text = stringResource(id = R.string.howIsTheWeather),
+                        modifier = Modifier
+                            .padding(top = 0.dp, bottom = 0.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 25.sp,
+                    )
+
+          //  }
+
 
 
             DropDown(
                 expanded = expanded,
-                //textSearch = textLocation,
                 vm = vm,
-                predictionsList = predictionsList.collectAsState(
-                    initial = emptyList()
-                )
+                predictionsList = predictionsList
             )
         }
     }

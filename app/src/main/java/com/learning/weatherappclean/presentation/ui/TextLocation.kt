@@ -16,6 +16,7 @@ import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -45,18 +46,18 @@ fun TextLocation(
     }
     TextField(
         modifier = modifier
-            .onFocusEvent(){ vm.setExpanded (false) }
-            .focusRequester(focusRequester)
-            .onFocusChanged {  if (it.isCaptured) vm.setShowSearch(false)},
+
+            .focusRequester(focusRequester),
+           // .onFocusChanged { if (it.isCaptured) vm.setShowSearch(false) },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.textField,
-            focusedIndicatorColor = Color.LightGray,
-            cursorColor = Color.DarkGray
+            focusedIndicatorColor = Color.LightGray.copy(alpha = 0f),
+            cursorColor = MaterialTheme.colors.onTextField
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
                 keyboardController?.hide()
-                vm.addCard(textSearch.value)
+                vm.addCard(textSearch.value,null)
 
             }
         ),
@@ -65,13 +66,11 @@ fun TextLocation(
             keyboardType = KeyboardType.Text
         ),
         value = textSearch.value,
-        onValueChange = {vm.getSearchText.value = it
-            //vm.getExpanded.value = true
-                        },
+        onValueChange = {vm.getSearchText.value = it},
         maxLines = 3,
-        textStyle = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
+        textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
         leadingIcon = {
-            Text(text = "Location:", modifier = Modifier.padding(start = 10.dp, end = 5.dp))
+            Text(text = stringResource(id = R.string.location), modifier = Modifier.padding(start = 10.dp, end = 5.dp))
         },
         /*trailingIcon = {
             Card(

@@ -2,9 +2,10 @@ package com.learning.weatherappclean.data.model.requests
 
 import com.squareup.moshi.Json
 
- data class WeatherRequests(
+ data class WeatherQuery(
 
     @field:Json( name ="content")
-    val content : List<String>) {
+    val content : List<CardQuery>) {
 
 }
+
