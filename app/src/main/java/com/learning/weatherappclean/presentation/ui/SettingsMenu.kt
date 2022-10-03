@@ -40,7 +40,8 @@ fun SettingsMenu(vm: MainViewModel, settings: State<Settings>) {
             description = stringResource(id = R.string.imperialDescription),
             checkedState = checkedStateUnits,
             setValue = vm::saveSettings,
-            field = Settings::fahrenheit
+            field = Settings::fahrenheit,
+            action = vm::refreshCards
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.addAtTop),
@@ -72,6 +73,7 @@ fun MenuSwitchItem(
     description: String? = null,
     checkedState: MutableState<Boolean>,
     setValue: (Boolean, KProperty1<Settings, *>) -> Unit,
+    action: (() -> Unit )? = null,
     field: KProperty1<Settings, *>
 ) {
     Box(
@@ -103,6 +105,7 @@ fun MenuSwitchItem(
             onCheckedChange = {
                 checkedState.value = it
                 setValue(it, field)
+                if (action!=null) action()
             }
         )
     }

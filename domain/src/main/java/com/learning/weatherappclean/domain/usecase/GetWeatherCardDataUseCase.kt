@@ -5,6 +5,7 @@ import com.learning.weatherappclean.domain.model.Request
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 
+
 class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) {
 
     suspend fun execute(request: Request): WeatherCard {
@@ -16,7 +17,8 @@ class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) 
              wrong location, so if the location does not match the query the app sends another
              request with latitude and longitude. Relying on coordinates alone also does not help
              because API often returns location name which does not match autocomplete suggestion.*/
-           if (request.location!=weatherCard.location&&request.location!=""){
+           println("D/my_tag: request loc: "+request.location+", card loc: "+weatherCard.location)
+            if (request.location!=weatherCard.location&&request.location!=""){
                 weatherCard = remoteRepository.getWeatherData(Request(
                     query = "${request.lat}, ${request.lon}"))
             }

@@ -11,16 +11,19 @@ data class WeatherCard(
     val humidity: String= "",
     val pressure: String= "",
     val uvIndex: String= "",
-    val visibility: String= "",
-    val weatherCode: String= "",
-    val windDegree: String= "",
-    val windDir: String= "",
     val windSpeed: String = "",
-    val observationTime: String= "",
 
+    val weatherCode: String= "",
+
+
+
+   /* val windDegree: String= "",
+    val windDir: String= "",
+    val visibility: String= "",
+    val observationTime: String= "",
     val localtime: String= "",
     val timezoneId: String= "",
-    val utcOffset: String= "",
+    val utcOffset: String= "",*/
 
 
     val lat: String= "",
@@ -34,6 +37,7 @@ data class WeatherCard(
 
     val error: Boolean = false,
     val errorType:Any? = null,
+    val errorCode:Int? = null,
     val errorMsg: String="",
 
 

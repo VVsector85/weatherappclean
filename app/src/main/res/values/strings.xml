@@ -16,8 +16,8 @@
     <string name="dragAndDropDescription">Allow swapping weather cards by dragging them (available in portrait screen orientation)</string>
 
 
-    <string name="isOnTheList">is already on the list</string>
-    <string name="noCardsLoaded">"No weather cards were loaded.\n Tap \"Refresh\" to load cards"</string>
+
+    <string name="noCardsLoaded">"No weather cards were loaded.\n Tap \"Try again\" to load cards"</string>
     <string name="noItemsToShow">No items to show.\nAdd locations</string>
 
     <string name="howIsTheWeather">How is the weather in…</string>
@@ -38,5 +38,19 @@
     <string name="windSpeed">Wind speed</string>
     <string name="cloudCover">Cloud cover</string>
     <string name="searchLocation">Search location</string>
+
+
+
+    <string name="code101">Wrong access key</string>
+    <string name="code102">Account is inactive or blocked</string>
+    <string name="code104">Request limit reached</string>
+    <string name="code601">The location was not specified</string>
+    <string name="code602">No data found</string>
+    <string name="code615">Location not found</string>
+
+    <string name="ioError">Check your Internet connection</string>
+    <string name="unknownError">An unknown error occurred</string>
+    <string name="isOnTheList">is already on the list</string>
+
 
 </resources>

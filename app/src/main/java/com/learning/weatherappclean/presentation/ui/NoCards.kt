@@ -23,12 +23,14 @@ fun NoCards(noRequests: State<Boolean>, vm: MainViewModel) {
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center)
     {
         Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(horizontal = 10.dp),
             text = if (!noRequests.value)
                 stringResource(R.string.noCardsLoaded)
             else stringResource(R.string.noItemsToShow),
             fontSize = 30.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Light,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.onTextField
         )
@@ -37,7 +39,11 @@ fun NoCards(noRequests: State<Boolean>, vm: MainViewModel) {
                 .padding(30.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            Text(text = stringResource(R.string.tryAgain), modifier = Modifier.padding(20.dp))
+            Text(
+                text = stringResource(R.string.tryAgain),
+                modifier = Modifier.padding(10.dp),
+                fontSize = 20.sp
+            )
         }
     }
 }

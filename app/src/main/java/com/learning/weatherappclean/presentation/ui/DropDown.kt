@@ -24,7 +24,7 @@ import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
 fun DropDown(
     expanded: State<Boolean>,
     vm: MainViewModel,
-    predictionsList: State<List<Autocomplete.Predictions>>
+    predictionList: State<List<Autocomplete.Prediction>>
 
 ) {
     if (expanded.value)
@@ -36,7 +36,7 @@ fun DropDown(
         ) {
             LazyColumn(
             ) {
-                itemsIndexed(predictionsList.value) { index, item ->
+                itemsIndexed(predictionList.value) { index, item ->
                     Column(
                         modifier = Modifier
                             .background(MaterialTheme.colors.autocomplete.copy(alpha = 0.85f))

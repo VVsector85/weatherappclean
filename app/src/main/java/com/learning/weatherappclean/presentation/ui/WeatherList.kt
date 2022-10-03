@@ -1,6 +1,5 @@
 package com.learning.weatherappclean.presentation.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -15,6 +14,7 @@ import androidx.compose.ui.unit.*
 
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.learning.weatherappclean.util.ErrorMessage
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.MainViewModel
@@ -32,32 +32,33 @@ fun WeatherList(
     scrollToFirst: State<Pair<Boolean, Int>>,
     isLandscape: Boolean,
     settings: State<Settings>,
-    errorMsg:State<String>,
-    noRequests:State<Boolean>
+    errorMsg: State<ErrorMessage>,
+    noRequests: State<Boolean>
 ) {
     SwipeRefresh(
         modifier = Modifier.padding(padding),
         state = rememberSwipeRefreshState(isRefreshing = isLoading.value),
         onRefresh = { vm.refreshCards() }
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-               // .padding(padding)
-                .padding(top=10.dp),
+                // .padding(padding)
+                .padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-             ErrorMessage(errorMsg = errorMsg)
-           if (weatherCardList.value.isEmpty()&&!isLoading.value)NoCards(vm=vm, noRequests = noRequests)
-            if (isLandscape||!settings.value.dragAndDropCards)
+            ErrorMessage(errorMsg = errorMsg, resetError = vm::resetErrorMessage)
+            if (weatherCardList.value.isEmpty() && !isLoading.value) NoCards(
+                vm = vm,
+                noRequests = noRequests
+            )
+            if (isLandscape || !settings.value.dragAndDropCards)
                 WeatherGrid(
                     vm = vm,
                     weatherCardList = weatherCardList,
                     scrollToFirst = scrollToFirst,
                     settings = settings,
                     setShowDetails = vm::setShowDetails
-
                 )
             else
                 WeatherColumnWithDrag(
@@ -107,7 +108,7 @@ fun WeatherGrid(
                 delete = vm::deleteCard,
                 settings = settings,
                 setShowDetails = setShowDetails,
-            vm = vm
+                vm = vm
             )
         }
     }
@@ -132,13 +133,13 @@ fun WeatherColumnWithDrag(
         CardWeather(
             modifier = Modifier
                 .fillMaxWidth(0.9f),
-                // .padding(horizontal = 0.dp, vertical = 0.dp),
+            // .padding(horizontal = 0.dp, vertical = 0.dp),
             content = item,
             index = index,
             delete = vm::deleteCard,
             settings = settings,
             setShowDetails = setShowDetails,
-        vm = vm
+            vm = vm
         )
     }
 }

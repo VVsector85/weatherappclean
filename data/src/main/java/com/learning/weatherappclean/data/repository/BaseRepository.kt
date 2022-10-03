@@ -25,23 +25,23 @@ abstract class BaseRepository() {
                 } else {
                     val errorResponse: ErrorResponse? = convertErrorBody(response.errorBody())
                     Resource.Error(
-                        errorMessage = errorResponse?.error?.info ?: "Something went wrong",
+                        errorMessage = errorResponse?.error?.info ?:"",// "Something went wrong",
                         errorType = ErrorType.INTERNAL_ERROR
                     )
                 }
             } catch (e: HttpException) {
                 Resource.Error(
-                    errorMessage = e.message ?: "Something went wrong",
+                    errorMessage = e.message ?: "",// "Something went wrong",
                     errorType = ErrorType.HTTP_ERROR
                 )
             } catch (e: IOException) {
                 Resource.Error(
-                    errorMessage = e.message ?: "Please check your network connection",
+                    errorMessage = e.message ?: "",//""Please check your network connection",
                     errorType = ErrorType.IO_ERROR
                 )
             } catch (e: Exception) {
                 Resource.Error(
-                    errorMessage = e.message ?: "Something went wrong",
+                    errorMessage = e.message ?: "",//""Something went wrong",
                     errorType = ErrorType.UNKNOWN_ERROR
                 )
             }

@@ -10,7 +10,7 @@ import com.learning.weatherappclean.domain.model.Settings
 private const val SHARED_PREFS_SETTINGS = "shared_refs_weather_settings"
 private const val KEY_SETTINGS = "settings"
 private const val DEFAULT_SETTINGS =
-    """{"fahrenheit":false,"newCardFirst":true,"detailsOnDoubleTap":false,"dragAndDropCards":false }"""
+    """{"fahrenheit":false,"newCardFirst":true,"detailsOnDoubleTap":true,"dragAndDropCards":true }"""
 
 class SharedPrefsSettingsStorage(context: Context) : SettingsStorage {
     private val sharedPreferences =
