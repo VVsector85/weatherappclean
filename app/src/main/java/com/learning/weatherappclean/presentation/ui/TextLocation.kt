@@ -48,11 +48,11 @@ fun TextLocation(
         modifier = modifier
 
             .focusRequester(focusRequester),
-           // .onFocusChanged { if (it.isCaptured) vm.setShowSearch(false) },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.textField,
             focusedIndicatorColor = Color.LightGray.copy(alpha = 0f),
-            cursorColor = MaterialTheme.colors.onTextField
+            cursorColor = MaterialTheme.colors.onTextField,
+
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
@@ -72,24 +72,25 @@ fun TextLocation(
         leadingIcon = {
             Text(text = stringResource(id = R.string.location), modifier = Modifier.padding(start = 10.dp, end = 5.dp))
         },
-        /*trailingIcon = {
+       /* trailingIcon = {
             Card(
                 modifier = Modifier
                     .padding(end = 10.dp)
                     .size(50.dp, 50.dp)
                     .clickable {
-                        vm.addCard(textSearch.value)
+                        vm.addCard(location = textSearch.value, prediction = null)
                         keyboardController?.hide()
                     }
-                    .background(MaterialTheme.colors.textField.copy(alpha = 0f)),
+                    .background(MaterialTheme.colors.textField),
 
                 ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_plus),
-                    contentDescription = "Add city",
+                    contentDescription = stringResource(id = R.string.addLocation),
                     modifier = Modifier
                         .size(25.dp, 25.dp)
-                        .padding(10.dp).background(MaterialTheme.colors.autocomplete.copy(alpha = 0.0f)),
+                        .padding(10.dp)
+                        .background(MaterialTheme.colors.textField),
                     tint = MaterialTheme.colors.onTextField,
                     )
             }

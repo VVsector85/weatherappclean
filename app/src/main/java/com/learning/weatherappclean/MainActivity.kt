@@ -7,7 +7,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.*
@@ -48,12 +50,13 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
 /*
+
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     WeatherAppCleanTheme {
-        Greeting()
+       MainScreen()
     }
-}*/
+}
+*/

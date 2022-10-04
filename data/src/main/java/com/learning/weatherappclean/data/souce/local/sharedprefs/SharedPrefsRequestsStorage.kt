@@ -8,11 +8,9 @@ import com.learning.weatherappclean.data.model.requests.WeatherQuery
 import com.learning.weatherappclean.data.util.JsonConverter
 import com.learning.weatherappclean.data.util.Mapper
 
-private const val SHARED_PREFS_WEATHER_CARDS = "shared_refs_weather_cards_22"
+private const val SHARED_PREFS_WEATHER_CARDS = "shared_prefs_weather_cards"
 private const val KEY_REQUESTS = "requests"
 private const val DEFAULT_REQUEST_LIST = """{"content":[{"location":"Stockholm","country":"Sweden","region":"Stockholms Lan","lat":"59.333","lon":"18.050","isDetailed":false}]}"""
-    //JsonConverter().convertToJson(WeatherQuery(listOf(CardQuery("59.333","18.050","Stockholm","","",false))))//
-
 class SharedPrefsRequestsStorage (context: Context): RequestsStorage {
 
     private val sharedPreferences = context.getSharedPreferences(SHARED_PREFS_WEATHER_CARDS, Context.MODE_PRIVATE)
@@ -24,6 +22,4 @@ class SharedPrefsRequestsStorage (context: Context): RequestsStorage {
 
     override fun load(): WeatherQuery =
          JsonConverter().convertFromJson<WeatherQuery>(jsonString =  sharedPreferences.getString(KEY_REQUESTS,DEFAULT_REQUEST_LIST)?:DEFAULT_REQUEST_LIST)!!
-
-
 }

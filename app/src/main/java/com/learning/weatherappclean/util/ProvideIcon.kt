@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.presentation
+package com.learning.weatherappclean.util
 
 import com.learning.weatherappclean.R
 

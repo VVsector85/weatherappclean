@@ -18,7 +18,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
@@ -31,8 +30,8 @@ class MainViewModel @Inject constructor(
     private val saveRequestListUseCase: SaveRequestListUseCase,
     private val getWeatherCardDataUseCase: GetWeatherCardDataUseCase,
     private val getAutocompletePredictionsUseCase: GetAutocompletePredictionsUseCase,
-    private val loadSettingsUseCase: LoadSettingsUseCase,
-    private val saveSettingsUseCase: SaveSettingsUseCase
+    private val saveSettingsUseCase: SaveSettingsUseCase,
+    loadSettingsUseCase: LoadSettingsUseCase
 ) : ViewModel() {
     private val isLoading = MutableStateFlow(true)
     private val weatherCardsList = MutableStateFlow(emptyList<WeatherCard>())
@@ -84,7 +83,7 @@ class MainViewModel @Inject constructor(
 
     fun saveSettings(value: Boolean, field: KProperty1<Settings, *>) {
         when (field) {
-            Settings::fahrenheit -> settings.update { it.copy(fahrenheit = value) }
+            Settings::imperialUnits -> settings.update { it.copy(imperialUnits = value) }
             Settings::newCardFirst -> settings.update { it.copy(newCardFirst = value) }
             Settings::dragAndDropCards -> settings.update { it.copy(dragAndDropCards = value) }
             Settings::detailsOnDoubleTap -> settings.update { it.copy(detailsOnDoubleTap = value) }
@@ -99,7 +98,7 @@ class MainViewModel @Inject constructor(
             val card = getWeatherCardDataUseCase.execute(
                 Request(
                     query = location,
-                    units = if (settings.value.fahrenheit) "f" else "m",
+                    units = if (settings.value.imperialUnits) "f" else "m",
                     lat = prediction?.lat ?: "",
                     lon = prediction?.lon ?: "",
                     location = prediction?.location ?: "",
@@ -150,7 +149,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(IO) {
             run breaking@{
                 requestList.forEach {
-                    it.units = if (settings.value.fahrenheit) "f" else "m"
+                    it.units = if (settings.value.imperialUnits) "f" else "m"
                     val card = getWeatherCardDataUseCase.execute(it)
                     if (!card.error) {
                         tempCardList.add(card)

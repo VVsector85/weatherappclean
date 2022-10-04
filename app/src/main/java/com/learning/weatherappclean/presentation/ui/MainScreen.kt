@@ -137,11 +137,11 @@ fun MainScreen(vm: MainViewModel) {
                         fontSize = 25.sp,
                     )
 
-
             DropDown(
                 expanded = expanded,
                 vm = vm,
-                predictionList = predictionsList
+                predictionList = predictionsList,
+                isLandscape = isLandscape
             )
         }
     }

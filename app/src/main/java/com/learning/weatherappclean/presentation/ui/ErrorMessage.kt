@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ErrorMessage(errorMsg: State<ErrorMessage>, resetError:()->Unit) {
-    var text:String = ""
+    val text: String
     if (errorMsg.value.errorType != null) {
         val error = errorMsg.value.getErrorMessage()
         val errorStringId = error.first
@@ -33,20 +33,16 @@ fun ErrorMessage(errorMsg: State<ErrorMessage>, resetError:()->Unit) {
         }else{
             if (errorStringId != null) stringResource(errorStringId) else error.second
         }
-
         LaunchedEffect(Unit) {
             delay(errorMsg.value.showTime)
             resetError()
         }
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp)
                 .padding(horizontal = 20.dp)
         ) {
-
-
             Text(
                 modifier = Modifier.align(Alignment.Center),
                 text = text,

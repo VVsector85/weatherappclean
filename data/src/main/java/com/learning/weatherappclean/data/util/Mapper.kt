@@ -91,7 +91,7 @@ internal class Mapper {
 
     internal fun mapToDomain(response: SettingsData): Settings =
         Settings(
-            fahrenheit = response.fahrenheit,
+            imperialUnits = response.imperialUnits,
             newCardFirst = response.newCardFirst,
             detailsOnDoubleTap = response.detailsOnDoubleTap,
             dragAndDropCards = response.dragAndDropCards

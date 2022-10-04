@@ -17,7 +17,7 @@ import kotlin.reflect.KProperty1
 
 @Composable
 fun SettingsMenu(vm: MainViewModel, settings: State<Settings>) {
-    val checkedStateUnits = remember { mutableStateOf(settings.value.fahrenheit) }
+    val checkedStateUnits = remember { mutableStateOf(settings.value.imperialUnits) }
     val checkedStateAtTop = remember { mutableStateOf(settings.value.newCardFirst) }
     val checkedStateShowDetails = remember { mutableStateOf(settings.value.detailsOnDoubleTap) }
     val checkedStateDragAndDrop = remember { mutableStateOf(settings.value.dragAndDropCards) }
@@ -39,29 +39,29 @@ fun SettingsMenu(vm: MainViewModel, settings: State<Settings>) {
             text = stringResource(id = R.string.imperial),
             description = stringResource(id = R.string.imperialDescription),
             checkedState = checkedStateUnits,
-            setValue = vm::saveSettings,
-            field = Settings::fahrenheit,
+            saveSettings = vm::saveSettings,
+            field = Settings::imperialUnits,
             action = vm::refreshCards
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.addAtTop),
             description = stringResource(id = R.string.addAtTopDescription),
             checkedState = checkedStateAtTop,
-            setValue = vm::saveSettings,
+            saveSettings = vm::saveSettings,
             field = Settings::newCardFirst
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.showDetails),
             description = stringResource(id = R.string.showDetailsDescription),
             checkedState = checkedStateShowDetails,
-            setValue = vm::saveSettings,
+            saveSettings = vm::saveSettings,
             field = Settings::detailsOnDoubleTap
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.dragAndDrop),
             description = stringResource(id = R.string.dragAndDropDescription),
             checkedState = checkedStateDragAndDrop,
-            setValue = vm::saveSettings,
+            saveSettings = vm::saveSettings,
             field = Settings::dragAndDropCards
         )
     }
@@ -72,7 +72,7 @@ fun MenuSwitchItem(
     text: String,
     description: String? = null,
     checkedState: MutableState<Boolean>,
-    setValue: (Boolean, KProperty1<Settings, *>) -> Unit,
+    saveSettings: (Boolean, KProperty1<Settings, *>) -> Unit,
     action: (() -> Unit )? = null,
     field: KProperty1<Settings, *>
 ) {
@@ -104,7 +104,7 @@ fun MenuSwitchItem(
             colors = SwitchDefaults.colors(uncheckedThumbColor = Color.LightGray),
             onCheckedChange = {
                 checkedState.value = it
-                setValue(it, field)
+                saveSettings(it, field)
                 if (action!=null) action()
             }
         )

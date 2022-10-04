@@ -24,14 +24,15 @@ import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
 fun DropDown(
     expanded: State<Boolean>,
     vm: MainViewModel,
-    predictionList: State<List<Autocomplete.Prediction>>
+    predictionList: State<List<Autocomplete.Prediction>>,
+    isLandscape:Boolean
 
 ) {
     if (expanded.value)
         Column(
             modifier = Modifier
                 .requiredSizeIn(maxHeight = 270.dp)
-                .fillMaxWidth(0.9f),
+                .fillMaxWidth(if (isLandscape) 0.75f else 0.9f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LazyColumn(

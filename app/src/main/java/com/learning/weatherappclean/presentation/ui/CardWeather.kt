@@ -1,7 +1,6 @@
 package com.learning.weatherappclean.presentation.ui
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import com.learning.weatherappclean.R
@@ -24,7 +23,7 @@ import com.learning.weatherappclean.domain.model.CardColorOption
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.MainViewModel
-import com.learning.weatherappclean.presentation.getIcon
+import com.learning.weatherappclean.util.getIcon
 import com.learning.weatherappclean.presentation.ui.theme.*
 import kotlinx.coroutines.flow.collectLatest
 import java.util.*
@@ -58,8 +57,10 @@ fun CardWeather(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
-                        details.value = !details.value
-                        setShowDetails(details.value, index)
+                        if (settings.value.detailsOnDoubleTap) {
+                            details.value = !details.value
+                            setShowDetails(details.value, index)
+                        }
                     },
                     onTap = {
                         vm.setShowSearch(false)
