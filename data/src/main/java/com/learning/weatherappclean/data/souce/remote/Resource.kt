@@ -9,10 +9,6 @@ sealed class Resource<T>(
 ) {
 
     class Success<T>(data: T) : Resource<T>(data = data)
-
     class Error<T>(errorType: ErrorType,errorMessage: String) : Resource<T>(type = errorType,message = errorMessage)
 
-    // We'll just pass object of this Loading
-    // class, just before making an api call
-    class Loading<T> : Resource<T>()
 }

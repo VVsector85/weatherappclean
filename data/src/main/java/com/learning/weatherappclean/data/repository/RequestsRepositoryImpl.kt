@@ -11,10 +11,6 @@ class RequestsRepositoryImpl(private val requestsStorage: RequestsStorage) : Req
     override fun saveWeatherCards(saveWeatherCardsList: List<WeatherCard>): Boolean =
               requestsStorage.save(Mapper().mapToStorage(saveWeatherCardsList))
 
-
     override fun loadWeatherCards():List<Request> =
         Mapper().mapToDomain(requestsStorage.load())
-
-
-
 }

@@ -39,11 +39,4 @@ data class WeatherCard(
     val errorType:Any? = null,
     val errorCode:Int? = null,
     val errorMsg: String="",
-
-
-
-
-
-) {
-
-}
+)

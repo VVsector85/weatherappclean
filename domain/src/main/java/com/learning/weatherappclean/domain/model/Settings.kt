@@ -5,5 +5,4 @@ data class Settings(
     var newCardFirst:Boolean = true,
     var detailsOnDoubleTap:Boolean = true,
     var dragAndDropCards:Boolean = true
-
 )

@@ -14,7 +14,6 @@ class SettingsRepositoryImpl(private val settingsStorage: SettingsStorage):Setti
 
     override fun saveSettings(settings: Settings): Boolean {
         settingsStorage.save(settings)
-
         return true
     }
 

@@ -7,6 +7,4 @@ import com.learning.weatherappclean.domain.model.WeatherCard
 interface RemoteRepository {
    suspend fun getWeatherData(request: Request) : WeatherCard
    suspend fun getAutocompletePredictions(request: Request):Autocomplete
-
-
 }

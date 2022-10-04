@@ -41,13 +41,6 @@ fun MainScreen(vm: MainViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         scaffoldState = scaffoldState,
-        topBar = {
-
-
-
-
-
-        },
         drawerContent = {
             SettingsMenu(vm = vm, settings = settings)
         },
@@ -76,9 +69,6 @@ fun MainScreen(vm: MainViewModel) {
             }
         }
     ) { padding ->
-
-
-
         WeatherList(
             padding = if (showSearch.value) PaddingValues (top = 80.dp) else if(!showSearch.value&&!isLandscape) PaddingValues (top = 60.dp) else padding,
             vm = vm,

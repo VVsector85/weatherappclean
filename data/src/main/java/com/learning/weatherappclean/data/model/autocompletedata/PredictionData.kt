@@ -1,7 +1,4 @@
 package com.learning.weatherappclean.data.model.autocompletedata
-
-
-
 import com.squareup.moshi.Json
 
 

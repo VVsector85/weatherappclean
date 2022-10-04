@@ -20,7 +20,7 @@ fun getIcon(weatherCode:Int, isNight:Boolean):Int{
        116 -> if (isNight) R.drawable.ic_cloud_night else R.drawable.ic_cloud_day
        113 -> if (isNight) R.drawable.ic_moon else R.drawable.ic_sun
 
-        else -> R.drawable.ic_alster
+        else -> R.drawable.ic_unknown
     }
 
 

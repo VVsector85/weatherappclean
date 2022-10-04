@@ -11,9 +11,6 @@ class SettingsData    (
     val detailsOnDoubleTap:Boolean,
     @field:Json( name ="dragAndDropCards")
     val dragAndDropCards:Boolean
-
-
-
 )
 
 

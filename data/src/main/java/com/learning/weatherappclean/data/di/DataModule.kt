@@ -24,7 +24,7 @@ class DataModule {
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             /*.addConverterFactory(MoshiConverterFactory.create())*/
-            /* .addConverterFactory(GsonConverterFactory.create())*/
+            /*.addConverterFactory(GsonConverterFactory.create())*/
             .build()
             .create(WeatherApi::class.java)
 

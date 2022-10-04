@@ -44,7 +44,7 @@ fun DropDown(
                     ) {
                         Box(modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { vm.addCard(/*"${item.lat}, ${item.lon}"*/location ="${item.location}, ${item.country}, ${item.region}", prediction = item) }
+                            .clickable { vm.addCard(location ="${item.location}, ${item.country}, ${item.region}", prediction = item) }
                             .padding(5.dp)
                         )
                         {

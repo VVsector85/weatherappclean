@@ -5,9 +5,6 @@ import com.learning.weatherappclean.domain.model.Settings
 
 
 interface SettingsRepository {
-
     fun saveSettings(settings: Settings):Boolean
     fun loadSettings(): Settings
-
-
 }
