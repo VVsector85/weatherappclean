@@ -51,18 +51,14 @@ fun DropDown(
                             Column(horizontalAlignment = Alignment.Start) {
                                 Text(
                                     text = item.location,
-                                    modifier = Modifier
-                                        .padding(top = 2.dp)
-                                        .padding(start = 10.dp),
+                                    modifier = Modifier.padding(top = 2.dp,start = 10.dp),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp,
                                     color = MaterialTheme.colors.onAutocomplete
                                 )
                                 Text(
                                     text = "${item.country}, ${item.region}",
-                                    modifier = Modifier
-                                        .padding(bottom = 2.dp)
-                                        .padding(start = 10.dp),
+                                    modifier = Modifier.padding(bottom = 2.dp,start = 10.dp),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colors.onAutocomplete

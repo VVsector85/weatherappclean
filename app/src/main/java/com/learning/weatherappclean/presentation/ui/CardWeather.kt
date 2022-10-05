@@ -104,11 +104,7 @@ fun CardWeather(
                         text = "${content.temperature}\u00b0${if (content.units == "f") "F" else ""}",
                         color = MaterialTheme.colors.onCard,
                         modifier = Modifier
-                            .padding(
-                                start = 15.dp,
-                                top = 0.dp,
-                                bottom = 0.dp
-                            )
+                            .padding(start = 15.dp)
                             .align(Alignment.TopStart),
                         fontSize = 60.sp,
                         fontWeight = FontWeight(600)
@@ -119,12 +115,7 @@ fun CardWeather(
                             text = content.location.uppercase(Locale.ROOT),
                             color = MaterialTheme.colors.onCard,
                             modifier = Modifier
-                                .padding(
-                                    start = 20.dp,
-                                    end = 10.dp,
-                                    top = 0.dp,
-                                    bottom = 0.dp
-                                )
+                                .padding(start = 20.dp, end = 10.dp)
                                 .horizontalScroll(state = ScrollState(0)),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
@@ -133,12 +124,7 @@ fun CardWeather(
                             text = "${content.country}${ if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else "" }",
                             color = MaterialTheme.colors.onCard,
                             modifier = Modifier
-                                .padding(
-                                    end = 10.dp,
-                                    start = 20.dp,
-                                    top = 0.dp,
-                                    bottom = 10.dp
-                                )
+                                .padding(end = 10.dp,start = 20.dp,bottom = 10.dp)
                                 .horizontalScroll(state = ScrollState(0)),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold

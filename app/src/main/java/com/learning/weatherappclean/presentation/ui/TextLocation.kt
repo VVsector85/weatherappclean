@@ -51,7 +51,7 @@ fun TextLocation(
         keyboardActions = KeyboardActions(
             onSearch = {
                 keyboardController?.hide()
-                vm.addCard(textSearch.value,null)
+                vm.addCard(location =textSearch.value, prediction = null)
                 vm.setExpanded(false)
             }
         ),
@@ -66,6 +66,7 @@ fun TextLocation(
         leadingIcon = {
             Text(text = stringResource(id = R.string.location), modifier = Modifier.padding(start = 10.dp, end = 5.dp))
         },
+        /**The "+" button seems to be redundant */
        /* trailingIcon = {
             Card(
                 modifier = Modifier
@@ -74,6 +75,7 @@ fun TextLocation(
                     .clickable {
                         vm.addCard(location = textSearch.value, prediction = null)
                         keyboardController?.hide()
+                        vm.setExpanded(false)
                     }
                     .background(MaterialTheme.colors.textField),
 

@@ -23,25 +23,28 @@ abstract class BaseRepository() {
                 if (response.isSuccessful) {
                     Resource.Success(data = response.body()!!)
                 } else {
+                    /** This never happens because WeatherStack API always
+                      responds with code 200 and "OK" message, so response.isSuccessful = true
+                     even in case of error*/
                     val errorResponse: ErrorResponse? = convertErrorBody(response.errorBody())
                     Resource.Error(
-                        errorMessage = errorResponse?.error?.info ?:"",// "Something went wrong",
+                        errorMessage = errorResponse?.error?.info ?:"",
                         errorType = ErrorType.INTERNAL_ERROR
                     )
                 }
             } catch (e: HttpException) {
                 Resource.Error(
-                    errorMessage = e.message ?: "",// "Something went wrong",
+                    errorMessage = e.message ?: "",
                     errorType = ErrorType.HTTP_ERROR
                 )
             } catch (e: IOException) {
                 Resource.Error(
-                    errorMessage = e.message ?: "",//""Please check your network connection",
+                    errorMessage = e.message ?: "",
                     errorType = ErrorType.IO_ERROR
                 )
             } catch (e: Exception) {
                 Resource.Error(
-                    errorMessage = e.message ?: "",//""Something went wrong",
+                    errorMessage = e.message ?: "",
                     errorType = ErrorType.UNKNOWN_ERROR
                 )
             }

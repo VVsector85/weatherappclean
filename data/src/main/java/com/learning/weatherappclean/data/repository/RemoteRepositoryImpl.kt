@@ -34,6 +34,8 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
             errorType = response.type,
             errorMsg = response.message ?: "error"
         )
+        /** The only way I found to distinct success response from failed one is to
+         try to parse API response in WeatherResponse and if it fails, in ErrorResponse*/
         val weatherResponse = JsonConverter().convertFromJson<WeatherResponse>(response.data)
         return if (weatherResponse?.current != null) {
             Mapper().mapToDomain(weatherResponse)

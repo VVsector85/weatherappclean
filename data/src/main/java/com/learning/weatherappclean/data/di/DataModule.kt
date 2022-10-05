@@ -37,6 +37,4 @@ class DataModule {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .build()
-
-
 }

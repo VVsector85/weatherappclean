@@ -114,15 +114,12 @@ fun MainScreen(vm: MainViewModel) {
                     TextLocation(
                         modifier = Modifier
                             .fillMaxWidth(if (isLandscape) 0.75f else 0.9f)
-                            .height(60.dp)
-                            .padding(bottom = 0.dp),
+                            .height(60.dp),
                         vm = vm,
                         textSearch = searchText
                     ) else if (!isLandscape)
                     Text(
                         text = stringResource(id = R.string.howIsTheWeather),
-                        modifier = Modifier
-                            .padding(top = 0.dp, bottom = 0.dp),
                         textAlign = TextAlign.Center,
                         fontSize = 25.sp,
                     )

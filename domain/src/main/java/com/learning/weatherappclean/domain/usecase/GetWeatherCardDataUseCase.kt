@@ -26,7 +26,7 @@ class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) 
 
             /**This condition was in the task so I consider it as a part of business logic.
             That is why it is in the domain module
-            No actual colours specified specified here, just enums*/
+            No actual colours specified here, just enums*/
 
             if (!weatherCard.error) {
                 val temperature = weatherCard.temperature.toInt()

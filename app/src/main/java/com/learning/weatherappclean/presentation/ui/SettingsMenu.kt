@@ -94,7 +94,6 @@ fun MenuSwitchItem(
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
                     text = description,
-                    // fontSize = 20.sp
                 )
             }
         }

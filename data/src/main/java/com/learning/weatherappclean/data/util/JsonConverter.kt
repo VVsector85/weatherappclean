@@ -9,7 +9,7 @@ import com.squareup.moshi.Moshi
          return try {
              jsonString.let {
                  val moshiAdapter = Moshi.Builder().build().adapter(T::class.java)
-                 moshiAdapter.fromJson(it)
+                 moshiAdapter.fromJson(it!!)
              }
          } catch (exception: Exception) {
              null

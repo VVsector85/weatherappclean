@@ -1,17 +1,13 @@
 package com.learning.weatherappclean.presentation.ui
 
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.*
-
-
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.learning.weatherappclean.util.ErrorMessage
@@ -43,7 +39,6 @@ fun WeatherList(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // .padding(padding)
                 .padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -101,8 +96,7 @@ fun WeatherGrid(
         items(weatherCardList.value.size) { index ->
             CardWeather(
                 modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .padding(horizontal = 0.dp, vertical = 0.dp),
+                    .fillMaxWidth(0.9f),
                 content = weatherCardList.value[index],
                 index = index,
                 delete = vm::deleteCard,
@@ -133,7 +127,6 @@ fun WeatherColumnWithDrag(
         CardWeather(
             modifier = Modifier
                 .fillMaxWidth(0.9f),
-            // .padding(horizontal = 0.dp, vertical = 0.dp),
             content = item,
             index = index,
             delete = vm::deleteCard,

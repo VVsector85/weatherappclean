@@ -25,20 +25,14 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideLocalStorage(@ApplicationContext context: Context):RequestsStorage{
+    fun provideRequestsStorage(@ApplicationContext context: Context):RequestsStorage{
         return SharedPrefsRequestsStorage(context)
     }
 
     @Provides
     @Singleton
-    fun provideLocalRepository (requestsStorage: RequestsStorage):RequestsRepository{
+    fun provideRequestsRepository (requestsStorage: RequestsStorage):RequestsRepository{
         return RequestsRepositoryImpl(requestsStorage = requestsStorage)
-    }
-
-    @Provides
-    @Singleton
-    fun provideSettingsRepository (settingsStorage: SettingsStorage): SettingsRepository {
-        return SettingsRepositoryImpl(settingsStorage = settingsStorage)
     }
 
     @Provides
@@ -47,6 +41,11 @@ class DataModule {
         return SharedPrefsSettingsStorage(context)
     }
 
+    @Provides
+    @Singleton
+    fun provideSettingsRepository (settingsStorage: SettingsStorage): SettingsRepository {
+        return SettingsRepositoryImpl(settingsStorage = settingsStorage)
+    }
     @Provides
     @Singleton
     fun provideRemoteRepository (weatherAPI: WeatherApi): RemoteRepository {
