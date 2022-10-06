@@ -7,8 +7,6 @@ import com.learning.weatherappclean.util.ErrorMapper
 import com.learning.weatherappclean.util.ErrorMessage
 import com.learning.weatherappclean.util.ErrorTypeUi
 import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
-
-
 import com.learning.weatherappclean.domain.model.Autocomplete
 import com.learning.weatherappclean.domain.model.Request
 import com.learning.weatherappclean.domain.model.Settings
@@ -42,6 +40,7 @@ class MainViewModel @Inject constructor(
     private val expanded = MutableStateFlow(false)
     private val showSearch = MutableStateFlow(false)
     private val searchText = MutableStateFlow("")
+    private var lastRefreshTime = System.currentTimeMillis()
 
     init {
         settings.value = loadSettingsUseCase.execute()
@@ -71,6 +70,10 @@ class MainViewModel @Inject constructor(
         }
         expanded.value = true
         return flowOf(getAutocompletePredictionsUseCase.execute(Request(query)).predictions)
+    }
+
+    fun refreshCardsOnResume() {
+        if (System.currentTimeMillis() - lastRefreshTime > REFRESH_ON_RESUME_TIMEOUT) refreshCards()
     }
 
     fun deleteCard(index: Int) {
@@ -107,17 +110,17 @@ class MainViewModel @Inject constructor(
                 )
             )
             if (!card.error) {
-                val list = weatherCardsList.value.toMutableList()
-                if (list.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
-                    if (settings.value.newCardFirst) list.add(0, card) else list.add(card)
+                val tempCardList = weatherCardsList.value.toMutableList()
+                if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
+                    if (settings.value.newCardFirst) tempCardList.add(0, card) else tempCardList.add(card)
                     noRequests.emit(false)
-                    weatherCardsList.emit(list)
+                    weatherCardsList.emit(tempCardList)
                     scrollToFirst.value = Pair(
                         true,
                         if (settings.value.newCardFirst) 0 else weatherCardsList.value.size
                     )
                     searchText.value = ""
-                    saveRequestListUseCase.execute(list)
+                    saveRequestListUseCase.execute(tempCardList)
                     showSearch.emit(false)
                 } else {
                     errorMessage.value = ErrorMessage(
@@ -143,16 +146,21 @@ class MainViewModel @Inject constructor(
 
     fun refreshCards() {
         isLoading.value = true
+        var duplicatesFound = false
         val requestList = loadRequestListUseCase.execute()
         noRequests.tryEmit(requestList.isEmpty())
         val tempCardList = mutableListOf<WeatherCard>()
         viewModelScope.launch(IO) {
             run breaking@{
-                requestList.forEach {
-                    it.units = if (settings.value.imperialUnits) "f" else "m"
-                    val card = getWeatherCardDataUseCase.execute(it)
+                requestList.forEach { request ->
+                    request.units = if (settings.value.imperialUnits) "f" else "m"
+                    val card = getWeatherCardDataUseCase.execute(request)
                     if (!card.error) {
-                        tempCardList.add(card)
+                        if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
+                            tempCardList.add(card)
+                        } else {
+                            duplicatesFound = true
+                        }
                     } else {
                         errorMessage.value = ErrorMessage(
                             errorType = ErrorMapper().mapToPresentation(card.errorType as ErrorType),
@@ -161,14 +169,16 @@ class MainViewModel @Inject constructor(
                             errorString = card.errorMsg
                         )
                         isLoading.value = false
-                        return@breaking false
+                        return@breaking
                     }
                 }
             }
             weatherCardsList.emit(tempCardList)
+            lastRefreshTime = System.currentTimeMillis()
             scrollToFirst.value =
                 Pair(true, if (settings.value.newCardFirst) 0 else weatherCardsList.value.size)
             isLoading.value = false
+            if (duplicatesFound) saveRequestListUseCase.execute(tempCardList)
         }
     }
 
@@ -206,5 +216,6 @@ class MainViewModel @Inject constructor(
         private const val DEFAULT_ERROR_MESSAGE_SHOW_TIME = 8000L
         private const val AUTOCOMPLETE_QUERY_DELAY = 1500L
         private const val AUTOCOMPLETE_QUERY_MIN_CHARS = 3
+        private const val REFRESH_ON_RESUME_TIMEOUT = 1800000L
     }
 }

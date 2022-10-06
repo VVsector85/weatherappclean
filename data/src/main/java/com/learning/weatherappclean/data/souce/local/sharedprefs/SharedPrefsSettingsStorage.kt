@@ -7,11 +7,6 @@ import com.learning.weatherappclean.data.souce.local.SettingsStorage
 import com.learning.weatherappclean.data.util.JsonConverter
 import com.learning.weatherappclean.domain.model.Settings
 
-private const val SHARED_PREFS_SETTINGS = "shared_refs_weather_settings"
-private const val KEY_SETTINGS = "settings"
-private const val DEFAULT_SETTINGS =
-    """{"imperialUnits":false,"newCardFirst":true,"detailsOnDoubleTap":true,"dragAndDropCards":true }"""
-
 class SharedPrefsSettingsStorage(context: Context) : SettingsStorage {
     private val sharedPreferences =
         context.getSharedPreferences(SHARED_PREFS_SETTINGS, Context.MODE_PRIVATE)
@@ -19,7 +14,9 @@ class SharedPrefsSettingsStorage(context: Context) : SettingsStorage {
     override fun load(): SettingsData {
         return JsonConverter().convertFromJson<SettingsData>(
             jsonString = sharedPreferences.getString(
-                KEY_SETTINGS,DEFAULT_SETTINGS) ?: DEFAULT_SETTINGS)!!
+                KEY_SETTINGS, DEFAULT_SETTINGS
+            ) ?: DEFAULT_SETTINGS
+        )!!
     }
 
     override fun save(settings: Settings): Boolean {
@@ -28,4 +25,10 @@ class SharedPrefsSettingsStorage(context: Context) : SettingsStorage {
         return true
     }
 
+    companion object {
+        private const val SHARED_PREFS_SETTINGS = "shared_refs_weather_settings"
+        private const val KEY_SETTINGS = "settings"
+        private const val DEFAULT_SETTINGS =
+            """{"imperialUnits":false,"newCardFirst":true,"detailsOnDoubleTap":true,"dragAndDropCards":true }"""
+    }
 }

@@ -22,8 +22,4 @@ fun getIcon(weatherCode:Int, isNight:Boolean):Int{
 
         else -> R.drawable.ic_unknown
     }
-
-
-
-
 }
