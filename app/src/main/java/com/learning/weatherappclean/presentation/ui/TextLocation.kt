@@ -39,20 +39,17 @@ fun TextLocation(
         focusRequester.requestFocus()
     }
     TextField(
-        modifier = modifier
-
-            .focusRequester(focusRequester),
+        modifier = modifier.focusRequester(focusRequester),
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.textField,
             focusedIndicatorColor = Color.LightGray.copy(alpha = 0f),
             cursorColor = MaterialTheme.colors.onTextField,
-
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
                 keyboardController?.hide()
-                vm.addCard(location =textSearch.value, prediction = null)
                 vm.setExpanded(false)
+                vm.addCard(location =textSearch.value, prediction = null)
             }
         ),
         keyboardOptions = KeyboardOptions.Default.copy(

@@ -51,7 +51,7 @@ class MainViewModel @Inject constructor(
     val getScrollToFirst: StateFlow<Pair<Boolean, Int>> get() = scrollToFirst.asStateFlow()
     val getLoadingState: StateFlow<Boolean> get() = isLoading.asStateFlow()
     val getPredictions: Flow<List<Autocomplete.Prediction>> get() = predictions
-    val getList: StateFlow<List<WeatherCard>> get() = weatherCardsList.asStateFlow()
+    val getCardList: StateFlow<List<WeatherCard>> get() = weatherCardsList.asStateFlow()
     val getSettings: StateFlow<Settings> get() = settings.asStateFlow()
     val getNoRequests: StateFlow<Boolean> get() = noRequests.asStateFlow()
     val getExpanded: StateFlow<Boolean> get() = expanded.asStateFlow()
@@ -62,26 +62,22 @@ class MainViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     private val predictions = searchText.debounce(AUTOCOMPLETE_QUERY_DELAY)
         .distinctUntilChanged()
-        .flatMapLatest { autocompleteQuery(it) }
+        .flatMapLatest { autocompleteQuery(query = it) }
 
     private suspend fun autocompleteQuery(query: String): Flow<List<Autocomplete.Prediction>> {
         if (query.length < AUTOCOMPLETE_QUERY_MIN_CHARS) {
             return flowOf(emptyList())
         }
-        expanded.value = true
+        expanded.emit(true)
         return flowOf(getAutocompletePredictionsUseCase.execute(Request(query)).predictions)
     }
 
-    fun refreshCardsOnResume() {
-        if (System.currentTimeMillis() - lastRefreshTime > REFRESH_ON_RESUME_TIMEOUT) refreshCards()
-    }
-
     fun deleteCard(index: Int) {
-        val list = weatherCardsList.value.toMutableList()
-        list.removeAt(index)
-        if (list.isEmpty()) noRequests.value = true
-        weatherCardsList.update { list }
-        saveRequestListUseCase.execute(list)
+        val tempCardList = weatherCardsList.value.toMutableList()
+        tempCardList.removeAt(index)
+        if (tempCardList.isEmpty()) noRequests.value = true
+        weatherCardsList.value = tempCardList
+        saveRequestListUseCase.execute(tempCardList)
     }
 
     fun saveSettings(value: Boolean, field: KProperty1<Settings, *>) {
@@ -112,35 +108,38 @@ class MainViewModel @Inject constructor(
             if (!card.error) {
                 val tempCardList = weatherCardsList.value.toMutableList()
                 if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
-                    if (settings.value.newCardFirst) tempCardList.add(0, card) else tempCardList.add(card)
+                    if (settings.value.newCardFirst) tempCardList.add(
+                        0,
+                        card
+                    ) else tempCardList.add(card)
                     noRequests.emit(false)
                     weatherCardsList.emit(tempCardList)
-                    scrollToFirst.value = Pair(
+                    scrollToFirst.emit (Pair(
                         true,
                         if (settings.value.newCardFirst) 0 else weatherCardsList.value.size
-                    )
-                    searchText.value = ""
+                    ))
+                    searchText.emit("")
                     saveRequestListUseCase.execute(tempCardList)
                     showSearch.emit(false)
                 } else {
-                    errorMessage.value = ErrorMessage(
+                    errorMessage.emit (ErrorMessage(
                         errorType = ErrorTypeUi.SAME_ITEM_ERROR,
                         showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
                         errorCode = null,
                         errorString = "${card.location}, ${card.country}, ${card.region}"
-                    )
-                    isLoading.value = false
+                    ))
+                    isLoading.emit(false)
                 }
             } else {
-                errorMessage.value = ErrorMessage(
+                errorMessage.emit(ErrorMessage(
                     errorType = ErrorMapper().mapToPresentation(card.errorType as ErrorType),
                     showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
                     errorCode = card.errorCode,
                     errorString = card.errorMsg
-                )
-                isLoading.value = false
+                ))
+                isLoading.emit(false)
             }
-            isLoading.value = false
+            isLoading.emit(false)
         }
     }
 
@@ -162,22 +161,21 @@ class MainViewModel @Inject constructor(
                             duplicatesFound = true
                         }
                     } else {
-                        errorMessage.value = ErrorMessage(
+                        errorMessage.emit(ErrorMessage(
                             errorType = ErrorMapper().mapToPresentation(card.errorType as ErrorType),
                             showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
                             errorCode = card.errorCode,
                             errorString = card.errorMsg
-                        )
-                        isLoading.value = false
+                        ))
+                        isLoading.emit(false)
                         return@breaking
                     }
                 }
             }
             weatherCardsList.emit(tempCardList)
             lastRefreshTime = System.currentTimeMillis()
-            scrollToFirst.value =
-                Pair(true, if (settings.value.newCardFirst) 0 else weatherCardsList.value.size)
-            isLoading.value = false
+            scrollToFirst.emit(Pair(true, if (settings.value.newCardFirst) 0 else weatherCardsList.value.size))
+            isLoading.emit(false)
             if (duplicatesFound) saveRequestListUseCase.execute(tempCardList)
         }
     }
@@ -189,13 +187,6 @@ class MainViewModel @Inject constructor(
         saveRequestListUseCase.execute(list)
     }
 
-    fun setShowSearch(boolean: Boolean) {
-        showSearch.update { boolean }
-    }
-
-    fun setExpanded(boolean: Boolean) {
-        expanded.update { boolean }
-    }
 
     fun swapSections(a: Int, b: Int) {
         val list = weatherCardsList.value.toMutableList()
@@ -204,12 +195,25 @@ class MainViewModel @Inject constructor(
         saveRequestListUseCase.execute(weatherCardsList.value)
     }
 
+    fun setShowSearch(value: Boolean) {
+        showSearch.value = value
+        searchText.value = ""
+    }
+
+    fun setExpanded(value: Boolean) {
+        expanded.value = value
+    }
+
     fun stopScrollToFirst() {
         scrollToFirst.value = Pair(false, 0)
     }
 
     fun resetErrorMessage() {
         errorMessage.value = ErrorMessage()
+    }
+
+    fun refreshCardsOnResume() {
+        if (System.currentTimeMillis() - lastRefreshTime > REFRESH_ON_RESUME_TIMEOUT) refreshCards()
     }
 
     companion object {

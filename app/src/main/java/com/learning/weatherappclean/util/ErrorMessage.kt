@@ -10,7 +10,6 @@ import com.learning.weatherappclean.R
 
  ) {
 
-
     fun getErrorMessage():Pair<Int?, String>{
 
         if (errorType == ErrorTypeUi.API_ERROR){
@@ -28,9 +27,7 @@ import com.learning.weatherappclean.R
             return Pair (R.string.ioError,errorString)
         }
         else if(errorType == ErrorTypeUi.SAME_ITEM_ERROR){
-
             return Pair (R.string.isOnTheList,errorString)
-
         }
              return Pair(null,errorString)
     }

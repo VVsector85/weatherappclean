@@ -29,14 +29,12 @@ fun MainScreen(vm: MainViewModel) {
     val expanded = vm.getExpanded.collectAsState()
     val errorMsg = vm.getError.collectAsState()
     val predictionsList = vm.getPredictions.collectAsState(initial = emptyList())
-    val weatherCardList = vm.getList.collectAsState()
+    val weatherCardList = vm.getCardList.collectAsState()
     val isLoading = vm.getLoadingState.collectAsState()
     val scrollToFirst = vm.getScrollToFirst.collectAsState()
     val settings = vm.getSettings.collectAsState()
     val noRequests = vm.getNoRequests.collectAsState()
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-
 
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
@@ -106,8 +104,6 @@ fun MainScreen(vm: MainViewModel) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-
-
         ) {
 
                 if (showSearch.value)
@@ -123,7 +119,6 @@ fun MainScreen(vm: MainViewModel) {
                         textAlign = TextAlign.Center,
                         fontSize = 25.sp,
                     )
-
             DropDown(
                 expanded = expanded,
                 vm = vm,

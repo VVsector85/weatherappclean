@@ -50,7 +50,7 @@ fun CardWeather(
         mutableStateOf(content.showDetails)
     }
     LaunchedEffect(Unit) {
-        vm.getList.collectLatest { if (it.size > index) details.value = it[index].showDetails }
+       vm.getCardList.collectLatest { if (it.size > index) details.value = it[index].showDetails }
     }
     Card(
         modifier = modifier
@@ -155,7 +155,7 @@ fun CardWeather(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.33f)
-                        .padding(start = 26.dp)
+                        .padding(start = 20.dp)
                 ) {
                     Column() {
                         WeatherDetails(
@@ -173,7 +173,7 @@ fun CardWeather(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
-                        .padding(start = 20.dp)
+                        .padding(start = 24.dp)
                 ) {
                     Column() {
                         WeatherDetails(
@@ -231,7 +231,6 @@ fun WeatherDetails(
                 ),
                 contentDescription = stringResource(id = description),
                 modifier = Modifier
-                    .padding(0.dp)
                     .size(30.dp, 30.dp)
                     .align(Alignment.CenterVertically),
                 tint = MaterialTheme.colors.onCard

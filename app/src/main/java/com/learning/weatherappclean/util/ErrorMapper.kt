@@ -11,7 +11,5 @@ class ErrorMapper {
             ErrorType.IO_ERROR -> ErrorTypeUi.IO_ERROR
         else -> ErrorTypeUi.UNKNOWN_ERROR
         }
-
     }
-
 }
