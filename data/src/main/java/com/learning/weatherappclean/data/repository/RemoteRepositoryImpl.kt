@@ -1,17 +1,18 @@
 package com.learning.weatherappclean.data.repository
 
 
-import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
+import com.learning.weatherappclean.data.model.ErrorType
 import com.learning.weatherappclean.data.util.Mapper
 import com.learning.weatherappclean.data.util.JsonConverter
-import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
-import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
+import com.learning.weatherappclean.data.model.dto.apierror.ErrorResponse
+import com.learning.weatherappclean.data.model.dto.autocompletedata.AutocompleteResponse
 import com.learning.weatherappclean.data.util.Constants.API_KEY
-import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
+import com.learning.weatherappclean.data.model.dto.weatherdata.WeatherResponse
 import com.learning.weatherappclean.data.souce.remote.Resource
 import com.learning.weatherappclean.data.souce.remote.WeatherApi
-import com.learning.weatherappclean.domain.model.Autocomplete
+import com.learning.weatherappclean.domain.model.AutocompletePrediction
 import com.learning.weatherappclean.domain.model.Request
+import com.learning.weatherappclean.domain.model.ResourceDomain
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 import javax.inject.Inject
@@ -20,7 +21,7 @@ import javax.inject.Inject
 class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherApi) :
     RemoteRepository, BaseRepository() {
 
-    override suspend fun getWeatherData(request: Request): WeatherCard {
+    override suspend fun getWeatherData(request: Request): ResourceDomain<WeatherCard> {
         val response =
             safeApiCall {
                 weatherApi.getWeather(
@@ -29,46 +30,47 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
                     units = request.units
                 )
             }
-        if (response is Resource.Error) return WeatherCard(
-            error = true,
-            errorType = response.type,
-            errorMsg = response.message ?: "error"
+        if (response is Resource.Error) return ResourceDomain.Error(
+            errorType = response.type as ErrorType,
+            errorMessage = response.message ?: "error",
+            errorCode = null
         )
         /** The only way I found to distinct success response from failed one is to
          try to parse API response in WeatherResponse and if it fails, in ErrorResponse*/
         val weatherResponse = JsonConverter().convertFromJson<WeatherResponse>(response.data)
         return if (weatherResponse?.current != null) {
-            Mapper().mapToDomain(weatherResponse)
+            ResourceDomain.Success( Mapper().mapToDomain(weatherResponse))
         } else {
             val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             if (errorResponse != null) {
-                Mapper().mapToDomain<WeatherCard>(errorResponse) as WeatherCard
-            } else WeatherCard(error = true, errorType = ErrorType.UNKNOWN_ERROR)
+                ResourceDomain.Error( errorType = ErrorType.API_ERROR, errorMessage = errorResponse.error.info, errorCode = errorResponse.error.code ) // Mapper().mapToDomain<WeatherCard>(errorResponse) as WeatherCard
+            } else ResourceDomain.Error( errorType = ErrorType.UNKNOWN_ERROR , errorMessage = response.message?:"unknown error", errorCode = null)//WeatherCard(error = true, errorType = ErrorType.UNKNOWN_ERROR)
         }
     }
 
-    override suspend fun getAutocompletePredictions(request: Request): Autocomplete {
+    override suspend fun getAutocompletePredictions(request: Request): ResourceDomain<List<AutocompletePrediction>> {
         val response =
             safeApiCall {
                 weatherApi.getAutocomplete(
                     accessKey = API_KEY,
-                    searchString = request.query
+                    searchString = request.query,
                 )
             }
-        if (response is Resource.Error) return Autocomplete(
-            error = true,
-            errorType = response.type,
-            errorMsg = response.message ?: "error"
+        if (response is Resource.Error) return ResourceDomain.Error(
+
+            errorType = response.type as ErrorType,
+            errorMessage = response.message ?: "error",
+            errorCode = null
         )
         val autocompleteResponse =
             JsonConverter().convertFromJson<AutocompleteResponse>(response.data)
         return if (autocompleteResponse?.predictionData != null) {
-            Mapper().mapToDomain(autocompleteResponse)
+            ResourceDomain.Success( data =  Mapper().mapToDomain(autocompleteResponse))
         } else {
             val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             if (errorResponse != null) {
-                Mapper().mapToDomain<Autocomplete>(errorResponse) as Autocomplete
-            } else Autocomplete(error = true, errorType = ErrorType.UNKNOWN_ERROR)
+                ResourceDomain.Error( errorType = ErrorType.API_ERROR, errorMessage = errorResponse.error.info, errorCode = errorResponse.error.code )
+            } else ResourceDomain.Error( errorType = ErrorType.UNKNOWN_ERROR , errorMessage = response.message?:"unknown error", errorCode = null)
         }
     }
 }

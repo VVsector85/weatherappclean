@@ -5,7 +5,7 @@ import com.learning.weatherappclean.domain.repository.RequestsRepository
 
 class SaveRequestListUseCase (private val requestsRepository:RequestsRepository){
 
-   fun execute(saveWeatherCardsList: List<WeatherCard>):Boolean {
+    operator fun invoke(saveWeatherCardsList: List<WeatherCard>):Boolean {
        return requestsRepository.saveWeatherCards(saveWeatherCardsList =  saveWeatherCardsList)
    }
 }

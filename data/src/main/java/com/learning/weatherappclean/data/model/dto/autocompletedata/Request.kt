@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.model.autocompletedata
+package com.learning.weatherappclean.data.model.dto.autocompletedata
 import com.squareup.moshi.Json
 
 data class Request(

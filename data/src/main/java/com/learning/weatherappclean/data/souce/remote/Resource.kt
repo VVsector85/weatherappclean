@@ -1,6 +1,6 @@
 package com.learning.weatherappclean.data.souce.remote
 
-import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
+import com.learning.weatherappclean.data.model.ErrorType
 
 sealed class Resource<T>(
     val data: T? = null,
@@ -9,6 +9,6 @@ sealed class Resource<T>(
 ) {
 
     class Success<T>(data: T) : Resource<T>(data = data)
-    class Error<T>(errorType: ErrorType,errorMessage: String) : Resource<T>(type = errorType,message = errorMessage)
+    class Error<T>(errorType: ErrorType, errorMessage: String) : Resource<T>(type = errorType,message = errorMessage)
 
 }

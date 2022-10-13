@@ -1,16 +1,15 @@
 package com.learning.weatherappclean.data.util
 
-import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
-import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
-import com.learning.weatherappclean.data.model.autocompletedata.AutocompleteResponse
-import com.learning.weatherappclean.data.model.requests.CardQuery
-import com.learning.weatherappclean.data.model.requests.WeatherQuery
-import com.learning.weatherappclean.data.model.settings.SettingsData
-import com.learning.weatherappclean.data.model.weatherdata.WeatherResponse
-import com.learning.weatherappclean.domain.model.Autocomplete
-import com.learning.weatherappclean.domain.model.Request
-import com.learning.weatherappclean.domain.model.Settings
-import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.data.model.ErrorType
+import com.learning.weatherappclean.data.model.dto.apierror.ErrorResponse
+import com.learning.weatherappclean.data.model.dto.autocompletedata.AutocompleteResponse
+import com.learning.weatherappclean.data.model.dto.requests.CardQuery
+import com.learning.weatherappclean.data.model.dto.requests.WeatherQuery
+import com.learning.weatherappclean.data.model.dto.settings.SettingsData
+import com.learning.weatherappclean.data.model.dto.weatherdata.WeatherResponse
+import com.learning.weatherappclean.domain.model.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 internal class Mapper {
 
@@ -22,7 +21,6 @@ internal class Mapper {
             lat = response.location.lat,
             lon = response.location.lon,
             units = response.request.unit,
-
             temperature = response.current.temperature,
             cloudCover = response.current.cloudcover,
             feelsLike = response.current.feelslike,
@@ -31,49 +29,19 @@ internal class Mapper {
             uvIndex = response.current.uvIndex,
             windSpeed = response.current.windSpeed,
             weatherCode = response.current.weatherCode,
-
             isNightIcon = response.current.weatherIcons[0].contains("night"),
             weatherDescription = response.current.weatherDescriptions[0],
-
-            /*   observationTime = response.current.observationTime,
-               visibility = response.current.visibility,
-               windDegree = response.current.windDegree,
-               windDir = response.current.windDir,
-               localtime = response.location.localtime,
-               timezoneId = response.location.timezoneId,
-               utcOffset = response.location.utcOffset,*/
-
-
+            cardColorOption = CardColorOption.DEFAULT,
+            showDetails = false
         )
     }
 
 
-    internal inline fun <reified T> mapToDomain(response: ErrorResponse): Any? {
-        return when (T::class) {
-            WeatherCard::class -> WeatherCard(
-
-                error = true,
-                errorType = ErrorType.API_ERROR,
-                errorCode = response.error.code,
-                errorMsg = "${response.error.type}, ${response.error.info}",
-
-                )
-            Autocomplete::class -> Autocomplete(
-
-                error = true,
-                errorType = ErrorType.API_ERROR,
-                errorCode = response.error.code,
-                errorMsg = "${response.error.type}, ${response.error.info}"
-            )
-            else -> null
-        }
-    }
-
-    internal fun mapToDomain(response: AutocompleteResponse): Autocomplete {
-        val tempList: MutableList<Autocomplete.Prediction> = mutableListOf()
+    internal fun mapToDomain(response: AutocompleteResponse): List<AutocompletePrediction> {
+        val tempList: MutableList<AutocompletePrediction> = mutableListOf()
         response.predictionData.forEach {
             tempList.add(
-                Autocomplete.Prediction(
+                AutocompletePrediction(
                     location = it.name,
                     country = it.country,
                     region = it.region,
@@ -83,10 +51,7 @@ internal class Mapper {
             )
         }
 
-        return Autocomplete(
-            searchString = response.request.query,
-            predictions = tempList
-        )
+        return tempList
     }
 
     internal fun mapToDomain(response: SettingsData): Settings =

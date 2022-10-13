@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.model.apierror.connection
+package com.learning.weatherappclean.data.model
 
 enum class ErrorType{
     HTTP_ERROR,

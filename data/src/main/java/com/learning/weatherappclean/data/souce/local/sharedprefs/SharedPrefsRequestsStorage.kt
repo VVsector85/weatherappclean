@@ -1,12 +1,10 @@
 package com.learning.weatherappclean.data.souce.local.sharedprefs
 
 import android.content.Context
-import android.util.Log
-import com.learning.weatherappclean.data.model.requests.CardQuery
 import com.learning.weatherappclean.data.souce.local.RequestsStorage
-import com.learning.weatherappclean.data.model.requests.WeatherQuery
+import com.learning.weatherappclean.data.model.dto.requests.WeatherQuery
 import com.learning.weatherappclean.data.util.JsonConverter
-import com.learning.weatherappclean.data.util.Mapper
+
 class SharedPrefsRequestsStorage (context: Context): RequestsStorage {
 
     private val sharedPreferences = context.getSharedPreferences(SHARED_PREFS_WEATHER_CARDS, Context.MODE_PRIVATE)

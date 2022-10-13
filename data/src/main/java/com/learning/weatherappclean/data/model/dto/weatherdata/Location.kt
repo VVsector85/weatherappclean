@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.model.weatherdata
+package com.learning.weatherappclean.data.model.dto.weatherdata
 
 
 

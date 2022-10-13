@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.learning.weatherappclean.domain.model.Autocomplete
+import com.learning.weatherappclean.domain.model.AutocompletePrediction
 import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.theme.autocomplete
 import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
@@ -24,7 +24,7 @@ import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
 fun DropDown(
     expanded: State<Boolean>,
     vm: MainViewModel,
-    predictionList: State<List<Autocomplete.Prediction>>,
+    predictionList: State<List<AutocompletePrediction>>,
     isLandscape:Boolean
 
 ) {

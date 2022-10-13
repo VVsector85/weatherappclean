@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.model.settings
+package com.learning.weatherappclean.data.model.dto.settings
 
 import com.squareup.moshi.Json
 

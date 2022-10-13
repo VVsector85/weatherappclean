@@ -1,6 +1,6 @@
 package com.learning.weatherappclean.util
 
-import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
+import com.learning.weatherappclean.data.model.ErrorType
 
 class ErrorMapper {
 

@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.model.requests
+package com.learning.weatherappclean.data.model.dto.requests
 
 
 import com.squareup.moshi.Json

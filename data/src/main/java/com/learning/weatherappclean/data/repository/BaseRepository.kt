@@ -1,8 +1,8 @@
 package com.learning.weatherappclean.data.repository
 
 
-import com.learning.weatherappclean.data.model.apierror.connection.ErrorType
-import com.learning.weatherappclean.data.model.apierror.internal.ErrorResponse
+import com.learning.weatherappclean.data.model.ErrorType
+import com.learning.weatherappclean.data.model.dto.apierror.ErrorResponse
 import com.learning.weatherappclean.data.souce.remote.Resource
 
 import com.squareup.moshi.Moshi

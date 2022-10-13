@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.model.apierror.internal
+package com.learning.weatherappclean.data.model.dto.apierror
 
 import com.squareup.moshi.Json
 
