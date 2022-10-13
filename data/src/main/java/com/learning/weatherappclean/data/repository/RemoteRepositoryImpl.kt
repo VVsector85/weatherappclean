@@ -23,41 +23,41 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
 
     override suspend fun getWeatherData(request: Request): ResourceDomain<WeatherCard> {
         val response =
-            safeApiCall {
-                weatherApi.getWeather(
-                    accessKey = API_KEY,
-                    city = request.query,
-                    units = request.units
-                )
-            }
+            safeApiCall { weatherApi.getWeather(city = request.query, units = request.units) }
         if (response is Resource.Error) return ResourceDomain.Error(
             errorType = response.type as ErrorType,
             errorMessage = response.message ?: "error",
             errorCode = null
         )
         /** The only way I found to distinct success response from failed one is to
-         try to parse API response in WeatherResponse and if it fails, in ErrorResponse*/
+        try to parse API response in WeatherResponse and if it fails, in ErrorResponse
+
+        I have to handle errors on two levels, lower one (http and IO errors) and higher one,
+        when I get API response with code 200 and OK message but there is error data instead of
+        weather data in response body. This makes my code ugly
+         */
         val weatherResponse = JsonConverter().convertFromJson<WeatherResponse>(response.data)
         return if (weatherResponse?.current != null) {
-            ResourceDomain.Success( Mapper().mapToDomain(weatherResponse))
+            ResourceDomain.Success(Mapper().mapToDomain(weatherResponse))
         } else {
             val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             if (errorResponse != null) {
-                ResourceDomain.Error( errorType = ErrorType.API_ERROR, errorMessage = errorResponse.error.info, errorCode = errorResponse.error.code ) // Mapper().mapToDomain<WeatherCard>(errorResponse) as WeatherCard
-            } else ResourceDomain.Error( errorType = ErrorType.UNKNOWN_ERROR , errorMessage = response.message?:"unknown error", errorCode = null)//WeatherCard(error = true, errorType = ErrorType.UNKNOWN_ERROR)
+                ResourceDomain.Error(
+                    errorType = ErrorType.API_ERROR,
+                    errorMessage = errorResponse.error.info,
+                    errorCode = errorResponse.error.code
+                )
+            } else ResourceDomain.Error(
+                errorType = ErrorType.UNKNOWN_ERROR,
+                errorMessage = response.message ?: "unknown error",
+                errorCode = null
+            )
         }
     }
 
     override suspend fun getAutocompletePredictions(request: Request): ResourceDomain<List<AutocompletePrediction>> {
-        val response =
-            safeApiCall {
-                weatherApi.getAutocomplete(
-                    accessKey = API_KEY,
-                    searchString = request.query,
-                )
-            }
+        val response = safeApiCall { weatherApi.getAutocomplete(searchString = request.query) }
         if (response is Resource.Error) return ResourceDomain.Error(
-
             errorType = response.type as ErrorType,
             errorMessage = response.message ?: "error",
             errorCode = null
@@ -65,12 +65,20 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
         val autocompleteResponse =
             JsonConverter().convertFromJson<AutocompleteResponse>(response.data)
         return if (autocompleteResponse?.predictionData != null) {
-            ResourceDomain.Success( data =  Mapper().mapToDomain(autocompleteResponse))
+            ResourceDomain.Success(data = Mapper().mapToDomain(autocompleteResponse))
         } else {
             val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             if (errorResponse != null) {
-                ResourceDomain.Error( errorType = ErrorType.API_ERROR, errorMessage = errorResponse.error.info, errorCode = errorResponse.error.code )
-            } else ResourceDomain.Error( errorType = ErrorType.UNKNOWN_ERROR , errorMessage = response.message?:"unknown error", errorCode = null)
+                ResourceDomain.Error(
+                    errorType = ErrorType.API_ERROR,
+                    errorMessage = errorResponse.error.info,
+                    errorCode = errorResponse.error.code
+                )
+            } else ResourceDomain.Error(
+                errorType = ErrorType.UNKNOWN_ERROR,
+                errorMessage = response.message ?: "unknown error",
+                errorCode = null
+            )
         }
     }
 }

@@ -18,7 +18,7 @@ import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.theme.onTextField
 
 @Composable
-fun NoCards(noRequests: State<Boolean>, vm: MainViewModel) {
+fun NoCards(noRequests: State<Boolean>, refreshCards:()->Unit) {
 
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center)
     {
@@ -35,7 +35,7 @@ fun NoCards(noRequests: State<Boolean>, vm: MainViewModel) {
             color = MaterialTheme.colors.onTextField
         )
         if (!noRequests.value) Button(
-            onClick = { vm.refreshCards() }, modifier = Modifier
+            onClick = { refreshCards() }, modifier = Modifier
                 .padding(30.dp)
                 .align(Alignment.CenterHorizontally)
         ) {

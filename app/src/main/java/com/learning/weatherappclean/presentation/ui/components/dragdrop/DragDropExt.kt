@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.presentation.ui.dragdrop
+package com.learning.weatherappclean.presentation.ui.components.dragdrop
 
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateFloatAsState

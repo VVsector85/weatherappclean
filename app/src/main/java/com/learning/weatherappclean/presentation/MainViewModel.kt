@@ -9,8 +9,8 @@ import com.learning.weatherappclean.util.ErrorTypeUi
 import com.learning.weatherappclean.data.model.ErrorType
 import com.learning.weatherappclean.domain.model.*
 import com.learning.weatherappclean.domain.usecase.*
+import com.learning.weatherappclean.util.CoroutineDispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -26,6 +26,7 @@ class MainViewModel @Inject constructor(
     private val getWeatherCardDataUseCase: GetWeatherCardDataUseCase,
     private val getAutocompletePredictionsUseCase: GetAutocompletePredictionsUseCase,
     private val saveSettingsUseCase: SaveSettingsUseCase,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
     loadSettingsUseCase: LoadSettingsUseCase
 ) : ViewModel() {
     private val isLoading = MutableStateFlow(true)
@@ -69,19 +70,6 @@ class MainViewModel @Inject constructor(
         return flowOf(getAutocompletePredictionsUseCase(Request(query)).data!!)
     }
 
-/*    private val predictions = searchText.debounce(AUTOCOMPLETE_QUERY_DELAY)
-        .distinctUntilChanged()
-        .flatMapLatest { autocompleteQuery(query = it) }
-
-    private suspend fun autocompleteQuery(query: String): Flow<AutocompletePrediction> {
-        if (query.length < AUTOCOMPLETE_QUERY_MIN_CHARS) {
-            return flowOf()
-        }
-        expanded.emit(true)
-        return getAutocompletePredictionsUseCase(Request(query))
-    }*/
-
-
     fun deleteCard(index: Int) {
         val tempCardList = weatherCardsList.value.toMutableList()
         tempCardList.removeAt(index)
@@ -103,7 +91,7 @@ class MainViewModel @Inject constructor(
     fun addCard(location: String, prediction: AutocompletePrediction?) {
         expanded.value = false
         isLoading.value = true
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(coroutineDispatcherProvider.IO()) {
             val resourceDomain = getWeatherCardDataUseCase(
                 Request(
                     query = location,
@@ -160,7 +148,7 @@ class MainViewModel @Inject constructor(
         val requestList = loadRequestListUseCase()
         noRequests.tryEmit(requestList.isEmpty())
         val tempCardList = mutableListOf<WeatherCard>()
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(coroutineDispatcherProvider.IO()) {
             run breaking@{
                 requestList.forEach { request ->
                     request.units = if (settings.value.imperialUnits) "f" else "m"

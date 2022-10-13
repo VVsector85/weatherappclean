@@ -14,7 +14,9 @@ import com.learning.weatherappclean.util.ErrorMessage
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.MainViewModel
-import com.learning.weatherappclean.presentation.ui.dragdrop.DragDropColumn
+import com.learning.weatherappclean.presentation.ui.components.dragdrop.DragDropColumn
+import com.learning.weatherappclean.presentation.ui.components.weatherlist.WeatherColumnWithDrag
+import com.learning.weatherappclean.presentation.ui.components.weatherlist.WeatherGrid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +46,7 @@ fun WeatherList(
         ) {
             ErrorMessage(errorMsg = errorMsg, resetError = vm::resetErrorMessage)
             if (weatherCardList.value.isEmpty() && !isLoading.value) NoCards(
-                vm = vm,
+                refreshCards = vm::refreshCards,
                 noRequests = noRequests
             )
             if (isLandscape || !settings.value.dragAndDropCards)
@@ -67,72 +69,4 @@ fun WeatherList(
     }
 }
 
-@Composable
-fun WeatherGrid(
-    vm: MainViewModel,
-    weatherCardList: State<List<WeatherCard>>,
-    scrollToFirst: State<Pair<Boolean, Int>>,
-    settings: State<Settings>,
-    setShowDetails: (Boolean, Int) -> Unit
 
-) {
-    val gridState = rememberLazyGridState()
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(290.dp),
-        modifier = Modifier.fillMaxWidth(0.9f),
-        contentPadding = PaddingValues(bottom = 40.dp, top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(
-            space = 20.dp,
-            alignment = Alignment.CenterHorizontally
-        ),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        userScrollEnabled = true,
-        state = gridState
-    ) {
-        if (scrollToFirst.value.first) CoroutineScope(Dispatchers.Main).launch {
-            gridState.scrollToItem(scrollToFirst.value.second)
-            vm.stopScrollToFirst()
-        }
-        items(weatherCardList.value.size) { index ->
-            CardWeather(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f),
-                content = weatherCardList.value[index],
-                index = index,
-                delete = vm::deleteCard,
-                settings = settings,
-                setShowDetails = setShowDetails,
-                vm = vm
-            )
-        }
-    }
-}
-
-
-@Composable
-fun WeatherColumnWithDrag(
-    weatherCardList: State<List<WeatherCard>>,
-    vm: MainViewModel,
-    scrollToFirst: State<Pair<Boolean, Int>>,
-    settings: State<Settings>,
-    setShowDetails: (Boolean, Int) -> Unit
-) {
-    DragDropColumn(
-        items = weatherCardList.value,
-        onSwap = vm::swapSections,
-        scrollToFirst = scrollToFirst,
-        stopScrollToFirst = vm::stopScrollToFirst,
-        contentPadding = PaddingValues(bottom = 60.dp, top = 10.dp),
-    ) { index, item ->
-        CardWeather(
-            modifier = Modifier
-                .fillMaxWidth(0.9f),
-            content = item,
-            index = index,
-            delete = vm::deleteCard,
-            settings = settings,
-            setShowDetails = setShowDetails,
-            vm = vm
-        )
-    }
-}
