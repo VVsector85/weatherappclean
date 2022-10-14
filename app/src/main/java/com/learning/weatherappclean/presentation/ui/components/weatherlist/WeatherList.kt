@@ -1,9 +1,6 @@
-package com.learning.weatherappclean.presentation.ui
+package com.learning.weatherappclean.presentation.ui.components.weatherlist
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,21 +10,24 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.learning.weatherappclean.util.ErrorMessage
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
-import com.learning.weatherappclean.presentation.MainViewModel
-import com.learning.weatherappclean.presentation.ui.components.dragdrop.DragDropColumn
-import com.learning.weatherappclean.presentation.ui.components.weatherlist.WeatherColumnWithDrag
-import com.learning.weatherappclean.presentation.ui.components.weatherlist.WeatherGrid
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.learning.weatherappclean.presentation.ui.components.ErrorMessage
+import com.learning.weatherappclean.presentation.ui.components.NoCards
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun WeatherList(
     padding: PaddingValues,
-    vm: MainViewModel,
-    weatherCardList: State<List<WeatherCard>>,
+    refreshCards: () -> Unit,
+    setShowDetails: (Boolean, Int) -> Unit,
+    resetErrorMessage: () -> Unit,
+    setExpanded: (Boolean) -> Unit,
+    setShowSearch: (Boolean) -> Unit,
+    weatherCardList: StateFlow<List<WeatherCard>>,
     isLoading: State<Boolean>,
     scrollToFirst: State<Pair<Boolean, Int>>,
+    stopScrollToFirst: () -> Unit,
+    deleteCard: (Int) -> Unit,
+    swapSections: (Int, Int) -> Unit,
     isLandscape: Boolean,
     settings: State<Settings>,
     errorMsg: State<ErrorMessage>,
@@ -36,7 +36,7 @@ fun WeatherList(
     SwipeRefresh(
         modifier = Modifier.padding(padding),
         state = rememberSwipeRefreshState(isRefreshing = isLoading.value),
-        onRefresh = { vm.refreshCards() }
+        onRefresh = { refreshCards() }
     ) {
         Column(
             modifier = Modifier
@@ -44,26 +44,33 @@ fun WeatherList(
                 .padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ErrorMessage(errorMsg = errorMsg, resetError = vm::resetErrorMessage)
-            if (weatherCardList.value.isEmpty() && !isLoading.value) NoCards(
-                refreshCards = vm::refreshCards,
+            ErrorMessage(errorMsg = errorMsg, resetError = resetErrorMessage)
+            if (weatherCardList.collectAsState().value.isEmpty() && !isLoading.value) NoCards(
+                refreshCards = refreshCards,
                 noRequests = noRequests
             )
             if (isLandscape || !settings.value.dragAndDropCards)
                 WeatherGrid(
-                    vm = vm,
                     weatherCardList = weatherCardList,
                     scrollToFirst = scrollToFirst,
                     settings = settings,
-                    setShowDetails = vm::setShowDetails
-                )
+                    setShowDetails = setShowDetails,
+                    stopScrollToFirst = stopScrollToFirst,
+                    deleteCard = deleteCard,
+                    setExpanded = setExpanded,
+                    setShowSearch = setShowSearch,
+                    )
             else
                 WeatherColumnWithDrag(
                     weatherCardList = weatherCardList,
-                    vm = vm,
+                    deleteCard = deleteCard,
+                    setExpanded = setExpanded,
+                    setShowSearch = setShowSearch,
+                    stopScrollToFirst = stopScrollToFirst,
+                    swapSections = swapSections,
                     scrollToFirst = scrollToFirst,
                     settings = settings,
-                    setShowDetails = vm::setShowDetails
+                    setShowDetails = setShowDetails,
                 )
         }
     }

@@ -191,7 +191,7 @@ class MainViewModel @Inject constructor(
     fun swapSections(a: Int, b: Int) {
         val list = weatherCardsList.value.toMutableList()
         Collections.swap(list, a, b)
-        weatherCardsList.tryEmit(list)
+        weatherCardsList.value = list
         saveRequestListUseCase(weatherCardsList.value)
     }
 
@@ -202,6 +202,10 @@ class MainViewModel @Inject constructor(
 
     fun setExpanded(value: Boolean) {
         expanded.value = value
+    }
+
+    fun setSearchText(value: String) {
+        searchText.value = value
     }
 
     fun stopScrollToFirst() {

@@ -13,21 +13,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
-import com.learning.weatherappclean.presentation.MainViewModel
-import com.learning.weatherappclean.presentation.ui.CardWeather
+import com.learning.weatherappclean.presentation.ui.components.CardWeather
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun WeatherGrid(
-    vm: MainViewModel,
-    weatherCardList: State<List<WeatherCard>>,
+    stopScrollToFirst:()->Unit,
+    deleteCard:(Int)->Unit,
+    setExpanded:(Boolean)->Unit,
+    setShowSearch:(Boolean)->Unit,
+    weatherCardList: StateFlow<List<WeatherCard>>,
     scrollToFirst: State<Pair<Boolean, Int>>,
     settings: State<Settings>,
-    setShowDetails: (Boolean, Int) -> Unit
-
-) {
+    setShowDetails: (Boolean, Int) -> Unit,
+    ) {
     val gridState = rememberLazyGridState()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(290.dp),
@@ -43,7 +46,7 @@ fun WeatherGrid(
     ) {
         if (scrollToFirst.value.first) CoroutineScope(Dispatchers.Main).launch {
             gridState.scrollToItem(scrollToFirst.value.second)
-            vm.stopScrollToFirst()
+            stopScrollToFirst()
         }
         items(weatherCardList.value.size) { index ->
             CardWeather(
@@ -51,10 +54,12 @@ fun WeatherGrid(
                     .fillMaxWidth(0.9f),
                 content = weatherCardList.value[index],
                 index = index,
-                delete = vm::deleteCard,
+                deleteCard = deleteCard,
                 settings = settings,
                 setShowDetails = setShowDetails,
-                vm = vm
+                setExpanded = setExpanded,
+                setShowSearch = setShowSearch,
+                weatherCardList = weatherCardList
             )
         }
     }

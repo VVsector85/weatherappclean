@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.presentation.ui
+package com.learning.weatherappclean.presentation.ui.components
 
 
 import androidx.compose.foundation.background
@@ -23,7 +23,7 @@ import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
 @Composable
 fun DropDown(
     expanded: State<Boolean>,
-    vm: MainViewModel,
+    addCard:(String, AutocompletePrediction?)->Unit,
     predictionList: State<List<AutocompletePrediction>>,
     isLandscape:Boolean
 
@@ -44,7 +44,7 @@ fun DropDown(
                     ) {
                         Box(modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { vm.addCard(location ="${item.location}, ${item.country}, ${item.region}", prediction = item) }
+                            .clickable { addCard("${item.location}, ${item.country}, ${item.region}",  item) }
                             .padding(5.dp)
                         )
                         {

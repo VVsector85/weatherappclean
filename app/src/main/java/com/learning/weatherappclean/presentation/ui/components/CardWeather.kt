@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.presentation.ui
+package com.learning.weatherappclean.presentation.ui.components
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.domain.model.CardColorOption
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
-import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.util.getIcon
 import com.learning.weatherappclean.presentation.ui.theme.*
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import java.util.*
 
@@ -33,12 +33,13 @@ fun CardWeather(
     modifier: Modifier,
     content: WeatherCard,
     index: Int,
-    delete: (Index: Int) -> Unit,
+    deleteCard: (Index: Int) -> Unit,
     setShowDetails: (Boolean, Int) -> Unit,
     settings: State<Settings>,
-    vm: MainViewModel
+    setShowSearch:(Boolean)->Unit,
+    setExpanded:(Boolean)->Unit,
+    weatherCardList: StateFlow<List<WeatherCard>>
 ) {
-
     val colour = when (content.cardColorOption) {
         CardColorOption.BLUE -> MaterialTheme.colors.cold
         CardColorOption.RED -> MaterialTheme.colors.hot
@@ -49,8 +50,14 @@ fun CardWeather(
     val details = remember {
         mutableStateOf(content.showDetails)
     }
+    /**I don't like at all that I have to pass weatherCardList to CardWeather composable
+     * but I could not find the other way to update simple/detailed view of a weather card.
+     * Without 'collectLatest' the lazyList remembers the position of expanded cards and
+     * when I swap cards they change their order but 'showDetails' parameter remains applied to the
+     * same card by its index. My explanation is a bit confusing, so its easier just to comment
+     * LaunchedEffect block to see the behaviour I tried to describe*/
     LaunchedEffect(Unit) {
-       vm.getCardList.collectLatest { if (it.size > index) details.value = it[index].showDetails }
+      weatherCardList.collectLatest {if (it.size > index) details.value = it[index].showDetails  }
     }
     Card(
         modifier = modifier
@@ -63,8 +70,8 @@ fun CardWeather(
                         }
                     },
                     onTap = {
-                        vm.setShowSearch(false)
-                        vm.setExpanded(false)
+                        setShowSearch(false)
+                        setExpanded(false)
                     },
                 )
             },
@@ -133,7 +140,7 @@ fun CardWeather(
                     }
                     Button(
                         onClick = {
-                            delete(index)
+                            deleteCard(index)
                         },
                         shape = CircleShape,
                         contentPadding = PaddingValues(10.dp),

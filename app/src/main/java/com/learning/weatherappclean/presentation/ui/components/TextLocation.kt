@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.presentation.ui
+package com.learning.weatherappclean.presentation.ui.components
 
 
 import androidx.compose.foundation.layout.*
@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
+import com.learning.weatherappclean.domain.model.AutocompletePrediction
 import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.theme.onTextField
 import com.learning.weatherappclean.presentation.ui.theme.textField
@@ -28,10 +29,12 @@ import com.learning.weatherappclean.presentation.ui.theme.textField
 @Composable
 fun TextLocation(
     modifier: Modifier,
-    vm: MainViewModel,
+    setExpanded:(Boolean)-> Unit,
+    addCard:(String, AutocompletePrediction?)->Unit,
     textSearch: State<String>,
+    setSearchText:(String)->Unit
 
-) {
+    ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -48,8 +51,8 @@ fun TextLocation(
         keyboardActions = KeyboardActions(
             onSearch = {
                 keyboardController?.hide()
-                vm.setExpanded(false)
-                vm.addCard(location =textSearch.value, prediction = null)
+                setExpanded(false)
+                addCard(textSearch.value,  null)
             }
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -57,7 +60,7 @@ fun TextLocation(
             keyboardType = KeyboardType.Text
         ),
         value = textSearch.value,
-        onValueChange = {vm.getSearchText.value = it},
+        onValueChange = {setSearchText(it)},//vm.getSearchText.value = it
         maxLines = 3,
         textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
         leadingIcon = {

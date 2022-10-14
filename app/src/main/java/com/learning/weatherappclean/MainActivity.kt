@@ -2,17 +2,15 @@ package com.learning.weatherappclean
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.learning.weatherappclean.presentation.MainViewModel
-import com.learning.weatherappclean.presentation.ui.*
+import com.learning.weatherappclean.presentation.ui.components.MainScreen
 import com.learning.weatherappclean.presentation.ui.theme.*
 import dagger.hilt.android.AndroidEntryPoint
 

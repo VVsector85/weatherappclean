@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.presentation.ui
+package com.learning.weatherappclean.presentation.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -16,7 +16,9 @@ import com.learning.weatherappclean.presentation.MainViewModel
 import kotlin.reflect.KProperty1
 
 @Composable
-fun SettingsMenu(vm: MainViewModel, settings: State<Settings>) {
+fun SettingsMenu(settings: State<Settings>,
+                 saveSettings: (Boolean, KProperty1<Settings, *>) -> Unit,
+                 refreshCards:()->Unit) {
     val checkedStateUnits = remember { mutableStateOf(settings.value.imperialUnits) }
     val checkedStateAtTop = remember { mutableStateOf(settings.value.newCardFirst) }
     val checkedStateShowDetails = remember { mutableStateOf(settings.value.detailsOnDoubleTap) }
@@ -39,29 +41,29 @@ fun SettingsMenu(vm: MainViewModel, settings: State<Settings>) {
             text = stringResource(id = R.string.imperial),
             description = stringResource(id = R.string.imperialDescription),
             checkedState = checkedStateUnits,
-            saveSettings = vm::saveSettings,
+            saveSettings = saveSettings,
             field = Settings::imperialUnits,
-            action = vm::refreshCards
+            action = refreshCards
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.addAtTop),
             description = stringResource(id = R.string.addAtTopDescription),
             checkedState = checkedStateAtTop,
-            saveSettings = vm::saveSettings,
+            saveSettings = saveSettings,
             field = Settings::newCardFirst
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.showDetails),
             description = stringResource(id = R.string.showDetailsDescription),
             checkedState = checkedStateShowDetails,
-            saveSettings = vm::saveSettings,
+            saveSettings = saveSettings,
             field = Settings::detailsOnDoubleTap
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.dragAndDrop),
             description = stringResource(id = R.string.dragAndDropDescription),
             checkedState = checkedStateDragAndDrop,
-            saveSettings = vm::saveSettings,
+            saveSettings = saveSettings,
             field = Settings::dragAndDropCards
         )
     }

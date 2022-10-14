@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.presentation.ui
+package com.learning.weatherappclean.presentation.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.presentation.MainViewModel
+import com.learning.weatherappclean.presentation.ui.components.weatherlist.WeatherList
 import com.learning.weatherappclean.presentation.ui.theme.onTextField
 
 @Composable
@@ -29,7 +30,7 @@ fun MainScreen(vm: MainViewModel) {
     val expanded = vm.getExpanded.collectAsState()
     val errorMsg = vm.getError.collectAsState()
     val predictionsList = vm.getPredictions.collectAsState(initial = emptyList())
-    val weatherCardList = vm.getCardList.collectAsState()
+    val weatherCardList = vm.getCardList
     val isLoading = vm.getLoadingState.collectAsState()
     val scrollToFirst = vm.getScrollToFirst.collectAsState()
     val settings = vm.getSettings.collectAsState()
@@ -40,7 +41,7 @@ fun MainScreen(vm: MainViewModel) {
         modifier = Modifier.fillMaxWidth(),
         scaffoldState = scaffoldState,
         drawerContent = {
-            SettingsMenu(vm = vm, settings = settings)
+            SettingsMenu(settings = settings, saveSettings = vm::saveSettings, refreshCards = vm::refreshCards)
         },
         bottomBar = {
             Box(
@@ -69,14 +70,23 @@ fun MainScreen(vm: MainViewModel) {
     ) { padding ->
         WeatherList(
             padding = if (showSearch.value) PaddingValues (top = 80.dp) else if(!showSearch.value&&!isLandscape) PaddingValues (top = 60.dp) else padding,
-            vm = vm,
             weatherCardList = weatherCardList,
             isLoading = isLoading,
             scrollToFirst = scrollToFirst,
             isLandscape = isLandscape,
             settings = settings,
             errorMsg = errorMsg,
-            noRequests = noRequests
+            noRequests = noRequests,
+            deleteCard = vm::deleteCard,
+            stopScrollToFirst = vm::stopScrollToFirst,
+            resetErrorMessage = vm::resetErrorMessage,
+            setShowDetails = vm::setShowDetails,
+            refreshCards = vm::refreshCards,
+            setExpanded = vm::setExpanded,
+            setShowSearch = vm::setShowSearch,
+            swapSections = vm::swapSections
+
+
         )
         Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
             if (!showSearch.value) Button(
@@ -111,7 +121,9 @@ fun MainScreen(vm: MainViewModel) {
                         modifier = Modifier
                             .fillMaxWidth(if (isLandscape) 0.75f else 0.9f)
                             .height(60.dp),
-                        vm = vm,
+                        addCard = vm::addCard,
+                        setExpanded = vm::setExpanded,
+                        setSearchText = vm::setSearchText,
                         textSearch = searchText
                     ) else if (!isLandscape)
                     Text(
@@ -121,7 +133,7 @@ fun MainScreen(vm: MainViewModel) {
                     )
             DropDown(
                 expanded = expanded,
-                vm = vm,
+                addCard = vm::addCard,
                 predictionList = predictionsList,
                 isLandscape = isLandscape
             )
