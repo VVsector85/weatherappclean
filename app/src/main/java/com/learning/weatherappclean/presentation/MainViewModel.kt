@@ -67,7 +67,7 @@ class MainViewModel @Inject constructor(
             return flowOf(emptyList())
         }
         expanded.emit(true)
-        return flowOf(getAutocompletePredictionsUseCase(Request(query)).data!!)
+        return flowOf(getAutocompletePredictionsUseCase(Request(query)).data?:emptyList())
     }
 
     fun deleteCard(index: Int) {

@@ -1,17 +1,20 @@
 package com.learning.weatherappclean.data.model.dto.settings
 
-import com.squareup.moshi.Json
+import com.learning.weatherappclean.domain.model.Settings
 
 class SettingsData    (
-    @field:Json( name ="imperialUnits")
+
     val imperialUnits : Boolean,
-    @field:Json( name ="newCardFirst")
     val newCardFirst:Boolean,
-    @field:Json( name ="detailsOnDoubleTap")
     val detailsOnDoubleTap:Boolean,
-    @field:Json( name ="dragAndDropCards")
     val dragAndDropCards:Boolean
 )
 
 
-
+internal fun SettingsData.mapToDomain(): Settings =
+    Settings(
+        imperialUnits = this.imperialUnits,
+        newCardFirst = this.newCardFirst,
+        detailsOnDoubleTap = this.detailsOnDoubleTap,
+        dragAndDropCards = this.dragAndDropCards
+    )

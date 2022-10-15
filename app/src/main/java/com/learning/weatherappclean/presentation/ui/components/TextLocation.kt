@@ -60,7 +60,7 @@ fun TextLocation(
             keyboardType = KeyboardType.Text
         ),
         value = textSearch.value,
-        onValueChange = {setSearchText(it)},//vm.getSearchText.value = it
+        onValueChange = {setSearchText(it)},
         maxLines = 3,
         textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
         leadingIcon = {

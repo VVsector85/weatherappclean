@@ -33,9 +33,9 @@ fun CardWeather(
     modifier: Modifier,
     content: WeatherCard,
     index: Int,
+    settings: State<Settings>,
     deleteCard: (Index: Int) -> Unit,
     setShowDetails: (Boolean, Int) -> Unit,
-    settings: State<Settings>,
     setShowSearch:(Boolean)->Unit,
     setExpanded:(Boolean)->Unit,
     weatherCardList: StateFlow<List<WeatherCard>>
@@ -106,7 +106,6 @@ fun CardWeather(
                         .fillMaxWidth()
                         .height(130.dp)
                 ) {
-
                     Text(
                         text = "${content.temperature}\u00b0${if (content.units == "f") "F" else ""}",
                         color = MaterialTheme.colors.onCard,
@@ -216,21 +215,17 @@ fun CardWeather(
     }
 }
 
-
 @Composable
 fun WeatherDetails(
-
     value: String,
     iconId: Int,
     description: Int
-
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-
         Row() {
             Icon(
                 painter = painterResource(

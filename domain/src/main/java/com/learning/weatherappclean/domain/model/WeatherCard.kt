@@ -20,7 +20,7 @@ data class WeatherCard(
     val isNightIcon: Boolean,
 
     var showDetails:Boolean,
-    var cardColorOption: CardColorOption,
+    var cardColorOption: CardColorOption?,
 
    /* val error: Boolean,
     val errorType:Any?,

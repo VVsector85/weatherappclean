@@ -2,12 +2,12 @@ package com.learning.weatherappclean.data.repository
 
 
 import com.learning.weatherappclean.data.model.ErrorType
-import com.learning.weatherappclean.data.util.Mapper
 import com.learning.weatherappclean.data.util.JsonConverter
 import com.learning.weatherappclean.data.model.dto.apierror.ErrorResponse
 import com.learning.weatherappclean.data.model.dto.autocompletedata.AutocompleteResponse
-import com.learning.weatherappclean.data.util.Constants.API_KEY
+import com.learning.weatherappclean.data.model.dto.autocompletedata.mapToDomain
 import com.learning.weatherappclean.data.model.dto.weatherdata.WeatherResponse
+import com.learning.weatherappclean.data.model.dto.weatherdata.mapToDomain
 import com.learning.weatherappclean.data.souce.remote.Resource
 import com.learning.weatherappclean.data.souce.remote.WeatherApi
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
@@ -20,10 +20,9 @@ import javax.inject.Inject
 
 class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherApi) :
     RemoteRepository, BaseRepository() {
-
     override suspend fun getWeatherData(request: Request): ResourceDomain<WeatherCard> {
         val response =
-            safeApiCall { weatherApi.getWeather(city = request.query, units = request.units) }
+            safeApiCall { weatherApi.getWeather(location = request.query, units = request.units) }
         if (response is Resource.Error) return ResourceDomain.Error(
             errorType = response.type as ErrorType,
             errorMessage = response.message ?: "error",
@@ -38,7 +37,21 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
          */
         val weatherResponse = JsonConverter().convertFromJson<WeatherResponse>(response.data)
         return if (weatherResponse?.current != null) {
-            ResourceDomain.Success(Mapper().mapToDomain(weatherResponse))
+            /**I had to add this code to to fix some inconsistencies in Weatherstack API behaviour:
+            in case of specifying Region with API's own autocomplete sometimes it returns
+            wrong location, so if received location does not match the query the app sends another
+            request with latitude and longitude. Relying on coordinates alone also does not help
+            because API often returns location name which does not match autocomplete suggestion.*/
+            var tempResource:ResourceDomain<WeatherCard> = ResourceDomain.Success(weatherResponse.mapToDomain())
+            if (request.location != tempResource.data?.location && request.location != "") {
+                /**I'm not sure it's okay to make such a recursive call*/
+                tempResource = getWeatherData(
+                    Request(
+                        query = "${request.lat}, ${request.lon}"
+                    )
+                )
+            }
+            tempResource
         } else {
             val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             if (errorResponse != null) {
@@ -65,7 +78,7 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
         val autocompleteResponse =
             JsonConverter().convertFromJson<AutocompleteResponse>(response.data)
         return if (autocompleteResponse?.predictionData != null) {
-            ResourceDomain.Success(data = Mapper().mapToDomain(autocompleteResponse))
+            ResourceDomain.Success(data = autocompleteResponse.mapToDomain())
         } else {
             val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             if (errorResponse != null) {

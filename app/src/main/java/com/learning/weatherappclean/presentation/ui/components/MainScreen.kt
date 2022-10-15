@@ -48,7 +48,6 @@ fun MainScreen(vm: MainViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.background),
-
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

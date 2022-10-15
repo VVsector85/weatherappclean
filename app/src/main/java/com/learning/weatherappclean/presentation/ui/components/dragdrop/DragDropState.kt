@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
  * https://stackoverflow.com/questions/64913067/reorder-lazycolumn-items-with-drag-drop
  * */
 
-
 class DragDropState internal constructor(
     val state: LazyListState,
     private val scope: CoroutineScope,

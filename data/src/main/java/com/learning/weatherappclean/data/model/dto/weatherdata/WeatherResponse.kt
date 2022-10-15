@@ -1,15 +1,32 @@
 package com.learning.weatherappclean.data.model.dto.weatherdata
 
-
-import com.squareup.moshi.Json
+import com.learning.weatherappclean.domain.model.WeatherCard
 
 data class WeatherResponse(
-    @field:Json( name ="current")
     val current: Current,
-    @field:Json( name ="location")
     val location: Location,
-    @field:Json( name ="request")
     val request: Request,
-
-
 )
+
+internal fun WeatherResponse.mapToDomain(): WeatherCard {
+    return WeatherCard(
+        location = this.location.name,
+        country = this.location.country,
+        region = this.location.region,
+        lat = this.location.lat,
+        lon = this.location.lon,
+        units = this.request.unit,
+        temperature = this.current.temperature,
+        cloudCover = this.current.cloudCover,
+        feelsLike = this.current.feelsLike,
+        humidity = this.current.humidity,
+        pressure = this.current.pressure,
+        uvIndex = this.current.uvIndex,
+        windSpeed = this.current.windSpeed,
+        weatherCode = this.current.weatherCode,
+        isNightIcon = this.current.weatherIcons[0].contains("night"),
+        weatherDescription = this.current.weatherDescriptions[0],
+        cardColorOption = null,
+        showDetails = false
+    )
+}

@@ -6,22 +6,17 @@ import com.squareup.moshi.Json
 
 data class Current(
     @field:Json( name ="cloudcover")
-    val cloudcover: String,
+    val cloudCover: String,
     @field:Json( name ="feelslike")
-    val feelslike: String,
-    @field:Json( name ="humidity")
+    val feelsLike: String,
     val humidity: String,
     @field:Json( name ="observation_time")
     val observationTime: String,
-    @field:Json( name ="precip")
     val precip: String,
-    @field:Json( name ="pressure")
     val pressure: String,
-    @field:Json( name ="temperature")
     val temperature: String,
     @field:Json( name ="uv_index")
     val uvIndex: String,
-    @field:Json( name ="visibility")
     val visibility: String,
     @field:Json( name ="weather_code")
     val weatherCode: String,

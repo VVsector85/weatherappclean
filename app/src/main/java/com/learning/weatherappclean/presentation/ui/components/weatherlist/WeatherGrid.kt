@@ -31,6 +31,7 @@ fun WeatherGrid(
     settings: State<Settings>,
     setShowDetails: (Boolean, Int) -> Unit,
     ) {
+
     val gridState = rememberLazyGridState()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(290.dp),
