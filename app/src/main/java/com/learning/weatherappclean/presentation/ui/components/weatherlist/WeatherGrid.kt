@@ -19,18 +19,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun WeatherGrid(
-    stopScrollToFirst:()->Unit,
-    deleteCard:(Int)->Unit,
-    setExpanded:(Boolean)->Unit,
-    setShowSearch:(Boolean)->Unit,
+    stopScrollToFirst: () -> Unit,
+    deleteCard: (Int) -> Unit,
+    setExpanded: (Boolean) -> Unit,
+    setShowSearch: (Boolean) -> Unit,
     weatherCardList: StateFlow<List<WeatherCard>>,
     scrollToFirst: State<Pair<Boolean, Int>>,
     settings: State<Settings>,
     setShowDetails: (Boolean, Int) -> Unit,
-    ) {
+) {
 
     val gridState = rememberLazyGridState()
     LazyVerticalGrid(

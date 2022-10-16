@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -51,7 +50,6 @@ class DragDropState internal constructor(
             state.getVisibleItemInfoFor(absoluteIndex = it)
         }
 
-
     fun onDragStart(offset: Offset) {
         state.layoutInfo.visibleItemsInfo
             .firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
@@ -67,7 +65,7 @@ class DragDropState internal constructor(
             previousIndexOfDraggedItem = currentIndexOfDraggedItem
             // val startOffset = draggingItemOffset
             scope.launch {
-                //previousItemOffset.snapTo(startOffset)
+                // previousItemOffset.snapTo(startOffset)
                 previousItemOffset.animateTo(
                     0f,
                     tween(easing = FastOutLinearInEasing)
@@ -118,8 +116,8 @@ class DragDropState internal constructor(
             val startOffset = it.offset + draggedDistance
             val endOffset = it.offsetEnd + draggedDistance
             return@let when {
-                draggedDistance > 0 -> (endOffset - state.layoutInfo.viewportEndOffset+50f).takeIf { diff -> diff > 0 }
-                draggedDistance < 0 -> (startOffset - state.layoutInfo.viewportStartOffset-50f).takeIf { diff -> diff < 0 }
+                draggedDistance > 0 -> (endOffset - state.layoutInfo.viewportEndOffset + 50f).takeIf { diff -> diff > 0 }
+                draggedDistance < 0 -> (startOffset - state.layoutInfo.viewportStartOffset - 50f).takeIf { diff -> diff < 0 }
                 else -> null
             }
         } ?: 0f

@@ -1,8 +1,19 @@
 package com.learning.weatherappclean.presentation.ui.components
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Divider
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -12,13 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.domain.model.Settings
-import com.learning.weatherappclean.presentation.MainViewModel
 import kotlin.reflect.KProperty1
 
 @Composable
-fun SettingsMenu(settings: State<Settings>,
-                 saveSettings: (Boolean, KProperty1<Settings, *>) -> Unit,
-                 refreshCards:()->Unit) {
+fun SettingsMenu(
+    settings: State<Settings>,
+    saveSettings: (Boolean, KProperty1<Settings, *>) -> Unit,
+    refreshCards: () -> Unit
+) {
     val checkedStateUnits = remember { mutableStateOf(settings.value.imperialUnits) }
     val checkedStateAtTop = remember { mutableStateOf(settings.value.newCardFirst) }
     val checkedStateShowDetails = remember { mutableStateOf(settings.value.detailsOnDoubleTap) }
@@ -75,7 +87,7 @@ fun MenuSwitchItem(
     description: String? = null,
     checkedState: MutableState<Boolean>,
     saveSettings: (Boolean, KProperty1<Settings, *>) -> Unit,
-    action: (() -> Unit )? = null,
+    action: (() -> Unit)? = null,
     field: KProperty1<Settings, *>
 ) {
     Box(
@@ -106,7 +118,7 @@ fun MenuSwitchItem(
             onCheckedChange = {
                 checkedState.value = it
                 saveSettings(it, field)
-                if (action!=null) action()
+                if (action != null) action()
             }
         )
     }

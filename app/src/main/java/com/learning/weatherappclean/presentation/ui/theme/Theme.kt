@@ -7,7 +7,6 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
     primary = PrimaryNight,
@@ -26,7 +25,6 @@ private val LightColorPalette = lightColors(
     primary = PrimaryDay,
     primaryVariant = Color.LightGray,
     secondary = Teal200,
-
 
     background = BackgroundDay,
     surface = Color.White,
@@ -53,8 +51,6 @@ val Colors.autocomplete: Color
     get() = if (isLight) AutocompleteDay else AutocompleteNight
 val Colors.onAutocomplete: Color
     get() = if (isLight) OnAutocompleteDay else OnAutocompleteNight
-
-
 
 @Composable
 fun WeatherAppCleanTheme(

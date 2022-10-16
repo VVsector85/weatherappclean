@@ -10,8 +10,8 @@ import com.learning.weatherappclean.domain.repository.RequestsRepository
 class RequestsRepositoryImpl(private val requestsStorage: RequestsStorage) : RequestsRepository {
 
     override fun saveWeatherCards(saveWeatherCardsList: List<WeatherCard>): Boolean =
-              requestsStorage.save(saveWeatherCardsList.mapToStorage())
+        requestsStorage.save(saveWeatherCardsList.mapToStorage())
 
-    override fun loadWeatherCards():List<Request> =
-       requestsStorage.load().mapToDomain()
+    override fun loadWeatherCards(): List<Request> =
+        requestsStorage.load().mapToDomain()
 }

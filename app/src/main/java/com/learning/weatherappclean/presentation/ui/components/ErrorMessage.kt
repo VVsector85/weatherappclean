@@ -14,15 +14,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.util.ErrorMessage
 import com.learning.weatherappclean.util.ErrorTypeUi
-import kotlinx.coroutines.Delay
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun ErrorMessage(errorMsg: State<ErrorMessage>, resetError:()->Unit) {
+fun ErrorMessage(errorMsg: State<ErrorMessage>, resetError: () -> Unit) {
     val text: String
     if (errorMsg.value.errorType != null) {
         val error = errorMsg.value.getErrorMessage()
@@ -30,7 +27,7 @@ fun ErrorMessage(errorMsg: State<ErrorMessage>, resetError:()->Unit) {
 
         text = if (errorMsg.value.errorType == ErrorTypeUi.SAME_ITEM_ERROR) {
             "${error.second} ${stringResource(errorStringId!!)}"
-        }else{
+        } else {
             if (errorStringId != null) stringResource(errorStringId) else error.second
         }
         LaunchedEffect(Unit) {
@@ -53,4 +50,3 @@ fun ErrorMessage(errorMsg: State<ErrorMessage>, resetError:()->Unit) {
         }
     }
 }
-

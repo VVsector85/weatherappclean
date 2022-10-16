@@ -4,12 +4,7 @@ import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.repository.SettingsRepository
 
 class LoadSettingsUseCase(private val settingsRepository: SettingsRepository) {
-    operator fun invoke():Settings {
-            return settingsRepository.loadSettings()
-        }
+    operator fun invoke(): Settings {
+        return settingsRepository.loadSettings()
     }
-
-
-
-
-
+}

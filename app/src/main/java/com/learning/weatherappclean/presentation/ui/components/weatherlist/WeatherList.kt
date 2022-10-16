@@ -1,17 +1,22 @@
 package com.learning.weatherappclean.presentation.ui.components.weatherlist
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.learning.weatherappclean.util.ErrorMessage
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.ui.components.ErrorMessage
 import com.learning.weatherappclean.presentation.ui.components.NoCards
+import com.learning.weatherappclean.util.ErrorMessage
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -59,7 +64,7 @@ fun WeatherList(
                     deleteCard = deleteCard,
                     setExpanded = setExpanded,
                     setShowSearch = setShowSearch,
-                    )
+                )
             else
                 WeatherColumnWithDrag(
                     weatherCardList = weatherCardList,
@@ -75,5 +80,3 @@ fun WeatherList(
         }
     }
 }
-
-

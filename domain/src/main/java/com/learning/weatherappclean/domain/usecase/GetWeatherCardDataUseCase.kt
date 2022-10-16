@@ -13,12 +13,11 @@ class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) 
 
         if (resourceDomainCard is ResourceDomain.Success && resourceDomainCard.data != null) {
             /**This condition was in the task so I consider it as a part of business logic.
-            That is why it is in the domain module
-            No actual colours specified here, just enums*/
+             That is why it is in the domain module
+             No actual colours specified here, just enums*/
 
             val temperature = resourceDomainCard.data.temperature.toInt()
-            with(resourceDomainCard.data)
-            {
+            with(resourceDomainCard.data) {
                 if (this.units == "m") when (temperature) {
                     in BLUE_RANGE_CELSIUS -> this.cardColorOption = CardColorOption.BLUE
                     in YELLOW_RANGE_CELSIUS -> this.cardColorOption = CardColorOption.YELLOW
@@ -42,4 +41,3 @@ class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) 
         val YELLOW_RANGE_FAHRENHEIT = 34..68
     }
 }
-

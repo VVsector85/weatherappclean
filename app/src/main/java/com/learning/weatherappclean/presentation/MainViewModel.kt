@@ -1,21 +1,37 @@
 package com.learning.weatherappclean.presentation
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.learning.weatherappclean.data.model.ErrorType
+import com.learning.weatherappclean.domain.model.AutocompletePrediction
+import com.learning.weatherappclean.domain.model.Request
+import com.learning.weatherappclean.domain.model.ResourceDomain
+import com.learning.weatherappclean.domain.model.Settings
+import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.domain.usecase.GetAutocompletePredictionsUseCase
+import com.learning.weatherappclean.domain.usecase.GetWeatherCardDataUseCase
+import com.learning.weatherappclean.domain.usecase.LoadRequestListUseCase
+import com.learning.weatherappclean.domain.usecase.LoadSettingsUseCase
+import com.learning.weatherappclean.domain.usecase.SaveRequestListUseCase
+import com.learning.weatherappclean.domain.usecase.SaveSettingsUseCase
+import com.learning.weatherappclean.util.CoroutineDispatcherProvider
 import com.learning.weatherappclean.util.ErrorMapper
 import com.learning.weatherappclean.util.ErrorMessage
 import com.learning.weatherappclean.util.ErrorTypeUi
-import com.learning.weatherappclean.data.model.ErrorType
-import com.learning.weatherappclean.domain.model.*
-import com.learning.weatherappclean.domain.usecase.*
-import com.learning.weatherappclean.util.CoroutineDispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Collections
 import javax.inject.Inject
 import kotlin.reflect.KProperty1
 
@@ -56,7 +72,6 @@ class MainViewModel @Inject constructor(
     val getShowSearch: StateFlow<Boolean> get() = showSearch.asStateFlow()
     val getSearchText: MutableStateFlow<String> get() = searchText
 
-
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     private val predictions = searchText.debounce(AUTOCOMPLETE_QUERY_DELAY)
         .distinctUntilChanged()
@@ -67,7 +82,9 @@ class MainViewModel @Inject constructor(
             return flowOf(emptyList())
         }
         expanded.emit(true)
-        return flowOf(getAutocompletePredictionsUseCase(Request(query)).data?:emptyList())
+        val result = getAutocompletePredictionsUseCase(Request(query))
+        return if (result is ResourceDomain.Success)
+            flowOf(result.data!!) else flowOf(emptyList())
     }
 
     fun deleteCard(index: Int) {
@@ -113,29 +130,35 @@ class MainViewModel @Inject constructor(
                     ) else tempCardList.add(resourceDomain.data!!)
                     noRequests.emit(false)
                     weatherCardsList.emit(tempCardList)
-                    scrollToFirst.emit (Pair(
-                        true,
-                        if (settings.value.newCardFirst) 0 else weatherCardsList.value.size
-                    ))
+                    scrollToFirst.emit(
+                        Pair(
+                            true,
+                            if (settings.value.newCardFirst) 0 else weatherCardsList.value.size
+                        )
+                    )
                     searchText.emit("")
                     saveRequestListUseCase(tempCardList)
                     showSearch.emit(false)
                 } else {
-                    errorMessage.emit (ErrorMessage(
-                        errorType = ErrorTypeUi.SAME_ITEM_ERROR,
-                        showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                        errorCode = null,
-                        errorString = "${card.location}, ${card.country}, ${card.region}"
-                    ))
+                    errorMessage.emit(
+                        ErrorMessage(
+                            errorType = ErrorTypeUi.SAME_ITEM_ERROR,
+                            showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
+                            errorCode = null,
+                            errorString = "${card.location}, ${card.country}, ${card.region}"
+                        )
+                    )
                     isLoading.emit(false)
                 }
             } else {
-                errorMessage.emit(ErrorMessage(
-                    errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
-                    showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                    errorCode = resourceDomain.code,
-                    errorString = resourceDomain.message?:""
-                ))
+                errorMessage.emit(
+                    ErrorMessage(
+                        errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
+                        showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
+                        errorCode = resourceDomain.code,
+                        errorString = resourceDomain.message ?: ""
+                    )
+                )
                 isLoading.emit(false)
             }
             isLoading.emit(false)
@@ -161,12 +184,14 @@ class MainViewModel @Inject constructor(
                             duplicatesFound = true
                         }
                     } else {
-                        errorMessage.emit(ErrorMessage(
-                            errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
-                            showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                            errorCode = resourceDomain.code,
-                            errorString = resourceDomain.message?:""
-                        ))
+                        errorMessage.emit(
+                            ErrorMessage(
+                                errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
+                                showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
+                                errorCode = resourceDomain.code,
+                                errorString = resourceDomain.message ?: ""
+                            )
+                        )
                         isLoading.emit(false)
                         return@breaking
                     }
@@ -174,7 +199,12 @@ class MainViewModel @Inject constructor(
             }
             weatherCardsList.emit(tempCardList)
             lastRefreshTime = System.currentTimeMillis()
-            scrollToFirst.emit(Pair(true, if (settings.value.newCardFirst) 0 else weatherCardsList.value.size))
+            scrollToFirst.emit(
+                Pair(
+                    true,
+                    if (settings.value.newCardFirst) 0 else weatherCardsList.value.size
+                )
+            )
             isLoading.emit(false)
             if (duplicatesFound) saveRequestListUseCase(tempCardList)
         }
@@ -187,7 +217,6 @@ class MainViewModel @Inject constructor(
         saveRequestListUseCase(list)
     }
 
-
     fun swapSections(a: Int, b: Int) {
         val list = weatherCardsList.value.toMutableList()
         Collections.swap(list, a, b)
@@ -199,10 +228,7 @@ class MainViewModel @Inject constructor(
         showSearch.value = value
         searchText.value = ""
     }
-
-    fun setExpanded(value: Boolean) {
-        expanded.value = value
-    }
+    fun setExpanded(value: Boolean) { expanded.value = value }
 
     fun setSearchText(value: String) {
         searchText.value = value

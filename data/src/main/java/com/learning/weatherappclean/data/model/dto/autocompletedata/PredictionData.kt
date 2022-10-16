@@ -7,8 +7,8 @@ data class PredictionData(
     val lon: String,
     val name: String,
     val region: String,
-    @field:Json( name = "timezone_id")
+    @field:Json(name = "timezone_id")
     val timezoneId: String,
-    @field:Json( name ="utc_offset")
+    @field:Json(name = "utc_offset")
     val utcOffset: String
 )

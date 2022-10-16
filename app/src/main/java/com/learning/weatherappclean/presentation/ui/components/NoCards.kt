@@ -1,6 +1,9 @@
 package com.learning.weatherappclean.presentation.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -14,14 +17,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
-import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.theme.onTextField
 
 @Composable
-fun NoCards(noRequests: State<Boolean>, refreshCards:()->Unit) {
+fun NoCards(noRequests: State<Boolean>, refreshCards: () -> Unit) {
 
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center)
-    {
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -35,7 +36,8 @@ fun NoCards(noRequests: State<Boolean>, refreshCards:()->Unit) {
             color = MaterialTheme.colors.onTextField
         )
         if (!noRequests.value) Button(
-            onClick = { refreshCards() }, modifier = Modifier
+            onClick = { refreshCards() },
+            modifier = Modifier
                 .padding(30.dp)
                 .align(Alignment.CenterHorizontally)
         ) {

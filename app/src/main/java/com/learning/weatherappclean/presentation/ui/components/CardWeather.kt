@@ -3,12 +3,26 @@ package com.learning.weatherappclean.presentation.ui.components
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
-import com.learning.weatherappclean.R
-import androidx.compose.foundation.layout.*
-
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Button
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,14 +33,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.learning.weatherappclean.R
 import com.learning.weatherappclean.domain.model.CardColorOption
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
-import com.learning.weatherappclean.util.getIcon
-import com.learning.weatherappclean.presentation.ui.theme.*
+import com.learning.weatherappclean.presentation.ui.theme.cold
+import com.learning.weatherappclean.presentation.ui.theme.hot
+import com.learning.weatherappclean.presentation.ui.theme.onCard
+import com.learning.weatherappclean.presentation.ui.theme.warm
+import com.learning.weatherappclean.util.getWeatherIcon
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import java.util.*
 
 @Composable
 fun CardWeather(
@@ -36,8 +53,8 @@ fun CardWeather(
     settings: State<Settings>,
     deleteCard: (Index: Int) -> Unit,
     setShowDetails: (Boolean, Int) -> Unit,
-    setShowSearch:(Boolean)->Unit,
-    setExpanded:(Boolean)->Unit,
+    setShowSearch: (Boolean) -> Unit,
+    setExpanded: (Boolean) -> Unit,
     weatherCardList: StateFlow<List<WeatherCard>>
 ) {
     val colour = when (content.cardColorOption) {
@@ -57,7 +74,7 @@ fun CardWeather(
      * same card by its index. My explanation is a bit confusing, so its easier just to comment
      * LaunchedEffect block to see the behaviour I tried to describe*/
     LaunchedEffect(Unit) {
-      weatherCardList.collectLatest {if (it.size > index) details.value = it[index].showDetails  }
+        weatherCardList.collectLatest { if (it.size > index) details.value = it[index].showDetails }
     }
     Card(
         modifier = modifier
@@ -83,12 +100,11 @@ fun CardWeather(
                     modifier = Modifier
                         .fillMaxWidth(0.35f)
                         .align(Alignment.CenterVertically)
-                )
-                {
+                ) {
                     Column(modifier = Modifier.align(Alignment.Center)) {
                         Icon(
                             painter = painterResource(
-                                id = getIcon(
+                                id = getWeatherIcon(
                                     content.weatherCode.toInt(),
                                     content.isNightIcon
                                 )
@@ -118,7 +134,7 @@ fun CardWeather(
 
                     Column(modifier = Modifier.align(Alignment.BottomStart)) {
                         Text(
-                            text = content.location.uppercase(Locale.ROOT),
+                            text = content.location.uppercase(),
                             color = MaterialTheme.colors.onCard,
                             modifier = Modifier
                                 .padding(start = 20.dp, end = 10.dp)
@@ -130,12 +146,11 @@ fun CardWeather(
                             text = "${content.country}${ if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else "" }",
                             color = MaterialTheme.colors.onCard,
                             modifier = Modifier
-                                .padding(end = 10.dp,start = 20.dp,bottom = 10.dp)
+                                .padding(end = 10.dp, start = 20.dp, bottom = 10.dp)
                                 .horizontalScroll(state = ScrollState(0)),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
-
                     }
                     Button(
                         onClick = {

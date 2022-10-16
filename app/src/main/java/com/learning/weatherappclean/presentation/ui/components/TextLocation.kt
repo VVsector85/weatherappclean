@@ -1,14 +1,20 @@
 package com.learning.weatherappclean.presentation.ui.components
 
-
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.*
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -20,21 +26,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
-import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.theme.onTextField
 import com.learning.weatherappclean.presentation.ui.theme.textField
-
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TextLocation(
     modifier: Modifier,
-    setExpanded:(Boolean)-> Unit,
-    addCard:(String, AutocompletePrediction?)->Unit,
+    setExpanded: (Boolean) -> Unit,
+    addCard: (String, AutocompletePrediction?) -> Unit,
     textSearch: State<String>,
-    setSearchText:(String)->Unit
+    setSearchText: (String) -> Unit
 
-    ) {
+) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -52,7 +56,7 @@ fun TextLocation(
             onSearch = {
                 keyboardController?.hide()
                 setExpanded(false)
-                addCard(textSearch.value,  null)
+                addCard(textSearch.value, null)
             }
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -60,7 +64,7 @@ fun TextLocation(
             keyboardType = KeyboardType.Text
         ),
         value = textSearch.value,
-        onValueChange = {setSearchText(it)},
+        onValueChange = { setSearchText(it) },
         maxLines = 3,
         textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
         leadingIcon = {

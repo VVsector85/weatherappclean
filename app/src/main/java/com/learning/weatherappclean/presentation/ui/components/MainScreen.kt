@@ -2,15 +2,26 @@ package com.learning.weatherappclean.presentation.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-
+import androidx.compose.material.Button
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.rememberDrawerState
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
-
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,7 +79,7 @@ fun MainScreen(vm: MainViewModel) {
         }
     ) { padding ->
         WeatherList(
-            padding = if (showSearch.value) PaddingValues (top = 80.dp) else if(!showSearch.value&&!isLandscape) PaddingValues (top = 60.dp) else padding,
+            padding = if (showSearch.value) PaddingValues(top = 80.dp) else if (!showSearch.value && !isLandscape) PaddingValues(top = 60.dp) else padding,
             weatherCardList = weatherCardList,
             isLoading = isLoading,
             scrollToFirst = scrollToFirst,
@@ -85,7 +96,6 @@ fun MainScreen(vm: MainViewModel) {
             setShowSearch = vm::setShowSearch,
             swapSections = vm::swapSections
 
-
         )
         Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
             if (!showSearch.value) Button(
@@ -99,8 +109,7 @@ fun MainScreen(vm: MainViewModel) {
                     .align(if (isLandscape)Alignment.TopStart else Alignment.TopEnd)
                     .size(50.dp),
                 shape = CircleShape,
-            )
-            {
+            ) {
                 Icon(
                     painter = painterResource(id = com.google.android.material.R.drawable.abc_ic_search_api_material),
                     contentDescription = stringResource(id = R.string.searchLocation),
@@ -115,21 +124,21 @@ fun MainScreen(vm: MainViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-                if (showSearch.value)
-                    TextLocation(
-                        modifier = Modifier
-                            .fillMaxWidth(if (isLandscape) 0.75f else 0.9f)
-                            .height(60.dp),
-                        addCard = vm::addCard,
-                        setExpanded = vm::setExpanded,
-                        setSearchText = vm::setSearchText,
-                        textSearch = searchText
-                    ) else if (!isLandscape)
-                    Text(
-                        text = stringResource(id = R.string.howIsTheWeather),
-                        textAlign = TextAlign.Center,
-                        fontSize = 25.sp,
-                    )
+            if (showSearch.value)
+                TextLocation(
+                    modifier = Modifier
+                        .fillMaxWidth(if (isLandscape) 0.75f else 0.9f)
+                        .height(60.dp),
+                    addCard = vm::addCard,
+                    setExpanded = vm::setExpanded,
+                    setSearchText = vm::setSearchText,
+                    textSearch = searchText
+                ) else if (!isLandscape)
+                Text(
+                    text = stringResource(id = R.string.howIsTheWeather),
+                    textAlign = TextAlign.Center,
+                    fontSize = 25.sp,
+                )
             DropDown(
                 expanded = expanded,
                 addCard = vm::addCard,

@@ -35,11 +35,12 @@ class DataModule {
             .connectTimeout(Constants.NETWORK_REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(Constants.NETWORK_REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(Constants.NETWORK_REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            .addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+            )
             .build()
-
 
     private fun addApiKeyToRequests(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()

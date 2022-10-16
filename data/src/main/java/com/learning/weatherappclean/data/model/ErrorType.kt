@@ -1,6 +1,6 @@
 package com.learning.weatherappclean.data.model
 
-enum class ErrorType{
+enum class ErrorType {
     HTTP_ERROR,
     IO_ERROR,
     INTERNAL_ERROR,
