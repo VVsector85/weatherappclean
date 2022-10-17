@@ -22,6 +22,5 @@ internal fun AutocompleteResponse.mapToDomain(): List<AutocompletePrediction> {
             )
         )
     }
-
     return tempList
 }

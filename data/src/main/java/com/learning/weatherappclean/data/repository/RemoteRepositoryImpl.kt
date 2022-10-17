@@ -10,17 +10,18 @@ import com.learning.weatherappclean.data.souce.remote.Resource
 import com.learning.weatherappclean.data.souce.remote.WeatherApi
 import com.learning.weatherappclean.data.util.JsonConverter
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
-import com.learning.weatherappclean.domain.model.Request
+import com.learning.weatherappclean.domain.model.AutocompleteRequest
 import com.learning.weatherappclean.domain.model.ResourceDomain
 import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.domain.model.WeatherRequest
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 import javax.inject.Inject
 
 class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherApi) :
     RemoteRepository, BaseRepository() {
-    override suspend fun getWeatherData(request: Request): ResourceDomain<WeatherCard> {
+    override suspend fun getWeatherData(weatherRequest: WeatherRequest): ResourceDomain<WeatherCard> {
         val response =
-            safeApiCall { weatherApi.getWeather(location = request.query, units = request.units) }
+            safeApiCall { weatherApi.getWeather(location = weatherRequest.query, units = weatherRequest.units ?: "m") }
         if (response is Resource.Error) return ResourceDomain.Error(
             errorType = response.type as ErrorType,
             errorMessage = response.message ?: "error",
@@ -41,11 +42,12 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
              request with latitude and longitude. Relying on coordinates alone also does not help
              because API often returns location name which does not match autocomplete suggestion.*/
             var tempResource: ResourceDomain<WeatherCard> = ResourceDomain.Success(weatherResponse.mapToDomain())
-            if (request.location != tempResource.data?.location && request.location != "") {
-                /**I'm not sure it's okay to make such a recursive call*/
+            if (weatherRequest.location != tempResource.data?.location && weatherRequest.location != null) {
+                /**Such a recursive call looks unsafe, but otherwise code duplication is inevitable*/
                 tempResource = getWeatherData(
-                    Request(
-                        query = "${request.lat}, ${request.lon}"
+                    WeatherRequest(
+                        query = "${weatherRequest.lat}, ${weatherRequest.lon}",
+                        units = weatherRequest.units
                     )
                 )
             }
@@ -66,8 +68,8 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
         }
     }
 
-    override suspend fun getAutocompletePredictions(request: Request): ResourceDomain<List<AutocompletePrediction>> {
-        val response = safeApiCall { weatherApi.getAutocomplete(searchString = request.query) }
+    override suspend fun getAutocompletePredictions(autocompleteRequest: AutocompleteRequest): ResourceDomain<List<AutocompletePrediction>> {
+        val response = safeApiCall { weatherApi.getAutocomplete(searchString = autocompleteRequest.query) }
         if (response is Resource.Error) return ResourceDomain.Error(
             errorType = response.type as ErrorType,
             errorMessage = response.message ?: "error",

@@ -14,7 +14,7 @@ val OnErrorNight = Color(0xFFE64A19)
 val ColdDay = Color(0xFF2D9BF0)
 val ColdNight = Color(0xFF1565C0)
 
-val WarmDay = Color(0xFFFAC710)
+val WarmDay = Color(0xFFF8B305)
 val WarmNight = Color(0xA4FDA335)
 
 val HotDay = Color(0xFFF24726)

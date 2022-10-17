@@ -1,15 +1,15 @@
 package com.learning.weatherappclean.domain.usecase
 
 import com.learning.weatherappclean.domain.model.CardColorOption
-import com.learning.weatherappclean.domain.model.Request
 import com.learning.weatherappclean.domain.model.ResourceDomain
 import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.domain.model.WeatherRequest
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 
 class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) {
 
-    suspend operator fun invoke(request: Request): ResourceDomain<WeatherCard> {
-        val resourceDomainCard = remoteRepository.getWeatherData(request)
+    suspend operator fun invoke(weatherRequest: WeatherRequest): ResourceDomain<WeatherCard> {
+        val resourceDomainCard = remoteRepository.getWeatherData(weatherRequest)
 
         if (resourceDomainCard is ResourceDomain.Success && resourceDomainCard.data != null) {
             /**This condition was in the task so I consider it as a part of business logic.
@@ -30,7 +30,7 @@ class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) 
                 }
             }
         }
-        resourceDomainCard.data?.showDetails = request.showDetails
+        resourceDomainCard.data?.showDetails = weatherRequest.showDetails ?: false
         return resourceDomainCard
     }
 

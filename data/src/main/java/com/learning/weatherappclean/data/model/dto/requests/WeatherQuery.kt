@@ -1,24 +1,25 @@
 package com.learning.weatherappclean.data.model.dto.requests
 
-import com.learning.weatherappclean.domain.model.Request
 import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.domain.model.WeatherRequest
 
 data class WeatherQuery(
     val content: List<CardQuery>
 )
 
-internal fun WeatherQuery.mapToDomain(): List<Request> {
-    val list: MutableList<Request> = mutableListOf()
+internal fun WeatherQuery.mapToDomain(): List<WeatherRequest> {
+    val list: MutableList<WeatherRequest> = mutableListOf()
     this.content.forEach {
         list.add(
-            Request(
+            WeatherRequest(
                 query = "${it.location}, ${it.country}, ${it.region}",
                 location = it.location,
                 country = it.country,
                 region = it.region,
                 lat = it.lat,
                 lon = it.lon,
-                showDetails = it.isDetailed
+                showDetails = it.isDetailed,
+                units = null
             )
         )
     }

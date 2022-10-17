@@ -98,7 +98,7 @@ fun <T : Any> DragDropColumn(
                 dragDropState = dragDropState,
                 index = index, modifier = Modifier
             ) { isDragging ->
-                val elevation by animateDpAsState(if (isDragging) 6.dp else 0.dp)
+                val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp)
                 Card(elevation = elevation) {
                     itemContent(index, item)
                 }

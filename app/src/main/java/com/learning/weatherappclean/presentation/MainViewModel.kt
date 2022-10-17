@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.weatherappclean.data.model.ErrorType
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
-import com.learning.weatherappclean.domain.model.Request
+import com.learning.weatherappclean.domain.model.AutocompleteRequest
 import com.learning.weatherappclean.domain.model.ResourceDomain
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.domain.model.WeatherRequest
 import com.learning.weatherappclean.domain.usecase.GetAutocompletePredictionsUseCase
 import com.learning.weatherappclean.domain.usecase.GetWeatherCardDataUseCase
 import com.learning.weatherappclean.domain.usecase.LoadRequestListUseCase
@@ -19,8 +20,12 @@ import com.learning.weatherappclean.util.ErrorMapper
 import com.learning.weatherappclean.util.ErrorMessage
 import com.learning.weatherappclean.util.ErrorTypeUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -77,47 +82,19 @@ class MainViewModel @Inject constructor(
         .distinctUntilChanged()
         .flatMapLatest { autocompleteQuery(query = it) }
 
-    private suspend fun autocompleteQuery(query: String): Flow<List<AutocompletePrediction>> {
-        if (query.length < AUTOCOMPLETE_QUERY_MIN_CHARS) {
-            return flowOf(emptyList())
-        }
-        expanded.emit(true)
-        val result = getAutocompletePredictionsUseCase(Request(query))
-        return if (result is ResourceDomain.Success)
-            flowOf(result.data!!) else flowOf(emptyList())
-    }
-
-    fun deleteCard(index: Int) {
-        val tempCardList = weatherCardsList.value.toMutableList()
-        tempCardList.removeAt(index)
-        if (tempCardList.isEmpty()) noRequests.value = true
-        weatherCardsList.value = tempCardList
-        saveRequestListUseCase(tempCardList)
-    }
-
-    fun saveSettings(value: Boolean, field: KProperty1<Settings, *>) {
-        when (field) {
-            Settings::imperialUnits -> settings.update { it.copy(imperialUnits = value) }
-            Settings::newCardFirst -> settings.update { it.copy(newCardFirst = value) }
-            Settings::dragAndDropCards -> settings.update { it.copy(dragAndDropCards = value) }
-            Settings::detailsOnDoubleTap -> settings.update { it.copy(detailsOnDoubleTap = value) }
-        }
-        saveSettingsUseCase(settings.value)
-    }
-
     fun addCard(location: String, prediction: AutocompletePrediction?) {
         expanded.value = false
         isLoading.value = true
         viewModelScope.launch(coroutineDispatcherProvider.IO()) {
             val resourceDomain = getWeatherCardDataUseCase(
-                Request(
+                WeatherRequest(
                     query = location,
-                    units = if (settings.value.imperialUnits) "f" else "m",
-                    lat = prediction?.lat ?: "",
-                    lon = prediction?.lon ?: "",
-                    location = prediction?.location ?: "",
-                    country = prediction?.country ?: "",
-                    region = prediction?.region ?: "",
+                    units = if (settings.value.imperialUnits) IMPERIAL else METRIC,
+                    lat = prediction?.lat,
+                    lon = prediction?.lon,
+                    location = prediction?.location,
+                    country = prediction?.country,
+                    region = prediction?.region,
                 )
             )
             if (resourceDomain is ResourceDomain.Success) {
@@ -125,8 +102,8 @@ class MainViewModel @Inject constructor(
                 val tempCardList = weatherCardsList.value.toMutableList()
                 if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
                     if (settings.value.newCardFirst) tempCardList.add(
-                        0,
-                        resourceDomain.data!!
+                        index = 0,
+                        element = resourceDomain.data!!
                     ) else tempCardList.add(resourceDomain.data!!)
                     noRequests.emit(false)
                     weatherCardsList.emit(tempCardList)
@@ -173,9 +150,11 @@ class MainViewModel @Inject constructor(
         val tempCardList = mutableListOf<WeatherCard>()
         viewModelScope.launch(coroutineDispatcherProvider.IO()) {
             run breaking@{
-                requestList.forEach { request ->
-                    request.units = if (settings.value.imperialUnits) "f" else "m"
-                    val resourceDomain = getWeatherCardDataUseCase(request)
+                getWeatherResources(
+                    weatherRequestList = requestList,
+                    units = if (settings.value.imperialUnits) IMPERIAL else METRIC
+                ).forEach { resourceDomain ->
+
                     if (resourceDomain is ResourceDomain.Success) {
                         val card = resourceDomain.data!!
                         if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
@@ -210,6 +189,24 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun deleteCard(index: Int) {
+        val tempCardList = weatherCardsList.value.toMutableList()
+        tempCardList.removeAt(index)
+        if (tempCardList.isEmpty()) noRequests.value = true
+        weatherCardsList.value = tempCardList
+        saveRequestListUseCase(tempCardList)
+    }
+
+    fun saveSettings(value: Boolean, field: KProperty1<Settings, *>) {
+        when (field) {
+            Settings::imperialUnits -> settings.update { it.copy(imperialUnits = value) }
+            Settings::newCardFirst -> settings.update { it.copy(newCardFirst = value) }
+            Settings::dragAndDropCards -> settings.update { it.copy(dragAndDropCards = value) }
+            Settings::detailsOnDoubleTap -> settings.update { it.copy(detailsOnDoubleTap = value) }
+        }
+        saveSettingsUseCase(settings.value)
+    }
+
     fun setShowDetails(boolean: Boolean, index: Int) {
         val list = weatherCardsList.value
         list[index].showDetails = boolean
@@ -228,7 +225,10 @@ class MainViewModel @Inject constructor(
         showSearch.value = value
         searchText.value = ""
     }
-    fun setExpanded(value: Boolean) { expanded.value = value }
+
+    fun setExpanded(value: Boolean) {
+        expanded.value = value
+    }
 
     fun setSearchText(value: String) {
         searchText.value = value
@@ -246,10 +246,39 @@ class MainViewModel @Inject constructor(
         if (System.currentTimeMillis() - lastRefreshTime > REFRESH_ON_RESUME_TIMEOUT) refreshCards()
     }
 
+    private suspend fun autocompleteQuery(query: String): Flow<List<AutocompletePrediction>> {
+        if (query.length < AUTOCOMPLETE_QUERY_MIN_CHARS) {
+            return flowOf(emptyList())
+        }
+        expanded.emit(true)
+        val result = getAutocompletePredictionsUseCase(AutocompleteRequest(query))
+        return if (result is ResourceDomain.Success)
+            flowOf(result.data!!) else flowOf(emptyList())
+    }
+
+    private suspend fun getWeatherResources(
+        weatherRequestList: List<WeatherRequest>,
+        units: String
+    ): List<ResourceDomain<WeatherCard>> {
+        val resourceList = mutableListOf<Deferred<ResourceDomain<WeatherCard>>>()
+        coroutineScope {
+            weatherRequestList.forEach { request ->
+                request.units = units
+                val resourceDomain = async {
+                    getWeatherCardDataUseCase(request)
+                }
+                resourceList.add(resourceDomain)
+            }
+        }
+        return resourceList.awaitAll()
+    }
+
     companion object {
         private const val DEFAULT_ERROR_MESSAGE_SHOW_TIME = 8000L
         private const val AUTOCOMPLETE_QUERY_DELAY = 1500L
         private const val AUTOCOMPLETE_QUERY_MIN_CHARS = 3
         private const val REFRESH_ON_RESUME_TIMEOUT = 1800000L
+        private const val METRIC = "m"
+        private const val IMPERIAL = "f"
     }
 }
