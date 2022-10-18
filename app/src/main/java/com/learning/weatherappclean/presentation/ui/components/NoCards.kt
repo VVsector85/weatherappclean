@@ -30,8 +30,7 @@ fun NoCards(noRequests: State<Boolean>, refreshCards: () -> Unit) {
             text = if (!noRequests.value)
                 stringResource(R.string.noCardsLoaded)
             else stringResource(R.string.noItemsToShow),
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Light,
+            style = MaterialTheme.typography.h4,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.onTextField
         )
@@ -44,7 +43,7 @@ fun NoCards(noRequests: State<Boolean>, refreshCards: () -> Unit) {
             Text(
                 text = stringResource(R.string.tryAgain),
                 modifier = Modifier.padding(10.dp),
-                fontSize = 20.sp
+                style = MaterialTheme.typography.h5
             )
         }
     }

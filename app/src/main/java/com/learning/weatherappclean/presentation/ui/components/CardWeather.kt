@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -135,8 +136,7 @@ fun CardWeather(
                         modifier = Modifier
                             .padding(start = 15.dp)
                             .align(Alignment.TopStart),
-                        fontSize = 60.sp,
-                        fontWeight = FontWeight(600)
+                       style = MaterialTheme.typography.h2
                     )
 
                     Column(modifier = Modifier.align(Alignment.BottomStart)) {
@@ -146,8 +146,7 @@ fun CardWeather(
                             modifier = Modifier
                                 .padding(start = 20.dp, end = 10.dp)
                                 .horizontalScroll(state = ScrollState(0)),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.h5
                         )
                         Text(
                             text = "${content.country}${if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else ""}",
@@ -155,8 +154,7 @@ fun CardWeather(
                             modifier = Modifier
                                 .padding(end = 10.dp, start = 20.dp, bottom = 10.dp)
                                 .horizontalScroll(state = ScrollState(0)),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.h6,
                         )
                     }
                     Button(
@@ -265,7 +263,7 @@ fun WeatherDetails(
                     .align(Alignment.CenterVertically),
                 text = value,
                 color = MaterialTheme.colors.onCard,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.h6,
                 textAlign = TextAlign.Center
             )
         }

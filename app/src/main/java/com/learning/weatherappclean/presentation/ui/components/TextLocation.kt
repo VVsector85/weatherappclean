@@ -33,9 +33,9 @@ import com.learning.weatherappclean.presentation.ui.theme.textField
 @Composable
 fun TextLocation(
     modifier: Modifier,
+    textSearch: State<String>,
     setExpanded: (Boolean) -> Unit,
     addCard: (String, AutocompletePrediction?) -> Unit,
-    textSearch: State<String>,
     setSearchText: (String) -> Unit
 
 ) {
@@ -66,7 +66,7 @@ fun TextLocation(
         value = textSearch.value,
         onValueChange = { setSearchText(it) },
         maxLines = 3,
-        textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+        textStyle = MaterialTheme.typography.h5,
         leadingIcon = {
             Text(text = stringResource(id = R.string.location), modifier = Modifier.padding(start = 10.dp, end = 5.dp))
         },

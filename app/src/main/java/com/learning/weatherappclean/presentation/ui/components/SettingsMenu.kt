@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
@@ -18,9 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.domain.model.Settings
 import kotlin.reflect.KProperty1
@@ -45,10 +44,9 @@ fun SettingsMenu(
                 .padding(bottom = 15.dp)
                 .align(Alignment.CenterHorizontally),
             text = stringResource(id = R.string.settings),
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Medium
+            style = MaterialTheme.typography.h4
         )
-        Divider(startIndent = 8.dp, thickness = 3.dp)
+        Divider(thickness = 3.dp)
         MenuSwitchItem(
             text = stringResource(id = R.string.imperial),
             description = stringResource(id = R.string.imperialDescription),
@@ -102,12 +100,13 @@ fun MenuSwitchItem(
         ) {
             Text(
                 text = text,
-                fontSize = 22.sp
+                style = MaterialTheme.typography.h5
             )
             description?.let {
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
                     text = description,
+                    style = MaterialTheme.typography.body1
                 )
             }
         }
@@ -118,7 +117,7 @@ fun MenuSwitchItem(
             onCheckedChange = {
                 checkedState.value = it
                 saveSettings(it, property)
-                if (action != null) action()
+                action?.invoke()
             }
         )
     }

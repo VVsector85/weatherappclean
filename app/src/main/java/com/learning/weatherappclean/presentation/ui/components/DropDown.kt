@@ -26,10 +26,9 @@ import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
 @Composable
 fun DropDown(
     expanded: State<Boolean>,
-    addCard: (String, AutocompletePrediction?) -> Unit,
     predictionList: State<List<AutocompletePrediction>>,
-    isLandscape: Boolean
-
+    isLandscape: Boolean,
+    addCard: (String, AutocompletePrediction?) -> Unit
 ) {
     if (expanded.value)
         Column(
@@ -54,15 +53,13 @@ fun DropDown(
                                 Text(
                                     text = item.location,
                                     modifier = Modifier.padding(top = 2.dp, start = 10.dp),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
+                                    style = MaterialTheme.typography.h6,
                                     color = MaterialTheme.colors.onAutocomplete
                                 )
                                 Text(
                                     text = "${item.country}, ${item.region}",
                                     modifier = Modifier.padding(bottom = 2.dp, start = 10.dp),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.subtitle2,
                                     color = MaterialTheme.colors.onAutocomplete
                                 )
                             }

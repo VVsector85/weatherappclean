@@ -148,7 +148,7 @@ class MainViewModel @Inject constructor(
         isLoading.value = true
         var duplicatesFound = false
         val requestList = loadRequestListUseCase()
-        noRequests.tryEmit(requestList.isEmpty())
+        noRequests.value = requestList.isEmpty()
         val tempCardList = mutableListOf<WeatherCard>()
         viewModelScope.launch(coroutineDispatcherProvider.IO()) {
             run breaking@{

@@ -45,7 +45,7 @@ fun ErrorMessage(errorMsg: State<ErrorMessage>, resetError: () -> Unit) {
                 text = text,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colors.onError,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.subtitle2
             )
         }
     }
