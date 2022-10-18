@@ -36,21 +36,21 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
             )
 
             /** The only way I found to distinct success response from failed one is to
-            try to parse API response in WeatherResponse and if it fails, in ErrorResponse
+             try to parse API response in WeatherResponse and if it fails, in ErrorResponse
 
-            I have to handle errors on two levels, lower one (http and IO errors) and higher one,
-            when I get API response with code 200 and OK message but there is error data instead of
-            weather data in response body. This makes my code ugly
+             I have to handle errors on two levels, lower one (http and IO errors) and higher one,
+             when I get API response with code 200 and OK message but there is error data instead of
+             weather data in response body. This makes my code ugly
              */
             is Resource.Success -> {
                 val weatherResponse =
                     JsonConverter().convertFromJson<WeatherResponse>(response.data)
                 return if (weatherResponse?.current != null) {
                     /**I had to add this code to to fix some inconsistencies in Weatherstack API behaviour:
-                    in case of specifying Region with API's own autocomplete sometimes it returns
-                    wrong location, so if received location does not match the query the app sends another
-                    request with latitude and longitude. Relying on coordinates alone also does not help
-                    because API often returns location name which does not match autocomplete suggestion.*/
+                     in case of specifying Region with API's own autocomplete sometimes it returns
+                     wrong location, so if received location does not match the query the app sends another
+                     request with latitude and longitude. Relying on coordinates alone also does not help
+                     because API often returns location name which does not match autocomplete suggestion.*/
                     var tempResource: ResourceDomain<WeatherCard> =
                         ResourceDomain.Success(weatherResponse.mapToDomain())
                     if (weatherRequest.location != tempResource.data?.location && weatherRequest.location != null) {

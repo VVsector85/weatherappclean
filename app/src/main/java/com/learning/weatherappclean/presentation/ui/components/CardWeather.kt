@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,17 +31,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.domain.model.CardColorOption
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
+import com.learning.weatherappclean.presentation.ui.theme.WeatherAppCleanTheme
 import com.learning.weatherappclean.presentation.ui.theme.cold
 import com.learning.weatherappclean.presentation.ui.theme.hot
 import com.learning.weatherappclean.presentation.ui.theme.onCard
 import com.learning.weatherappclean.presentation.ui.theme.warm
 import com.learning.weatherappclean.util.getWeatherIcon
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
@@ -51,11 +56,11 @@ fun CardWeather(
     content: WeatherCard,
     index: Int,
     settings: State<Settings>,
-    deleteCard: (Index: Int) -> Unit,
-    setShowDetails: (Boolean, Int) -> Unit,
-    setShowSearch: (Boolean) -> Unit,
-    setExpanded: (Boolean) -> Unit,
-    weatherCardList: StateFlow<List<WeatherCard>>
+    deleteCard: ((Index: Int) -> Unit)? = null,
+    setShowDetails: ((Boolean, Int) -> Unit)? = null,
+    setShowSearch: ((Boolean) -> Unit?)? = null,
+    setExpanded: ((Boolean) -> Unit)? = null,
+    weatherCardList: StateFlow<List<WeatherCard>>? = null
 ) {
     val colour = when (content.cardColorOption) {
         CardColorOption.BLUE -> MaterialTheme.colors.cold
@@ -74,7 +79,9 @@ fun CardWeather(
      * same card by its index. My explanation is a bit confusing, so its easier just to comment
      * LaunchedEffect block to see the behaviour I tried to describe*/
     LaunchedEffect(Unit) {
-        weatherCardList.collectLatest { if (it.size > index) details.value = it[index].showDetails }
+        weatherCardList?.collectLatest {
+            if (it.size > index) details.value = it[index].showDetails
+        }
     }
     Card(
         modifier = modifier
@@ -83,12 +90,12 @@ fun CardWeather(
                     onDoubleTap = {
                         if (settings.value.detailsOnDoubleTap) {
                             details.value = !details.value
-                            setShowDetails(details.value, index)
+                            setShowDetails?.invoke(details.value, index)
                         }
                     },
                     onTap = {
-                        setShowSearch(false)
-                        setExpanded(false)
+                        setShowSearch?.invoke(false)
+                        setExpanded?.invoke(false)
                     },
                 )
             },
@@ -143,7 +150,7 @@ fun CardWeather(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "${content.country}${ if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else "" }",
+                            text = "${content.country}${if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else ""}",
                             color = MaterialTheme.colors.onCard,
                             modifier = Modifier
                                 .padding(end = 10.dp, start = 20.dp, bottom = 10.dp)
@@ -154,7 +161,7 @@ fun CardWeather(
                     }
                     Button(
                         onClick = {
-                            deleteCard(index)
+                            deleteCard?.invoke(index)
                         },
                         shape = CircleShape,
                         contentPadding = PaddingValues(10.dp),
@@ -172,7 +179,7 @@ fun CardWeather(
                 }
             }
 
-            if (details.value && settings.value.detailsOnDoubleTap) Row(modifier = Modifier.fillMaxSize()) {
+            if (details.value && settings.value.detailsOnDoubleTap) Row(modifier = Modifier.fillMaxWidth()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.33f)
@@ -263,4 +270,71 @@ fun WeatherDetails(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardWeatherPreview(
+    @PreviewParameter(WeatherCardPreviewParameterProvider::class) content: WeatherCard
+) {
+    WeatherAppCleanTheme {
+        CardWeather(
+            modifier = Modifier,
+            content = content,
+            index = 0,
+            settings = MutableStateFlow(
+                Settings(
+                    imperialUnits = false,
+                    newCardFirst = true,
+                    detailsOnDoubleTap = true,
+                    dragAndDropCards = true
+                )
+            ).collectAsState(),
+        )
+    }
+}
+
+class WeatherCardPreviewParameterProvider : PreviewParameterProvider<WeatherCard> {
+    override val values = sequenceOf(
+        WeatherCard(
+            location = "Kharkiv",
+            temperature = "18",
+            country = "Ukraine",
+            region = "Kharkivska oblast'",
+            units = "m",
+            cloudCover = "40",
+            feelsLike = "15",
+            humidity = "70",
+            pressure = "1015",
+            uvIndex = "4",
+            windSpeed = "12",
+            weatherCode = "113",
+            lat = "",
+            lon = "",
+            weatherDescription = "",
+            isNightIcon = false,
+            showDetails = false,
+            cardColorOption = CardColorOption.YELLOW
+        ),
+        WeatherCard(
+            location = "Cairo",
+            temperature = "26",
+            country = "Egypt",
+            region = "Al Qahirah",
+            units = "m",
+            cloudCover = "75",
+            feelsLike = "25",
+            humidity = "42",
+            pressure = "1016",
+            uvIndex = "7",
+            windSpeed = "15",
+            weatherCode = "116",
+            lat = "",
+            lon = "",
+            weatherDescription = "",
+            isNightIcon = false,
+            showDetails = true,
+            cardColorOption = CardColorOption.RED
+        ),
+    )
 }
