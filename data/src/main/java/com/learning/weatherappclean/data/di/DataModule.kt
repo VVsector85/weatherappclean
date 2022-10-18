@@ -1,6 +1,6 @@
 package com.learning.weatherappclean.data.di
 
-import com.learning.weatherappclean.data.souce.remote.WeatherApi
+import com.learning.weatherappclean.data.source.remote.WeatherApi
 import com.learning.weatherappclean.data.util.Constants
 import com.learning.weatherappclean.data.util.Constants.API_KEY
 import dagger.Module

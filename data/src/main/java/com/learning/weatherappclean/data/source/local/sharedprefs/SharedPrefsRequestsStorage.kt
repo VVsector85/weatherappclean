@@ -1,8 +1,8 @@
-package com.learning.weatherappclean.data.souce.local.sharedprefs
+package com.learning.weatherappclean.data.source.local.sharedprefs
 
 import android.content.Context
 import com.learning.weatherappclean.data.model.dto.requests.WeatherQuery
-import com.learning.weatherappclean.data.souce.local.RequestsStorage
+import com.learning.weatherappclean.data.source.local.RequestsStorage
 import com.learning.weatherappclean.data.util.JsonConverter
 
 class SharedPrefsRequestsStorage(context: Context) : RequestsStorage {

@@ -97,46 +97,48 @@ class MainViewModel @Inject constructor(
                     region = prediction?.region,
                 )
             )
-            if (resourceDomain is ResourceDomain.Success) {
-                val card = resourceDomain.data!!
-                val tempCardList = weatherCardsList.value.toMutableList()
-                if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
-                    if (settings.value.newCardFirst) tempCardList.add(
-                        index = 0,
-                        element = resourceDomain.data!!
-                    ) else tempCardList.add(resourceDomain.data!!)
-                    noRequests.emit(false)
-                    weatherCardsList.emit(tempCardList)
-                    scrollToFirst.emit(
-                        Pair(
-                            true,
-                            if (settings.value.newCardFirst) 0 else weatherCardsList.value.size
+            when (resourceDomain) {
+                is ResourceDomain.Success -> {
+                    val card = resourceDomain.data
+                    val tempCardList = weatherCardsList.value.toMutableList()
+                    if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
+                        if (settings.value.newCardFirst) tempCardList.add(
+                            index = 0,
+                            element = resourceDomain.data
+                        ) else tempCardList.add(resourceDomain.data)
+                        noRequests.emit(false)
+                        weatherCardsList.emit(tempCardList)
+                        scrollToFirst.emit(
+                            Pair(
+                                true,
+                                if (settings.value.newCardFirst) 0 else weatherCardsList.value.size
+                            )
                         )
-                    )
-                    searchText.emit("")
-                    saveRequestListUseCase(tempCardList)
-                    showSearch.emit(false)
-                } else {
+                        searchText.emit("")
+                        saveRequestListUseCase(tempCardList)
+                        showSearch.emit(false)
+                    } else {
+                        errorMessage.emit(
+                            ErrorMessage(
+                                errorType = ErrorTypeUi.SAME_ITEM_ERROR,
+                                showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
+                                errorCode = null,
+                                errorString = "${card.location}, ${card.country}, ${card.region}"
+                            )
+                        )
+                        isLoading.emit(false)
+                    }
+                } is ResourceDomain.Error -> {
                     errorMessage.emit(
                         ErrorMessage(
-                            errorType = ErrorTypeUi.SAME_ITEM_ERROR,
+                            errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
                             showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                            errorCode = null,
-                            errorString = "${card.location}, ${card.country}, ${card.region}"
+                            errorCode = resourceDomain.errorCode,
+                            errorString = resourceDomain.message
                         )
                     )
                     isLoading.emit(false)
                 }
-            } else {
-                errorMessage.emit(
-                    ErrorMessage(
-                        errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
-                        showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                        errorCode = resourceDomain.code,
-                        errorString = resourceDomain.message ?: ""
-                    )
-                )
-                isLoading.emit(false)
             }
             isLoading.emit(false)
         }
@@ -155,24 +157,28 @@ class MainViewModel @Inject constructor(
                     units = if (settings.value.imperialUnits) IMPERIAL else METRIC
                 ).forEach { resourceDomain ->
 
-                    if (resourceDomain is ResourceDomain.Success) {
-                        val card = resourceDomain.data!!
-                        if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
-                            tempCardList.add(card)
-                        } else {
-                            duplicatesFound = true
+                    when (resourceDomain) {
+                        is ResourceDomain.Success -> {
+                            val card = resourceDomain.data
+                            if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
+                                tempCardList.add(card)
+                            } else {
+                                duplicatesFound = true
+                            }
                         }
-                    } else {
-                        errorMessage.emit(
-                            ErrorMessage(
-                                errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
-                                showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                                errorCode = resourceDomain.code,
-                                errorString = resourceDomain.message ?: ""
-                            )
-                        )
-                        isLoading.emit(false)
-                        return@breaking
+                        is ResourceDomain.Error ->
+                            {
+                                errorMessage.emit(
+                                    ErrorMessage(
+                                        errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
+                                        showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
+                                        errorCode = resourceDomain.errorCode,
+                                        errorString = resourceDomain.message
+                                    )
+                                )
+                                isLoading.emit(false)
+                                return@breaking
+                            }
                     }
                 }
             }
@@ -197,8 +203,8 @@ class MainViewModel @Inject constructor(
         saveRequestListUseCase(tempCardList)
     }
 
-    fun saveSettings(value: Boolean, field: KProperty1<Settings, *>) {
-        when (field) {
+    fun saveSettings(value: Boolean, property: KProperty1<Settings, *>) {
+        when (property) {
             Settings::imperialUnits -> settings.update { it.copy(imperialUnits = value) }
             Settings::newCardFirst -> settings.update { it.copy(newCardFirst = value) }
             Settings::dragAndDropCards -> settings.update { it.copy(dragAndDropCards = value) }
@@ -253,7 +259,7 @@ class MainViewModel @Inject constructor(
         expanded.emit(true)
         val result = getAutocompletePredictionsUseCase(AutocompleteRequest(query))
         return if (result is ResourceDomain.Success)
-            flowOf(result.data!!) else flowOf(emptyList())
+            flowOf(result.data) else flowOf(emptyList())
     }
 
     private suspend fun getWeatherResources(

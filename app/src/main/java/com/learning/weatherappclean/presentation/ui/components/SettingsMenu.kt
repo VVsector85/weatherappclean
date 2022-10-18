@@ -54,7 +54,7 @@ fun SettingsMenu(
             description = stringResource(id = R.string.imperialDescription),
             checkedState = checkedStateUnits,
             saveSettings = saveSettings,
-            field = Settings::imperialUnits,
+            property = Settings::imperialUnits,
             action = refreshCards
         )
         MenuSwitchItem(
@@ -62,21 +62,21 @@ fun SettingsMenu(
             description = stringResource(id = R.string.addAtTopDescription),
             checkedState = checkedStateAtTop,
             saveSettings = saveSettings,
-            field = Settings::newCardFirst
+            property = Settings::newCardFirst
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.showDetails),
             description = stringResource(id = R.string.showDetailsDescription),
             checkedState = checkedStateShowDetails,
             saveSettings = saveSettings,
-            field = Settings::detailsOnDoubleTap
+            property = Settings::detailsOnDoubleTap
         )
         MenuSwitchItem(
             text = stringResource(id = R.string.dragAndDrop),
             description = stringResource(id = R.string.dragAndDropDescription),
             checkedState = checkedStateDragAndDrop,
             saveSettings = saveSettings,
-            field = Settings::dragAndDropCards
+            property = Settings::dragAndDropCards
         )
     }
 }
@@ -88,7 +88,7 @@ fun MenuSwitchItem(
     checkedState: MutableState<Boolean>,
     saveSettings: (Boolean, KProperty1<Settings, *>) -> Unit,
     action: (() -> Unit)? = null,
-    field: KProperty1<Settings, *>
+    property: KProperty1<Settings, *>
 ) {
     Box(
         modifier = Modifier
@@ -117,7 +117,7 @@ fun MenuSwitchItem(
             colors = SwitchDefaults.colors(uncheckedThumbColor = Color.LightGray),
             onCheckedChange = {
                 checkedState.value = it
-                saveSettings(it, field)
+                saveSettings(it, property)
                 if (action != null) action()
             }
         )

@@ -6,8 +6,8 @@ import com.learning.weatherappclean.data.model.dto.autocompletedata.Autocomplete
 import com.learning.weatherappclean.data.model.dto.autocompletedata.mapToDomain
 import com.learning.weatherappclean.data.model.dto.weatherdata.WeatherResponse
 import com.learning.weatherappclean.data.model.dto.weatherdata.mapToDomain
-import com.learning.weatherappclean.data.souce.remote.Resource
-import com.learning.weatherappclean.data.souce.remote.WeatherApi
+import com.learning.weatherappclean.data.source.remote.Resource
+import com.learning.weatherappclean.data.source.remote.WeatherApi
 import com.learning.weatherappclean.data.util.JsonConverter
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
 import com.learning.weatherappclean.domain.model.AutocompleteRequest
@@ -23,8 +23,8 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
         val response =
             safeApiCall { weatherApi.getWeather(location = weatherRequest.query, units = weatherRequest.units ?: "m") }
         if (response is Resource.Error) return ResourceDomain.Error(
-            errorType = response.type as ErrorType,
-            errorMessage = response.message ?: "error",
+            type = response.type as ErrorType,
+            message = response.message ?: "error",
             errorCode = null
         )
         /** The only way I found to distinct success response from failed one is to
@@ -56,13 +56,13 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
             val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             if (errorResponse != null) {
                 ResourceDomain.Error(
-                    errorType = ErrorType.API_ERROR,
-                    errorMessage = errorResponse.error.info,
+                    type = ErrorType.API_ERROR,
+                    message = errorResponse.error.info,
                     errorCode = errorResponse.error.code
                 )
             } else ResourceDomain.Error(
-                errorType = ErrorType.UNKNOWN_ERROR,
-                errorMessage = response.message ?: "unknown error",
+                type = ErrorType.UNKNOWN_ERROR,
+                message = response.message ?: "unknown error",
                 errorCode = null
             )
         }
@@ -71,8 +71,8 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
     override suspend fun getAutocompletePredictions(autocompleteRequest: AutocompleteRequest): ResourceDomain<List<AutocompletePrediction>> {
         val response = safeApiCall { weatherApi.getAutocomplete(searchString = autocompleteRequest.query) }
         if (response is Resource.Error) return ResourceDomain.Error(
-            errorType = response.type as ErrorType,
-            errorMessage = response.message ?: "error",
+            type = response.type as ErrorType,
+            message = response.message ?: "error",
             errorCode = null
         )
         val autocompleteResponse =
@@ -83,13 +83,13 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
             val errorResponse = JsonConverter().convertFromJson<ErrorResponse>(response.data)
             if (errorResponse != null) {
                 ResourceDomain.Error(
-                    errorType = ErrorType.API_ERROR,
-                    errorMessage = errorResponse.error.info,
+                    type = ErrorType.API_ERROR,
+                    message = errorResponse.error.info,
                     errorCode = errorResponse.error.code
                 )
             } else ResourceDomain.Error(
-                errorType = ErrorType.UNKNOWN_ERROR,
-                errorMessage = response.message ?: "unknown error",
+                type = ErrorType.UNKNOWN_ERROR,
+                message = response.message ?: "unknown error",
                 errorCode = null
             )
         }

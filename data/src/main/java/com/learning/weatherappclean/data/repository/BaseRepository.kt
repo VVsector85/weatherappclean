@@ -2,7 +2,7 @@ package com.learning.weatherappclean.data.repository
 
 import com.learning.weatherappclean.data.model.ErrorType
 import com.learning.weatherappclean.data.model.dto.apierror.ErrorResponse
-import com.learning.weatherappclean.data.souce.remote.Resource
+import com.learning.weatherappclean.data.source.remote.Resource
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

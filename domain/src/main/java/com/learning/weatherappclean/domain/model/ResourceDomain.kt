@@ -1,12 +1,11 @@
 package com.learning.weatherappclean.domain.model
 
-sealed class ResourceDomain<T>(
-    val data: T? = null,
-    val type: Any? = null,
-    val code: Int? = null,
-    val message: String? = null
-) {
-
-    class Success<T>(data: T) : ResourceDomain<T>(data = data)
-    class Error<T>(errorType: Any, errorMessage: String, errorCode: Int?) : ResourceDomain<T>(type = errorType, message = errorMessage, code = errorCode)
+sealed class ResourceDomain<T> {
+    open val data: T? = null
+    data class Success<T>(override val data: T) : ResourceDomain<T>()
+    data class Error<T>(
+        val type: Any,
+        val message: String,
+        val errorCode: Int?
+    ) : ResourceDomain<T>()
 }

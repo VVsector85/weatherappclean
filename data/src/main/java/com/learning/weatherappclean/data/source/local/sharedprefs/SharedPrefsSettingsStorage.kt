@@ -1,8 +1,8 @@
-package com.learning.weatherappclean.data.souce.local.sharedprefs
+package com.learning.weatherappclean.data.source.local.sharedprefs
 
 import android.content.Context
 import com.learning.weatherappclean.data.model.dto.settings.SettingsData
-import com.learning.weatherappclean.data.souce.local.SettingsStorage
+import com.learning.weatherappclean.data.source.local.SettingsStorage
 import com.learning.weatherappclean.data.util.JsonConverter
 import com.learning.weatherappclean.domain.model.Settings
 

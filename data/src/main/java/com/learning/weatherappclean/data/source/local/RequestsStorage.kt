@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.souce.local
+package com.learning.weatherappclean.data.source.local
 
 import com.learning.weatherappclean.data.model.dto.requests.WeatherQuery
 

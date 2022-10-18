@@ -1,4 +1,4 @@
-package com.learning.weatherappclean.data.souce.remote
+package com.learning.weatherappclean.data.source.remote
 
 import com.learning.weatherappclean.data.model.ErrorType
 

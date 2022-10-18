@@ -1,7 +1,7 @@
 package com.learning.weatherappclean.data.repository
 
 import com.learning.weatherappclean.data.model.dto.settings.mapToDomain
-import com.learning.weatherappclean.data.souce.local.SettingsStorage
+import com.learning.weatherappclean.data.source.local.SettingsStorage
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.repository.SettingsRepository
 

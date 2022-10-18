@@ -2,7 +2,7 @@ package com.learning.weatherappclean.data.repository
 
 import com.learning.weatherappclean.data.model.dto.requests.mapToDomain
 import com.learning.weatherappclean.data.model.dto.requests.mapToStorage
-import com.learning.weatherappclean.data.souce.local.RequestsStorage
+import com.learning.weatherappclean.data.source.local.RequestsStorage
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.domain.model.WeatherRequest
 import com.learning.weatherappclean.domain.repository.RequestsRepository

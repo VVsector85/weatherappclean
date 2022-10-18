@@ -4,11 +4,11 @@ import android.content.Context
 import com.learning.weatherappclean.data.repository.RemoteRepositoryImpl
 import com.learning.weatherappclean.data.repository.RequestsRepositoryImpl
 import com.learning.weatherappclean.data.repository.SettingsRepositoryImpl
-import com.learning.weatherappclean.data.souce.local.RequestsStorage
-import com.learning.weatherappclean.data.souce.local.SettingsStorage
-import com.learning.weatherappclean.data.souce.local.sharedprefs.SharedPrefsRequestsStorage
-import com.learning.weatherappclean.data.souce.local.sharedprefs.SharedPrefsSettingsStorage
-import com.learning.weatherappclean.data.souce.remote.WeatherApi
+import com.learning.weatherappclean.data.source.local.RequestsStorage
+import com.learning.weatherappclean.data.source.local.SettingsStorage
+import com.learning.weatherappclean.data.source.local.sharedprefs.SharedPrefsRequestsStorage
+import com.learning.weatherappclean.data.source.local.sharedprefs.SharedPrefsSettingsStorage
+import com.learning.weatherappclean.data.source.remote.WeatherApi
 import com.learning.weatherappclean.domain.repository.RemoteRepository
 import com.learning.weatherappclean.domain.repository.RequestsRepository
 import com.learning.weatherappclean.domain.repository.SettingsRepository
