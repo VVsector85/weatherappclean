@@ -137,7 +137,7 @@ fun MainScreen(vm: MainViewModel) {
                 Text(
                     text = stringResource(id = R.string.howIsTheWeather),
                     textAlign = TextAlign.Center,
-                    fontSize = 25.sp,
+                    style = MaterialTheme.typography.h4
                 )
             DropDown(
                 expanded = expanded,
