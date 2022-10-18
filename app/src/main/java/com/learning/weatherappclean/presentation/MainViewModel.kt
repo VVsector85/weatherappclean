@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
     private val isLoading = MutableStateFlow(true)
     private val weatherCardsList = MutableStateFlow(emptyList<WeatherCard>())
     private val scrollToFirst = MutableStateFlow(Pair(false, 0))
-    private val errorMessageProvider = MutableStateFlow(ErrorMessageProvider())
+    private val errorMessage = MutableStateFlow(ErrorMessageProvider())
     private val settings = MutableStateFlow(Settings())
     private val noRequests = MutableStateFlow(false)
     private val expanded = MutableStateFlow(false)
@@ -66,7 +66,7 @@ class MainViewModel @Inject constructor(
         refreshCards()
     }
 
-    val getError: StateFlow<ErrorMessageProvider> get() = errorMessageProvider.asStateFlow()
+    val getError: StateFlow<ErrorMessageProvider> get() = errorMessage.asStateFlow()
     val getScrollToFirst: StateFlow<Pair<Boolean, Int>> get() = scrollToFirst.asStateFlow()
     val getLoadingState: StateFlow<Boolean> get() = isLoading.asStateFlow()
     val getPredictions: Flow<List<AutocompletePrediction>> get() = predictions
@@ -118,7 +118,7 @@ class MainViewModel @Inject constructor(
                         saveRequestListUseCase(tempCardList)
                         showSearch.emit(false)
                     } else {
-                        errorMessageProvider.emit(
+                        errorMessage.emit(
                             ErrorMessageProvider(
                                 errorType = ErrorTypeUi.SAME_ITEM_ERROR,
                                 showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
@@ -129,7 +129,7 @@ class MainViewModel @Inject constructor(
                         isLoading.emit(false)
                     }
                 } is ResourceDomain.Error -> {
-                    errorMessageProvider.emit(
+                    errorMessage.emit(
                         ErrorMessageProvider(
                             errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
                             showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
@@ -168,7 +168,7 @@ class MainViewModel @Inject constructor(
                         }
                         is ResourceDomain.Error ->
                             {
-                                errorMessageProvider.emit(
+                                errorMessage.emit(
                                     ErrorMessageProvider(
                                         errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
                                         showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
@@ -245,7 +245,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun resetErrorMessage() {
-        errorMessageProvider.value = ErrorMessageProvider()
+        errorMessage.value = ErrorMessageProvider()
     }
 
     fun refreshCardsOnResume() {
