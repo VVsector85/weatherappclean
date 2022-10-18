@@ -133,7 +133,7 @@ class MainViewModel @Inject constructor(
                         ErrorMessage(
                             errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
                             showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                            errorCode = resourceDomain.errorCode,
+                            errorCode = resourceDomain.code,
                             errorString = resourceDomain.message
                         )
                     )
@@ -172,7 +172,7 @@ class MainViewModel @Inject constructor(
                                     ErrorMessage(
                                         errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
                                         showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                                        errorCode = resourceDomain.errorCode,
+                                        errorCode = resourceDomain.code,
                                         errorString = resourceDomain.message
                                     )
                                 )

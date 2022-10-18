@@ -6,6 +6,6 @@ sealed class ResourceDomain<T> {
     data class Error<T>(
         val type: Any,
         val message: String,
-        val errorCode: Int?
+        val code: Int?
     ) : ResourceDomain<T>()
 }
