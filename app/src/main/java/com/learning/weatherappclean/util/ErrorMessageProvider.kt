@@ -2,7 +2,7 @@ package com.learning.weatherappclean.util
 
 import com.learning.weatherappclean.R
 
-class ErrorMessage(
+class ErrorMessageProvider(
     val errorType: ErrorTypeUi? = null,
     val showTime: Long = 0,
     private val errorCode: Int? = null,

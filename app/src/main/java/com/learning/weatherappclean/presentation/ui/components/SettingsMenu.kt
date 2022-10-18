@@ -13,22 +13,26 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.domain.model.Settings
+import com.learning.weatherappclean.presentation.ui.theme.WeatherAppCleanTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.reflect.KProperty1
 
 @Composable
 fun SettingsMenu(
     settings: State<Settings>,
-    saveSettings: (Boolean, KProperty1<Settings, *>) -> Unit,
-    refreshCards: () -> Unit
+    saveSettings: ((Boolean, KProperty1<Settings, *>) -> Unit)? = null,
+    refreshCards: (() -> Unit)? = null
 ) {
     val checkedStateUnits = remember { mutableStateOf(settings.value.imperialUnits) }
     val checkedStateAtTop = remember { mutableStateOf(settings.value.newCardFirst) }
@@ -84,7 +88,7 @@ fun MenuSwitchItem(
     text: String,
     description: String? = null,
     checkedState: MutableState<Boolean>,
-    saveSettings: (Boolean, KProperty1<Settings, *>) -> Unit,
+    saveSettings: ((Boolean, KProperty1<Settings, *>) -> Unit)? = null,
     action: (() -> Unit)? = null,
     property: KProperty1<Settings, *>
 ) {
@@ -116,9 +120,26 @@ fun MenuSwitchItem(
             colors = SwitchDefaults.colors(uncheckedThumbColor = Color.LightGray),
             onCheckedChange = {
                 checkedState.value = it
-                saveSettings(it, property)
+                saveSettings?.invoke(it, property)
                 action?.invoke()
             }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SettingsMenuPreview() {
+    WeatherAppCleanTheme {
+        SettingsMenu(
+            settings = MutableStateFlow(
+                Settings(
+                    imperialUnits = false,
+                    newCardFirst = true,
+                    detailsOnDoubleTap = true,
+                    dragAndDropCards = true
+                )
+            ).collectAsState()
         )
     }
 }

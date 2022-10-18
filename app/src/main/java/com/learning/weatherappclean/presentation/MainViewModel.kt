@@ -17,7 +17,7 @@ import com.learning.weatherappclean.domain.usecase.SaveRequestListUseCase
 import com.learning.weatherappclean.domain.usecase.SaveSettingsUseCase
 import com.learning.weatherappclean.util.CoroutineDispatcherProvider
 import com.learning.weatherappclean.util.ErrorMapper
-import com.learning.weatherappclean.util.ErrorMessage
+import com.learning.weatherappclean.util.ErrorMessageProvider
 import com.learning.weatherappclean.util.ErrorTypeUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
     private val isLoading = MutableStateFlow(true)
     private val weatherCardsList = MutableStateFlow(emptyList<WeatherCard>())
     private val scrollToFirst = MutableStateFlow(Pair(false, 0))
-    private val errorMessage = MutableStateFlow(ErrorMessage())
+    private val errorMessageProvider = MutableStateFlow(ErrorMessageProvider())
     private val settings = MutableStateFlow(Settings())
     private val noRequests = MutableStateFlow(false)
     private val expanded = MutableStateFlow(false)
@@ -66,7 +66,7 @@ class MainViewModel @Inject constructor(
         refreshCards()
     }
 
-    val getError: StateFlow<ErrorMessage> get() = errorMessage.asStateFlow()
+    val getError: StateFlow<ErrorMessageProvider> get() = errorMessageProvider.asStateFlow()
     val getScrollToFirst: StateFlow<Pair<Boolean, Int>> get() = scrollToFirst.asStateFlow()
     val getLoadingState: StateFlow<Boolean> get() = isLoading.asStateFlow()
     val getPredictions: Flow<List<AutocompletePrediction>> get() = predictions
@@ -118,8 +118,8 @@ class MainViewModel @Inject constructor(
                         saveRequestListUseCase(tempCardList)
                         showSearch.emit(false)
                     } else {
-                        errorMessage.emit(
-                            ErrorMessage(
+                        errorMessageProvider.emit(
+                            ErrorMessageProvider(
                                 errorType = ErrorTypeUi.SAME_ITEM_ERROR,
                                 showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
                                 errorCode = null,
@@ -129,8 +129,8 @@ class MainViewModel @Inject constructor(
                         isLoading.emit(false)
                     }
                 } is ResourceDomain.Error -> {
-                    errorMessage.emit(
-                        ErrorMessage(
+                    errorMessageProvider.emit(
+                        ErrorMessageProvider(
                             errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
                             showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
                             errorCode = resourceDomain.code,
@@ -168,8 +168,8 @@ class MainViewModel @Inject constructor(
                         }
                         is ResourceDomain.Error ->
                             {
-                                errorMessage.emit(
-                                    ErrorMessage(
+                                errorMessageProvider.emit(
+                                    ErrorMessageProvider(
                                         errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
                                         showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
                                         errorCode = resourceDomain.code,
@@ -245,7 +245,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun resetErrorMessage() {
-        errorMessage.value = ErrorMessage()
+        errorMessageProvider.value = ErrorMessageProvider()
     }
 
     fun refreshCardsOnResume() {

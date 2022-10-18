@@ -29,14 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.domain.model.CardColorOption
 import com.learning.weatherappclean.domain.model.Settings
@@ -136,7 +133,7 @@ fun CardWeather(
                         modifier = Modifier
                             .padding(start = 15.dp)
                             .align(Alignment.TopStart),
-                       style = MaterialTheme.typography.h2
+                        style = MaterialTheme.typography.h2
                     )
 
                     Column(modifier = Modifier.align(Alignment.BottomStart)) {
@@ -294,6 +291,26 @@ fun CardWeatherPreview(
 
 class WeatherCardPreviewParameterProvider : PreviewParameterProvider<WeatherCard> {
     override val values = sequenceOf(
+        WeatherCard(
+            location = "Stockholm",
+            temperature = "0",
+            country = "Sweden",
+            region = "Stockholms Lan",
+            units = "m",
+            cloudCover = "50",
+            feelsLike = "-3",
+            humidity = "76",
+            pressure = "1014",
+            uvIndex = "2",
+            windSpeed = "11",
+            weatherCode = "113",
+            lat = "",
+            lon = "",
+            weatherDescription = "",
+            isNightIcon = true,
+            showDetails = false,
+            cardColorOption = CardColorOption.BLUE
+        ),
         WeatherCard(
             location = "Kharkiv",
             temperature = "18",

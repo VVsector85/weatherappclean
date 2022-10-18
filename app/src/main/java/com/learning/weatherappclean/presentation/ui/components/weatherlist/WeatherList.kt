@@ -16,7 +16,7 @@ import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.ui.components.ErrorMessage
 import com.learning.weatherappclean.presentation.ui.components.NoCards
-import com.learning.weatherappclean.util.ErrorMessage
+import com.learning.weatherappclean.util.ErrorMessageProvider
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -35,7 +35,7 @@ fun WeatherList(
     swapSections: (Int, Int) -> Unit,
     isLandscape: Boolean,
     settings: State<Settings>,
-    errorMsg: State<ErrorMessage>,
+    errorMsg: State<ErrorMessageProvider>,
     noRequests: State<Boolean>
 ) {
     SwipeRefresh(
@@ -49,7 +49,7 @@ fun WeatherList(
                 .padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ErrorMessage(errorMsg = errorMsg, resetError = resetErrorMessage)
+            ErrorMessage(errorMessageProvider = errorMsg, resetError = resetErrorMessage)
             if (weatherCardList.collectAsState().value.isEmpty() && !isLoading.value) NoCards(
                 refreshCards = refreshCards,
                 noRequests = noRequests

@@ -14,21 +14,23 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
+import com.learning.weatherappclean.presentation.ui.theme.WeatherAppCleanTheme
 import com.learning.weatherappclean.presentation.ui.theme.autocomplete
 import com.learning.weatherappclean.presentation.ui.theme.onAutocomplete
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun DropDown(
     expanded: State<Boolean>,
     predictionList: State<List<AutocompletePrediction>>,
     isLandscape: Boolean,
-    addCard: (String, AutocompletePrediction?) -> Unit
+    addCard: ((String, AutocompletePrediction?) -> Unit)? = null
 ) {
     if (expanded.value)
         Column(
@@ -38,15 +40,20 @@ fun DropDown(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LazyColumn() {
-                itemsIndexed(predictionList.value) { index, item ->
+                itemsIndexed(predictionList.value) { _, item ->
                     Column(
                         modifier = Modifier
-                            .background(MaterialTheme.colors.autocomplete.copy(alpha = 0.85f))
+                            .background(MaterialTheme.colors.autocomplete.copy(alpha = 0.80f))
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { addCard("${item.location}, ${item.country}, ${item.region}", item) }
+                                .clickable {
+                                    addCard?.invoke(
+                                        "${item.location}, ${item.country}, ${item.region}",
+                                        item
+                                    )
+                                }
                                 .padding(5.dp)
                         ) {
                             Column(horizontalAlignment = Alignment.Start) {
@@ -64,9 +71,47 @@ fun DropDown(
                                 )
                             }
                         }
-                        Divider(startIndent = 8.dp, thickness = 1.dp)
+                        Divider(thickness = 1.dp)
                     }
                 }
             }
         }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DropDownPreview() {
+    WeatherAppCleanTheme {
+        DropDown(
+            expanded = MutableStateFlow(true).collectAsState(),
+            isLandscape = false,
+            predictionList = MutableStateFlow(
+                listOf(
+                    AutocompletePrediction(
+                        location = "London",
+                        country = "United Kingdom",
+                        region = "Greater London",
+                        lat = "",
+                        lon = ""
+                    ),
+                    AutocompletePrediction(
+                        location = "Paris",
+                        country = "France",
+                        region = "Ile-de-France",
+                        lat = "",
+                        lon = ""
+                    ),
+                    AutocompletePrediction(
+                        location = "New York",
+                        country = "United States of America",
+                        region = "New York",
+                        lat = "",
+                        lon = ""
+                    )
+
+                )
+
+            ).collectAsState(),
+        )
+    }
 }
