@@ -21,14 +21,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun WeatherGrid(
-    stopScrollToFirst: () -> Unit,
-    deleteCard: (Int) -> Unit,
-    setExpanded: (Boolean) -> Unit,
-    setShowSearch: (Boolean) -> Unit,
     weatherCardList: StateFlow<List<WeatherCard>>,
     scrollToFirst: State<Pair<Boolean, Int>>,
     settings: State<Settings>,
-    setShowDetails: (Boolean, Int) -> Unit,
+    setShowDetails: ((Boolean, Int) -> Unit)? = null,
+    stopScrollToFirst: (() -> Unit)? = null,
+    deleteCard: ((Int) -> Unit)? = null,
+    setExpanded: ((Boolean) -> Unit)? = null,
+    setShowSearch: ((Boolean) -> Unit)? = null
 ) {
 
     val gridState = rememberLazyGridState()
@@ -46,7 +46,7 @@ fun WeatherGrid(
     ) {
         if (scrollToFirst.value.first) CoroutineScope(Dispatchers.Main).launch {
             gridState.scrollToItem(scrollToFirst.value.second)
-            stopScrollToFirst()
+            stopScrollToFirst?.invoke()
         }
         items(weatherCardList.value.size) { index ->
             CardWeather(

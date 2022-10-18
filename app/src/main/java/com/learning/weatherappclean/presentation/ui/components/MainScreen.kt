@@ -85,7 +85,7 @@ fun MainScreen(vm: MainViewModel) {
             scrollToFirst = scrollToFirst,
             isLandscape = isLandscape,
             settings = settings,
-            errorMsg = errorMsg,
+            errorMessage = errorMsg,
             noRequests = noRequests,
             deleteCard = vm::deleteCard,
             stopScrollToFirst = vm::stopScrollToFirst,

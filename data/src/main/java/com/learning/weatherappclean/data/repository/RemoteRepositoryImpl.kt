@@ -6,7 +6,7 @@ import com.learning.weatherappclean.data.model.dto.autocompletedata.Autocomplete
 import com.learning.weatherappclean.data.model.dto.autocompletedata.mapToDomain
 import com.learning.weatherappclean.data.model.dto.weatherdata.WeatherResponse
 import com.learning.weatherappclean.data.model.dto.weatherdata.mapToDomain
-import com.learning.weatherappclean.data.source.remote.Resource
+import com.learning.weatherappclean.data.source.remote.ResourceData
 import com.learning.weatherappclean.data.source.remote.WeatherApi
 import com.learning.weatherappclean.data.util.JsonConverter
 import com.learning.weatherappclean.domain.model.AutocompletePrediction
@@ -29,7 +29,7 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
                     )
                 }
         ) {
-            is Resource.Error -> return ResourceDomain.Error(
+            is ResourceData.Error -> return ResourceDomain.Error(
                 type = response.errorType,
                 message = response.errorMessage,
                 code = null
@@ -42,7 +42,7 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
              when I get API response with code 200 and OK message but there is error data instead of
              weather data in response body. This makes my code ugly
              */
-            is Resource.Success -> {
+            is ResourceData.Success -> {
                 val weatherResponse =
                     JsonConverter().convertFromJson<WeatherResponse>(response.data)
                 return if (weatherResponse?.current != null) {
@@ -88,12 +88,12 @@ class RemoteRepositoryImpl @Inject constructor(private val weatherApi: WeatherAp
             val response =
                 safeApiCall { weatherApi.getAutocomplete(searchString = autocompleteRequest.query) }
         ) {
-            is Resource.Error -> return ResourceDomain.Error(
+            is ResourceData.Error -> return ResourceDomain.Error(
                 type = response.errorType,
                 message = response.errorMessage,
                 code = null
             )
-            is Resource.Success -> {
+            is ResourceData.Success -> {
                 val autocompleteResponse =
                     JsonConverter().convertFromJson<AutocompleteResponse>(response.data)
                 return if (autocompleteResponse?.predictionData != null) {

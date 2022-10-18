@@ -16,14 +16,14 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun WeatherColumnWithDrag(
     weatherCardList: StateFlow<List<WeatherCard>>,
-    swapSections: (Int, Int) -> Unit,
-    stopScrollToFirst: () -> Unit,
-    deleteCard: (Int) -> Unit,
-    setExpanded: (Boolean) -> Unit,
-    setShowSearch: (Boolean) -> Unit,
-    scrollToFirst: State<Pair<Boolean, Int>>,
     settings: State<Settings>,
-    setShowDetails: (Boolean, Int) -> Unit,
+    scrollToFirst: State<Pair<Boolean, Int>>,
+    swapSections: ((Int, Int) -> Unit)? = null,
+    stopScrollToFirst: (() -> Unit)? = null,
+    deleteCard: ((Int) -> Unit)? = null,
+    setExpanded: ((Boolean) -> Unit)? = null,
+    setShowSearch: ((Boolean) -> Unit)? = null,
+    setShowDetails: ((Boolean, Int) -> Unit)? = null,
 ) {
     DragDropColumn(
         items = weatherCardList.collectAsState().value,

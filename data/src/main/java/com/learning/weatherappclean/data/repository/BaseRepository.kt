@@ -2,7 +2,7 @@ package com.learning.weatherappclean.data.repository
 
 import com.learning.weatherappclean.data.model.ErrorType
 import com.learning.weatherappclean.data.model.dto.apierror.ErrorResponse
-import com.learning.weatherappclean.data.source.remote.Resource
+import com.learning.weatherappclean.data.source.remote.ResourceData
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,35 +13,35 @@ import java.io.IOException
 
 /**"https://www.geeksforgeeks.org/how-to-handle-api-responses-success-error-in-android/"*/
 abstract class BaseRepository() {
-    suspend fun <T> safeApiCall(apiToBeCalled: suspend () -> Response<T>): Resource<T> {
+    suspend fun <T> safeApiCall(apiToBeCalled: suspend () -> Response<T>): ResourceData<T> {
         return withContext(Dispatchers.IO) {
             try {
                 val response: Response<T> = apiToBeCalled()
 
                 if (response.isSuccessful) {
-                    Resource.Success(data = response.body()!!)
+                    ResourceData.Success(data = response.body()!!)
                 } else {
                     /** This never happens because WeatherStack API always
                      responds with code 200 and "OK" message, so response.isSuccessful = true
                      even in case of error*/
                     val errorResponse: ErrorResponse? = convertErrorBody(response.errorBody())
-                    Resource.Error(
+                    ResourceData.Error(
                         errorMessage = errorResponse?.error?.info ?: "",
                         errorType = ErrorType.INTERNAL_ERROR
                     )
                 }
             } catch (e: HttpException) {
-                Resource.Error(
+                ResourceData.Error(
                     errorMessage = e.message ?: "",
                     errorType = ErrorType.HTTP_ERROR
                 )
             } catch (e: IOException) {
-                Resource.Error(
+                ResourceData.Error(
                     errorMessage = e.message ?: "",
                     errorType = ErrorType.IO_ERROR
                 )
             } catch (e: Exception) {
-                Resource.Error(
+                ResourceData.Error(
                     errorMessage = e.message ?: "",
                     errorType = ErrorType.UNKNOWN_ERROR
                 )
