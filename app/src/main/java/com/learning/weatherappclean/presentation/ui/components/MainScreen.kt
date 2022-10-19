@@ -27,11 +27,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.learning.weatherappclean.R
 import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.components.weatherlist.WeatherList
 import com.learning.weatherappclean.presentation.ui.theme.onTextField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(vm: MainViewModel) {
@@ -41,6 +42,7 @@ fun MainScreen(vm: MainViewModel) {
     val expanded = vm.getExpanded.collectAsState()
     val errorMsg = vm.getError.collectAsState()
     val predictionsList = vm.getPredictions.collectAsState(initial = emptyList())
+
     val weatherCardList = vm.getCardList
     val isLoading = vm.getLoadingState.collectAsState()
     val scrollToFirst = vm.getScrollToFirst.collectAsState()

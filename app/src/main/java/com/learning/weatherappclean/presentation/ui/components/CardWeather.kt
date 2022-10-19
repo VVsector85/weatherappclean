@@ -19,6 +19,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +59,7 @@ fun CardWeather(
     setShowDetails: ((Boolean, Int) -> Unit)? = null,
     setShowSearch: ((Boolean) -> Unit?)? = null,
     setExpanded: ((Boolean) -> Unit)? = null,
-    weatherCardList: StateFlow<List<WeatherCard>>? = null
+
 ) {
     val colour = when (content.cardColorOption) {
         CardColorOption.BLUE -> MaterialTheme.colors.cold
@@ -70,17 +71,8 @@ fun CardWeather(
     val details = remember {
         mutableStateOf(content.showDetails)
     }
-    /**I don't like at all that I have to pass weatherCardList to CardWeather composable
-     * but I could not find the other way to update simple/detailed view of a weather card.
-     * Without 'collectLatest' the lazyList remembers the position of expanded cards and
-     * when I swap cards they change their order but 'showDetails' parameter remains applied to the
-     * same card by its index. My explanation is a bit confusing, so its easier just to comment
-     * LaunchedEffect block to see the behaviour I tried to describe*/
-    LaunchedEffect(Unit) {
-        weatherCardList?.collectLatest {
-            if (it.size > index) details.value = it[index].showDetails
-        }
-    }
+    details.value = content.showDetails
+
     Card(
         modifier = modifier
             .pointerInput(Unit) {

@@ -59,7 +59,7 @@ fun WeatherGrid(
                 setShowDetails = setShowDetails,
                 setExpanded = setExpanded,
                 setShowSearch = setShowSearch,
-                weatherCardList = weatherCardList
+
             )
         }
     }

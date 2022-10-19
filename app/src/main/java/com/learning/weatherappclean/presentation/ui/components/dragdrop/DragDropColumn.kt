@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -36,7 +39,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T : Any> DragDropColumn(
-    items: List<T>,
+    items: State<List<T>>,
     contentPadding: PaddingValues,
     scrollToFirst: State<Pair<Boolean, Int>>,
     stopScrollToFirst: (() -> Unit)? = null,
@@ -49,7 +52,6 @@ fun <T : Any> DragDropColumn(
     val dragDropState = rememberDragDropState(listState) { fromIndex, toIndex ->
         onSwap?.invoke(fromIndex, toIndex)
     }
-
     LazyColumn(
         modifier = Modifier
             .pointerInput(dragDropState) {
@@ -93,7 +95,8 @@ fun <T : Any> DragDropColumn(
             listState.scrollToItem(scrollToFirst.value.second)
             stopScrollToFirst?.invoke()
         }
-        itemsIndexed(items = items) { index, item ->
+
+        itemsIndexed(items = items.value) { index, item ->
             DraggableItem(
                 dragDropState = dragDropState,
                 index = index, modifier = Modifier
