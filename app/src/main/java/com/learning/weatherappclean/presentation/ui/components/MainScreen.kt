@@ -31,8 +31,6 @@ import com.learning.weatherappclean.R
 import com.learning.weatherappclean.presentation.MainViewModel
 import com.learning.weatherappclean.presentation.ui.components.weatherlist.WeatherList
 import com.learning.weatherappclean.presentation.ui.theme.onTextField
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(vm: MainViewModel) {
@@ -42,8 +40,7 @@ fun MainScreen(vm: MainViewModel) {
     val expanded = vm.getExpanded.collectAsState()
     val errorMsg = vm.getError.collectAsState()
     val predictionsList = vm.getPredictions.collectAsState(initial = emptyList())
-
-    val weatherCardList = vm.getCardList
+    val weatherCardList = vm.getCardList.collectAsState()
     val isLoading = vm.getLoadingState.collectAsState()
     val scrollToFirst = vm.getScrollToFirst.collectAsState()
     val settings = vm.getSettings.collectAsState()
@@ -82,7 +79,7 @@ fun MainScreen(vm: MainViewModel) {
     ) { padding ->
         WeatherList(
             padding = if (showSearch.value) PaddingValues(top = 80.dp) else if (!showSearch.value && !isLandscape) PaddingValues(top = 60.dp) else padding,
-            weatherCardList = weatherCardList,
+            weatherCardList = weatherCardList.value,
             isLoading = isLoading,
             scrollToFirst = scrollToFirst,
             isLandscape = isLandscape,
@@ -97,9 +94,12 @@ fun MainScreen(vm: MainViewModel) {
             setExpanded = vm::setExpanded,
             setShowSearch = vm::setShowSearch,
             swapSections = vm::swapSections
-
         )
-        Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
             if (!showSearch.value) Button(
                 onClick = {
                     vm.setShowSearch(true)
@@ -108,7 +108,7 @@ fun MainScreen(vm: MainViewModel) {
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier
                     .padding(5.dp)
-                    .align(if (isLandscape)Alignment.TopStart else Alignment.TopEnd)
+                    .align(if (isLandscape) Alignment.TopStart else Alignment.TopEnd)
                     .size(50.dp),
                 shape = CircleShape,
             ) {
@@ -122,7 +122,9 @@ fun MainScreen(vm: MainViewModel) {
             }
         }
         Column(
-            modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 

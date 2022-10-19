@@ -16,12 +16,11 @@ import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.ui.components.CardWeather
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
 fun WeatherGrid(
-    weatherCardList: StateFlow<List<WeatherCard>>,
+    weatherCardList: List<WeatherCard>,
     scrollToFirst: State<Pair<Boolean, Int>>,
     settings: State<Settings>,
     setShowDetails: ((Boolean, Int) -> Unit)? = null,
@@ -48,11 +47,11 @@ fun WeatherGrid(
             gridState.scrollToItem(scrollToFirst.value.second)
             stopScrollToFirst?.invoke()
         }
-        items(weatherCardList.value.size) { index ->
+        items(weatherCardList.size) { index ->
             CardWeather(
                 modifier = Modifier
                     .fillMaxWidth(0.9f),
-                content = weatherCardList.value[index],
+                content = weatherCardList[index],
                 index = index,
                 deleteCard = deleteCard,
                 settings = settings,

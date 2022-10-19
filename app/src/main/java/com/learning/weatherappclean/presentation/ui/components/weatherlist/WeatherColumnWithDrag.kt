@@ -3,22 +3,17 @@ package com.learning.weatherappclean.presentation.ui.components.weatherlist
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.ui.components.CardWeather
 import com.learning.weatherappclean.presentation.ui.components.dragdrop.DragDropColumn
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun WeatherColumnWithDrag(
-    weatherCardList: StateFlow<List<WeatherCard>>,
+    weatherCardList: List<WeatherCard>,
     settings: State<Settings>,
     scrollToFirst: State<Pair<Boolean, Int>>,
     swapSections: ((Int, Int) -> Unit)? = null,
@@ -30,7 +25,7 @@ fun WeatherColumnWithDrag(
 ) {
 
     DragDropColumn(
-        items = weatherCardList.collectAsState(),
+        items = weatherCardList,
         onSwap = swapSections,
         scrollToFirst = scrollToFirst,
         stopScrollToFirst = stopScrollToFirst,

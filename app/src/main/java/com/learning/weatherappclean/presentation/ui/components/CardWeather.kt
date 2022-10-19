@@ -18,8 +18,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -44,10 +42,9 @@ import com.learning.weatherappclean.presentation.ui.theme.cold
 import com.learning.weatherappclean.presentation.ui.theme.hot
 import com.learning.weatherappclean.presentation.ui.theme.onCard
 import com.learning.weatherappclean.presentation.ui.theme.warm
+import com.learning.weatherappclean.util.Constants.IMPERIAL_UNITS
 import com.learning.weatherappclean.util.getWeatherIcon
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CardWeather(
@@ -120,7 +117,7 @@ fun CardWeather(
                         .height(130.dp)
                 ) {
                     Text(
-                        text = "${content.temperature}\u00b0${if (content.units == "f") "F" else ""}",
+                        text = "${content.temperature}\u00b0${if (content.units == IMPERIAL_UNITS) stringResource(R.string.fahrenheit_letter) else ""}",
                         color = MaterialTheme.colors.onCard,
                         modifier = Modifier
                             .padding(start = 15.dp)
@@ -179,7 +176,7 @@ fun CardWeather(
                             description = R.string.humidity
                         )
                         WeatherDetails(
-                            value = "${content.pressure}\nmbar",
+                            value = "${content.pressure}\n${stringResource(R.string.millibars)}",
                             iconId = R.drawable.ic_pressure,
                             description = R.string.pressure
                         )
@@ -197,7 +194,7 @@ fun CardWeather(
                             description = R.string.uvIndex
                         )
                         WeatherDetails(
-                            value = "${content.windSpeed}\n${if (content.units == "f") "mil" else "km"}/h",
+                            value = "${content.windSpeed}\n${if (content.units == IMPERIAL_UNITS) stringResource(R.string.miles) else stringResource(R.string.kilometers)}${stringResource(R.string.perHour)}",
                             iconId = R.drawable.ic_wind,
                             description = R.string.windSpeed
                         )
@@ -210,7 +207,7 @@ fun CardWeather(
                 ) {
                     Column() {
                         WeatherDetails(
-                            value = "${content.feelsLike}\u00b0${if (content.units == "f") "F" else "C"}",
+                            value = "${content.feelsLike}\u00b0${if (content.units == IMPERIAL_UNITS) stringResource(R.string.fahrenheit_letter) else stringResource(R.string.celsius_letter)}",
                             iconId = R.drawable.ic_temp_feels_like, description = R.string.feelsLike
                         )
                         WeatherDetails(

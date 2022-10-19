@@ -33,4 +33,10 @@
     <string name="ioError">Check your Internet connection</string>
     <string name="unknownError">An unknown error occurred</string>
     <string name="isOnTheList">is already on the list</string>
+    <string name="fahrenheit_letter">F</string>
+    <string name="celsius_letter">C</string>
+    <string name="miles">mil</string>
+    <string name="kilometers">km</string>
+    <string name="millibars">mbar</string>
+    <string name="perHour">/h</string>
 </resources>

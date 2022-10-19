@@ -15,6 +15,8 @@ import com.learning.weatherappclean.domain.usecase.LoadRequestListUseCase
 import com.learning.weatherappclean.domain.usecase.LoadSettingsUseCase
 import com.learning.weatherappclean.domain.usecase.SaveRequestListUseCase
 import com.learning.weatherappclean.domain.usecase.SaveSettingsUseCase
+import com.learning.weatherappclean.util.Constants.IMPERIAL_UNITS
+import com.learning.weatherappclean.util.Constants.METRIC_UNITS
 import com.learning.weatherappclean.util.CoroutineDispatcherProvider
 import com.learning.weatherappclean.util.ErrorMapper
 import com.learning.weatherappclean.util.ErrorMessageProvider
@@ -89,7 +91,7 @@ class MainViewModel @Inject constructor(
             val resourceDomain = getWeatherCardDataUseCase(
                 WeatherRequest(
                     query = location,
-                    units = if (settings.value.imperialUnits) IMPERIAL else METRIC,
+                    units = if (settings.value.imperialUnits) IMPERIAL_UNITS else METRIC_UNITS,
                     lat = prediction?.lat,
                     lon = prediction?.lon,
                     location = prediction?.location,
@@ -154,7 +156,7 @@ class MainViewModel @Inject constructor(
             run breaking@{
                 getWeatherResources(
                     weatherRequestList = requestList,
-                    units = if (settings.value.imperialUnits) IMPERIAL else METRIC
+                    units = if (settings.value.imperialUnits) IMPERIAL_UNITS else METRIC_UNITS
                 ).forEach { resourceDomain ->
 
                     when (resourceDomain) {
@@ -284,7 +286,5 @@ class MainViewModel @Inject constructor(
         private const val AUTOCOMPLETE_QUERY_DELAY = 1500L
         private const val AUTOCOMPLETE_QUERY_MIN_CHARS = 3
         private const val REFRESH_ON_RESUME_TIMEOUT = 1800000L
-        private const val METRIC = "m"
-        private const val IMPERIAL = "f"
     }
 }
