@@ -130,7 +130,8 @@ class MainViewModel @Inject constructor(
                         )
                         isLoading.emit(false)
                     }
-                } is ResourceDomain.Error -> {
+                }
+                is ResourceDomain.Error -> {
                     errorMessage.emit(
                         ErrorMessageProvider(
                             errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
@@ -168,19 +169,18 @@ class MainViewModel @Inject constructor(
                                 duplicatesFound = true
                             }
                         }
-                        is ResourceDomain.Error ->
-                            {
-                                errorMessage.emit(
-                                    ErrorMessageProvider(
-                                        errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
-                                        showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
-                                        errorCode = resourceDomain.code,
-                                        errorString = resourceDomain.message
-                                    )
+                        is ResourceDomain.Error -> {
+                            errorMessage.emit(
+                                ErrorMessageProvider(
+                                    errorType = ErrorMapper().mapToPresentation(resourceDomain.type as ErrorType),
+                                    showTime = DEFAULT_ERROR_MESSAGE_SHOW_TIME,
+                                    errorCode = resourceDomain.code,
+                                    errorString = resourceDomain.message
                                 )
-                                isLoading.emit(false)
-                                return@breaking
-                            }
+                            )
+                            isLoading.emit(false)
+                            return@breaking
+                        }
                     }
                 }
             }
@@ -258,7 +258,7 @@ class MainViewModel @Inject constructor(
         if (query.length < AUTOCOMPLETE_QUERY_MIN_CHARS) {
             return flowOf(emptyList())
         }
-        expanded.emit(true)
+        if (showSearch.value) expanded.emit(true)
         val result = getAutocompletePredictionsUseCase(AutocompleteRequest(query))
         return if (result is ResourceDomain.Success)
             flowOf(result.data) else flowOf(emptyList())
@@ -272,10 +272,11 @@ class MainViewModel @Inject constructor(
         coroutineScope {
             weatherRequestList.forEach { request ->
                 request.units = units
-                val resourceDomain = async {
-                    getWeatherCardDataUseCase(request)
-                }
-                resourceList.add(resourceDomain)
+                resourceList.add(
+                    async {
+                        getWeatherCardDataUseCase(request)
+                    }
+                )
             }
         }
         return resourceList.awaitAll()
