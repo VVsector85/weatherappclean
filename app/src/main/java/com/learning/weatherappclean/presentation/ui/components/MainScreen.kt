@@ -93,7 +93,7 @@ fun MainScreen(vm: MainViewModel) {
             refreshCards = vm::refreshCards,
             setExpanded = vm::setExpanded,
             setShowSearch = vm::setShowSearch,
-            swapSections = vm::swapSections
+            swapSections = vm::swapSections,
         )
         Box(
             modifier = Modifier

@@ -11,7 +11,7 @@ class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) 
     suspend operator fun invoke(weatherRequest: WeatherRequest): ResourceDomain<WeatherCard> {
         val resourceDomainCard = remoteRepository.getWeatherData(weatherRequest)
 
-        if (resourceDomainCard is ResourceDomain.Success && resourceDomainCard.data != null) {
+        if (resourceDomainCard is ResourceDomain.Success) {
             /**This condition was in the task so I consider it as a part of business logic.
              That is why it is in the domain module
              No actual colours specified here, just enums*/

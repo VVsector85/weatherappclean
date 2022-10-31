@@ -50,13 +50,13 @@ class MainViewModel @Inject constructor(
     private val getAutocompletePredictionsUseCase: GetAutocompletePredictionsUseCase,
     private val saveSettingsUseCase: SaveSettingsUseCase,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-    loadSettingsUseCase: LoadSettingsUseCase
+    loadSettingsUseCase: LoadSettingsUseCase,
 ) : ViewModel() {
     private val isLoading = MutableStateFlow(true)
     private val weatherCardsList = MutableStateFlow(emptyList<WeatherCard>())
     private val scrollToFirst = MutableStateFlow(Pair(false, 0))
     private val errorMessage = MutableStateFlow(ErrorMessageProvider())
-    private val settings = MutableStateFlow(Settings())
+    private val settings = MutableStateFlow(loadSettingsUseCase())
     private val noRequests = MutableStateFlow(false)
     private val expanded = MutableStateFlow(false)
     private val showSearch = MutableStateFlow(false)
@@ -64,7 +64,6 @@ class MainViewModel @Inject constructor(
     private var lastRefreshTime = System.currentTimeMillis()
 
     init {
-        settings.value = loadSettingsUseCase()
         refreshCards()
     }
 
@@ -148,12 +147,19 @@ class MainViewModel @Inject constructor(
     }
 
     fun refreshCards() {
+       /* weatherCardsList.value.forEach {
+            if (it.videoPlayer is ExoPlayer) {
+                (it.videoPlayer as ExoPlayer).release()
+                it.videoPlayer = null
+            }
+        }*/
         isLoading.value = true
         var duplicatesFound = false
         val requestList = loadRequestListUseCase()
         noRequests.value = requestList.isEmpty()
         val tempCardList = mutableListOf<WeatherCard>()
         viewModelScope.launch(coroutineDispatcherProvider.IO()) {
+
             run breaking@{
                 getWeatherResources(
                     weatherRequestList = requestList,
@@ -163,6 +169,10 @@ class MainViewModel @Inject constructor(
                     when (resourceDomain) {
                         is ResourceDomain.Success -> {
                             val card = resourceDomain.data
+                           /* launch(coroutineDispatcherProvider.Main()) {
+                                card.videoPlayer = createPlayer(card.weatherCode.toInt(), card.isNightIcon)
+                            }*/
+
                             if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
                                 tempCardList.add(card)
                             } else {
@@ -184,6 +194,7 @@ class MainViewModel @Inject constructor(
                     }
                 }
             }
+
             weatherCardsList.emit(tempCardList)
             lastRefreshTime = System.currentTimeMillis()
             scrollToFirst.emit(
@@ -211,6 +222,7 @@ class MainViewModel @Inject constructor(
             Settings::newCardFirst -> settings.update { it.copy(newCardFirst = value) }
             Settings::dragAndDropCards -> settings.update { it.copy(dragAndDropCards = value) }
             Settings::detailsOnDoubleTap -> settings.update { it.copy(detailsOnDoubleTap = value) }
+            Settings::showVideo -> settings.update { it.copy(showVideo = value) }
         }
         saveSettingsUseCase(settings.value)
     }

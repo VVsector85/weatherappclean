@@ -24,7 +24,7 @@ internal fun WeatherResponse.mapToDomain(): WeatherCard {
         uvIndex = this.current.uvIndex,
         windSpeed = this.current.windSpeed,
         weatherCode = this.current.weatherCode,
-        isNightIcon = this.current.weatherIcons[0].contains("night", ignoreCase = true),
+        isNightIcon = this.current.isDay == "no",
         weatherDescription = this.current.weatherDescriptions[0],
         cardColorOption = null,
         showDetails = false

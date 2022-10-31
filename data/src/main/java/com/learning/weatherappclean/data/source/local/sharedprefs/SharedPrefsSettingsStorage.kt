@@ -1,6 +1,7 @@
 package com.learning.weatherappclean.data.source.local.sharedprefs
 
 import android.content.Context
+import android.util.Log
 import com.learning.weatherappclean.data.model.dto.settings.SettingsData
 import com.learning.weatherappclean.data.source.local.SettingsStorage
 import com.learning.weatherappclean.data.util.JsonConverter
@@ -25,9 +26,9 @@ class SharedPrefsSettingsStorage(context: Context) : SettingsStorage {
     }
 
     companion object {
-        private const val SHARED_PREFS_SETTINGS = "shared_refs_weather_settings"
+        private const val SHARED_PREFS_SETTINGS = "shared_prefs_weather_settings"
         private const val KEY_SETTINGS = "settings"
         private const val DEFAULT_SETTINGS =
-            """{"imperialUnits":false,"newCardFirst":true,"detailsOnDoubleTap":true,"dragAndDropCards":true }"""
+            """{"imperialUnits":false,"newCardFirst":true,"detailsOnDoubleTap":true,"dragAndDropCards":true,"showVideo":false }"""
     }
 }

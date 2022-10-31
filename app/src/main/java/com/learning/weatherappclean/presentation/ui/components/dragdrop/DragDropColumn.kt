@@ -23,8 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -81,14 +79,15 @@ fun <T : Any> DragDropColumn(
                     onDragCancel = {
                         dragDropState.onDragInterrupted()
                         overscrollJob?.cancel()
-                    }
+                    },
+
                 )
             },
         state = listState,
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        if (scrollToFirst.value.first) CoroutineScope(Dispatchers.Main).launch {
+        if (scrollToFirst.value.first) scope.launch {
             listState.scrollToItem(scrollToFirst.value.second)
             stopScrollToFirst?.invoke()
         }

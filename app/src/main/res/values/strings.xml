@@ -9,6 +9,8 @@
     <string name="showDetailsDescription">Show additional weather information on double tap on the card</string>
     <string name="dragAndDrop">Drag and Drop</string>
     <string name="dragAndDropDescription">Allow swapping weather cards by dragging them (available in portrait screen orientation)</string>
+    <string name="showVideo">Show weather animation</string>
+    <string name="showVideoDescription">Show weather animation on the cards</string>
     <string name="noCardsLoaded">"No weather cards were loaded.\n Tap \"Try again\" to load cards"</string>
     <string name="noItemsToShow">No items to show.\nAdd locations</string>
     <string name="howIsTheWeather">How is the weather in…</string>
@@ -39,4 +41,5 @@
     <string name="kilometers">km</string>
     <string name="millibars">mbar</string>
     <string name="perHour">/h</string>
+
 </resources>

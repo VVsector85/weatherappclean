@@ -46,6 +46,7 @@ class DataModule {
     fun provideSettingsRepository(settingsStorage: SettingsStorage): SettingsRepository {
         return SettingsRepositoryImpl(settingsStorage = settingsStorage)
     }
+
     @Provides
     @Singleton
     fun provideRemoteRepository(weatherAPI: WeatherApi): RemoteRepository {

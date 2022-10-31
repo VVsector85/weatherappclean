@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.media3.exoplayer.ExoPlayer
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.learning.weatherappclean.domain.model.CardColorOption
@@ -40,6 +41,7 @@ fun WeatherList(
     deleteCard: ((Int) -> Unit)? = null,
     swapSections: ((Int, Int) -> Unit)? = null,
     stopScrollToFirst: (() -> Unit)? = null,
+
 ) {
     SwipeRefresh(
         modifier = Modifier.padding(padding),
@@ -95,7 +97,8 @@ fun WeatherListPreview() {
                     imperialUnits = false,
                     newCardFirst = true,
                     detailsOnDoubleTap = true,
-                    dragAndDropCards = true
+                    dragAndDropCards = true,
+                    showVideo = false
                 )
             ).collectAsState(),
             errorMessage = MutableStateFlow(ErrorMessageProvider()).collectAsState(),

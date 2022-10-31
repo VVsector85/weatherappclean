@@ -38,6 +38,7 @@ fun SettingsMenu(
     val checkedStateAtTop = remember { mutableStateOf(settings.value.newCardFirst) }
     val checkedStateShowDetails = remember { mutableStateOf(settings.value.detailsOnDoubleTap) }
     val checkedStateDragAndDrop = remember { mutableStateOf(settings.value.dragAndDropCards) }
+    val checkedStateShowVideo = remember { mutableStateOf(settings.value.showVideo) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,6 +80,13 @@ fun SettingsMenu(
             checkedState = checkedStateDragAndDrop,
             saveSettings = saveSettings,
             property = Settings::dragAndDropCards
+        )
+        MenuSwitchItem(
+            text =  stringResource(id = R.string.showVideo),
+            description =  stringResource(id = R.string.showVideoDescription),
+            checkedState = checkedStateShowVideo,
+            saveSettings = saveSettings,
+            property = Settings::showVideo
         )
     }
 }
@@ -137,7 +145,8 @@ fun SettingsMenuPreview() {
                     imperialUnits = false,
                     newCardFirst = true,
                     detailsOnDoubleTap = true,
-                    dragAndDropCards = true
+                    dragAndDropCards = true,
+                    showVideo = false
                 )
             ).collectAsState()
         )

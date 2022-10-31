@@ -18,5 +18,5 @@ data class WeatherCard(
     val weatherDescription: String,
     val isNightIcon: Boolean,
     var showDetails: Boolean,
-    var cardColorOption: CardColorOption?,
+    var cardColorOption: CardColorOption?
 )

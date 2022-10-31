@@ -27,5 +27,7 @@ data class Current(
     @field:Json(name = "wind_dir")
     val windDir: String,
     @field:Json(name = "wind_speed")
-    val windSpeed: String
+    val windSpeed: String,
+    @field:Json(name = "is_day")
+    val isDay: String
 )

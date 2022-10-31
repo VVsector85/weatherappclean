@@ -1,5 +1,6 @@
 package com.learning.weatherappclean.presentation.ui.components
 
+import android.net.Uri
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -43,10 +46,11 @@ import com.learning.weatherappclean.presentation.ui.theme.hot
 import com.learning.weatherappclean.presentation.ui.theme.onCard
 import com.learning.weatherappclean.presentation.ui.theme.warm
 import com.learning.weatherappclean.util.Constants.IMPERIAL_UNITS
-import com.learning.weatherappclean.util.getWeatherIcon
+import com.learning.weatherappclean.util.getCardResources
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun CardWeather(
     modifier: Modifier,
     content: WeatherCard,
@@ -55,23 +59,27 @@ fun CardWeather(
     deleteCard: ((Index: Int) -> Unit)? = null,
     setShowDetails: ((Boolean, Int) -> Unit)? = null,
     setShowSearch: ((Boolean) -> Unit?)? = null,
-    setExpanded: ((Boolean) -> Unit)? = null,
+    setExpanded: ((Boolean) -> Unit)? = null
 
 ) {
+
     val colour = when (content.cardColorOption) {
         CardColorOption.BLUE -> MaterialTheme.colors.cold
         CardColorOption.RED -> MaterialTheme.colors.hot
         CardColorOption.YELLOW -> MaterialTheme.colors.warm
         else -> Color.LightGray
     }
+    val path = "android.resource://${LocalContext.current.packageName}/"
 
     val details = remember {
         mutableStateOf(content.showDetails)
     }
+
     details.value = content.showDetails
 
     Card(
         modifier = modifier
+            .height(if (details.value && settings.value.detailsOnDoubleTap) 230.dp else 130.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
@@ -88,6 +96,23 @@ fun CardWeather(
             },
         backgroundColor = colour,
     ) {
+
+        if (settings.value.showVideo) {
+          /*  Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {*/
+                VideoPlayer(
+                    Uri.parse(
+                        path + getCardResources(
+
+                            content.weatherCode.toInt(),
+                            content.isNightIcon
+                        ).video
+                    )
+                )
+           /* }*/
+        }
         Column() {
             Row() {
                 Box(
@@ -98,10 +123,10 @@ fun CardWeather(
                     Column(modifier = Modifier.align(Alignment.Center)) {
                         Icon(
                             painter = painterResource(
-                                id = getWeatherIcon(
+                                id = getCardResources(
                                     content.weatherCode.toInt(),
                                     content.isNightIcon
-                                )
+                                ).icon
                             ),
                             contentDescription = content.weatherDescription,
                             modifier = Modifier
@@ -117,7 +142,11 @@ fun CardWeather(
                         .height(130.dp)
                 ) {
                     Text(
-                        text = "${content.temperature}\u00b0${if (content.units == IMPERIAL_UNITS) stringResource(R.string.fahrenheit_letter) else ""}",
+                        text = "${content.temperature}\u00b0${
+                        if (content.units == IMPERIAL_UNITS) stringResource(
+                            R.string.fahrenheit_letter
+                        ) else ""
+                        }",
                         color = MaterialTheme.colors.onCard,
                         modifier = Modifier
                             .padding(start = 15.dp)
@@ -194,7 +223,11 @@ fun CardWeather(
                             description = R.string.uvIndex
                         )
                         WeatherDetails(
-                            value = "${content.windSpeed}\n${if (content.units == IMPERIAL_UNITS) stringResource(R.string.miles) else stringResource(R.string.kilometers)}${stringResource(R.string.perHour)}",
+                            value = "${content.windSpeed}\n${
+                            if (content.units == IMPERIAL_UNITS) stringResource(
+                                R.string.miles
+                            ) else stringResource(R.string.kilometers)
+                            }${stringResource(R.string.perHour)}",
                             iconId = R.drawable.ic_wind,
                             description = R.string.windSpeed
                         )
@@ -207,7 +240,11 @@ fun CardWeather(
                 ) {
                     Column() {
                         WeatherDetails(
-                            value = "${content.feelsLike}\u00b0${if (content.units == IMPERIAL_UNITS) stringResource(R.string.fahrenheit_letter) else stringResource(R.string.celsius_letter)}",
+                            value = "${content.feelsLike}\u00b0${
+                            if (content.units == IMPERIAL_UNITS) stringResource(
+                                R.string.fahrenheit_letter
+                            ) else stringResource(R.string.celsius_letter)
+                            }",
                             iconId = R.drawable.ic_temp_feels_like, description = R.string.feelsLike
                         )
                         WeatherDetails(
@@ -271,7 +308,8 @@ fun CardWeatherPreview(
                     imperialUnits = false,
                     newCardFirst = true,
                     detailsOnDoubleTap = true,
-                    dragAndDropCards = true
+                    dragAndDropCards = true,
+                    showVideo = false
                 )
             ).collectAsState(),
         )

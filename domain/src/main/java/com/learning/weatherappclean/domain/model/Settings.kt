@@ -1,8 +1,9 @@
 package com.learning.weatherappclean.domain.model
 
 data class Settings(
-    var imperialUnits: Boolean = true,
-    var newCardFirst: Boolean = true,
-    var detailsOnDoubleTap: Boolean = true,
-    var dragAndDropCards: Boolean = true
+    var imperialUnits: Boolean,
+    var newCardFirst: Boolean,
+    var detailsOnDoubleTap: Boolean,
+    var dragAndDropCards: Boolean,
+    var showVideo: Boolean
 )

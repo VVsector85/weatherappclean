@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.media3.exoplayer.ExoPlayer
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.ui.components.CardWeather
@@ -23,7 +24,6 @@ fun WeatherColumnWithDrag(
     setShowSearch: ((Boolean) -> Unit)? = null,
     setShowDetails: ((Boolean, Int) -> Unit)? = null,
 ) {
-
     DragDropColumn(
         items = weatherCardList,
         onSwap = swapSections,
@@ -40,7 +40,7 @@ fun WeatherColumnWithDrag(
             settings = settings,
             setShowDetails = setShowDetails,
             setShowSearch = setShowSearch,
-            setExpanded = setExpanded,
+            setExpanded = setExpanded
 
         )
     }
