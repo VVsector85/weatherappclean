@@ -146,7 +146,7 @@ fun MainScreen(vm: MainViewModel) {
             DropDown(
                 expanded = expanded,
                 addCard = vm::addCard,
-                predictionList = predictionsList,
+                predictionsList = predictionsList,
                 isLandscape = isLandscape
             )
         }

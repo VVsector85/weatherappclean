@@ -1,7 +1,6 @@
 package com.learning.weatherappclean.data.source.local.sharedprefs
 
 import android.content.Context
-import android.util.Log
 import com.learning.weatherappclean.data.model.dto.settings.SettingsData
 import com.learning.weatherappclean.data.source.local.SettingsStorage
 import com.learning.weatherappclean.data.util.JsonConverter

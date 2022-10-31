@@ -13,9 +13,9 @@ data class SettingsData(
 
 internal fun SettingsData.mapToDomain(): Settings =
     Settings(
-        imperialUnits = this.imperialUnits,
-        newCardFirst = this.newCardFirst,
-        detailsOnDoubleTap = this.detailsOnDoubleTap,
-        dragAndDropCards = this.dragAndDropCards,
-        showVideo = this.showVideo
+        imperialUnits = imperialUnits,
+        newCardFirst = newCardFirst,
+        detailsOnDoubleTap = detailsOnDoubleTap,
+        dragAndDropCards = dragAndDropCards,
+        showVideo = showVideo
     )

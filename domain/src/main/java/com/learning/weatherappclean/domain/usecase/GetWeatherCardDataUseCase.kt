@@ -18,15 +18,15 @@ class GetWeatherCardDataUseCase(private val remoteRepository: RemoteRepository) 
 
             val temperature = resourceDomainCard.data.temperature.toInt()
             with(resourceDomainCard.data) {
-                if (this.units == "m") when (temperature) {
-                    in BLUE_RANGE_CELSIUS -> this.cardColorOption = CardColorOption.BLUE
-                    in YELLOW_RANGE_CELSIUS -> this.cardColorOption = CardColorOption.YELLOW
-                    else -> this.cardColorOption = CardColorOption.RED
+                cardColorOption = if (units == "m") when (temperature) {
+                    in BLUE_RANGE_CELSIUS -> CardColorOption.BLUE
+                    in YELLOW_RANGE_CELSIUS -> CardColorOption.YELLOW
+                    else -> CardColorOption.RED
                 }
                 else when (temperature) {
-                    in BLUE_RANGE_FAHRENHEIT -> this.cardColorOption = CardColorOption.BLUE
-                    in YELLOW_RANGE_FAHRENHEIT -> this.cardColorOption = CardColorOption.YELLOW
-                    else -> this.cardColorOption = CardColorOption.RED
+                    in BLUE_RANGE_FAHRENHEIT -> CardColorOption.BLUE
+                    in YELLOW_RANGE_FAHRENHEIT -> CardColorOption.YELLOW
+                    else -> CardColorOption.RED
                 }
             }
         }

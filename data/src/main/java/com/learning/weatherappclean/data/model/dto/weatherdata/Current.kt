@@ -28,6 +28,6 @@ data class Current(
     val windDir: String,
     @field:Json(name = "wind_speed")
     val windSpeed: String,
-    @field:Json(name = "is_day")
+    @field:Json(name = "is_day") // was not in weatherstack api documentation
     val isDay: String
 )

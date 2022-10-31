@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun DropDown(
     expanded: State<Boolean>,
-    predictionList: State<List<AutocompletePrediction>>,
+    predictionsList: State<List<AutocompletePrediction>>,
     isLandscape: Boolean,
     addCard: ((String, AutocompletePrediction?) -> Unit)? = null
 ) {
@@ -40,7 +40,7 @@ fun DropDown(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LazyColumn() {
-                itemsIndexed(predictionList.value) { _, item ->
+                itemsIndexed(predictionsList.value) { _, item ->
                     Column(
                         modifier = Modifier
                             .background(MaterialTheme.colors.autocomplete.copy(alpha = 0.80f))
@@ -85,7 +85,7 @@ fun DropDownPreview() {
         DropDown(
             expanded = MutableStateFlow(true).collectAsState(),
             isLandscape = false,
-            predictionList = MutableStateFlow(
+            predictionsList = MutableStateFlow(
                 listOf(
                     AutocompletePrediction(
                         location = "London",

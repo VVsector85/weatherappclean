@@ -147,12 +147,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun refreshCards() {
-       /* weatherCardsList.value.forEach {
-            if (it.videoPlayer is ExoPlayer) {
-                (it.videoPlayer as ExoPlayer).release()
-                it.videoPlayer = null
-            }
-        }*/
+
         isLoading.value = true
         var duplicatesFound = false
         val requestList = loadRequestListUseCase()
@@ -169,9 +164,6 @@ class MainViewModel @Inject constructor(
                     when (resourceDomain) {
                         is ResourceDomain.Success -> {
                             val card = resourceDomain.data
-                           /* launch(coroutineDispatcherProvider.Main()) {
-                                card.videoPlayer = createPlayer(card.weatherCode.toInt(), card.isNightIcon)
-                            }*/
 
                             if (tempCardList.find { it.location == card.location && it.country == card.country && it.region == card.region } == null) {
                                 tempCardList.add(card)

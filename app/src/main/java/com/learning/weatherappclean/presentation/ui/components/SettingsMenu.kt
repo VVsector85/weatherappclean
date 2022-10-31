@@ -82,8 +82,8 @@ fun SettingsMenu(
             property = Settings::dragAndDropCards
         )
         MenuSwitchItem(
-            text =  stringResource(id = R.string.showVideo),
-            description =  stringResource(id = R.string.showVideoDescription),
+            text = stringResource(id = R.string.showVideo),
+            description = stringResource(id = R.string.showVideoDescription),
             checkedState = checkedStateShowVideo,
             saveSettings = saveSettings,
             property = Settings::showVideo

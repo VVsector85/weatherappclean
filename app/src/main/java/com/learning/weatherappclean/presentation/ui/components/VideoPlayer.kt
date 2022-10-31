@@ -46,10 +46,12 @@ fun VideoPlayer(uri: Uri) {
 
             setMediaSource(source)
             prepare()
+
+            playWhenReady = true
+            videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+            repeatMode = Player.REPEAT_MODE_ONE
         }
-        exoPlayer.playWhenReady = true
-        exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-        exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+
         Log.d("my_tag", "Launched effect")
     }
 
