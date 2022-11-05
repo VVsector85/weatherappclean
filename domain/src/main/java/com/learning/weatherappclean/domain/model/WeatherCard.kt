@@ -2,9 +2,9 @@ package com.learning.weatherappclean.domain.model
 
 data class WeatherCard(
     val location: String,
-    val temperature: String,
     val country: String,
     val region: String,
+    val temperature: String,
     val units: String,
     val cloudCover: String,
     val feelsLike: String,

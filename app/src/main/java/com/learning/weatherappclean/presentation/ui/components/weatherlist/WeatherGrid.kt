@@ -7,15 +7,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.ui.components.CardWeather
-import kotlinx.coroutines.launch
 
 @Composable
 fun WeatherGrid(
@@ -28,8 +27,15 @@ fun WeatherGrid(
     setExpanded: ((Boolean) -> Unit)? = null,
     setShowSearch: ((Boolean) -> Unit)? = null,
 ) {
-    val scope = rememberCoroutineScope()
+
     val gridState = rememberLazyGridState()
+    LaunchedEffect(scrollToFirst.value.first) {
+        if (scrollToFirst.value.first) {
+            gridState.scrollToItem(scrollToFirst.value.second)
+            stopScrollToFirst?.invoke()
+        }
+    }
+
     LazyVerticalGrid(
         columns = GridCells.Adaptive(290.dp),
         modifier = Modifier.fillMaxWidth(0.9f),
@@ -42,12 +48,7 @@ fun WeatherGrid(
         userScrollEnabled = true,
         state = gridState
     ) {
-        if (scrollToFirst.value.first) {
-            scope.launch {
-                gridState.scrollToItem(scrollToFirst.value.second)
-                stopScrollToFirst?.invoke()
-            }
-        }
+
         items(weatherCardList.size) { index ->
             CardWeather(
                 modifier = Modifier

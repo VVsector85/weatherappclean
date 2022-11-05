@@ -41,7 +41,8 @@ fun WeatherList(
     swapSections: ((Int, Int) -> Unit)? = null,
     stopScrollToFirst: (() -> Unit)? = null,
 
-) {
+    ) {
+
     SwipeRefresh(
         modifier = Modifier.padding(padding),
         state = rememberSwipeRefreshState(isRefreshing = isLoading.value),
@@ -58,18 +59,35 @@ fun WeatherList(
                 refreshCards = refreshCards,
                 noRequests = noRequests
             )
+
+
             if (isLandscape || !settings.value.dragAndDropCards)
-                WeatherGrid(
-                    weatherCardList = weatherCardList,
-                    scrollToFirst = scrollToFirst,
-                    settings = settings,
-                    setShowDetails = setShowDetails,
-                    stopScrollToFirst = stopScrollToFirst,
-                    deleteCard = deleteCard,
-                    setExpanded = setExpanded,
-                    setShowSearch = setShowSearch,
-                )
+                 WeatherGrid(
+                     weatherCardList = weatherCardList,
+                     scrollToFirst = scrollToFirst,
+                     settings = settings,
+                     setShowDetails = setShowDetails,
+                     stopScrollToFirst = stopScrollToFirst,
+                     deleteCard = deleteCard,
+                     setExpanded = setExpanded,
+                     setShowSearch = setShowSearch,
+                 )
+
+
+           /* WeatherLaboriousColumn(
+                weatherCardList = weatherCardList,
+                scrollToFirst = scrollToFirst,
+                settings = settings,
+                setShowDetails = setShowDetails,
+                stopScrollToFirst = stopScrollToFirst,
+                deleteCard = deleteCard,
+                setExpanded = setExpanded,
+                setShowSearch = setShowSearch,
+            )*/
+
             else
+
+            {
                 WeatherColumnWithDrag(
                     weatherCardList = weatherCardList,
                     deleteCard = deleteCard,
@@ -81,6 +99,10 @@ fun WeatherList(
                     settings = settings,
                     setShowDetails = setShowDetails,
                 )
+
+            }
+
+
         }
     }
 }

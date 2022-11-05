@@ -1,6 +1,7 @@
 package com.learning.weatherappclean.presentation.ui.components
 
 import android.net.Uri
+
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
@@ -58,7 +59,8 @@ fun CardWeather(
     deleteCard: ((Index: Int) -> Unit)? = null,
     setShowDetails: ((Boolean, Int) -> Unit)? = null,
     setShowSearch: ((Boolean) -> Unit?)? = null,
-    setExpanded: ((Boolean) -> Unit)? = null
+    setExpanded: ((Boolean) -> Unit)? = null,
+
 
 ) {
 
@@ -74,188 +76,187 @@ fun CardWeather(
         mutableStateOf(content.showDetails)
     }
 
-    details.value = content.showDetails
+        details.value = content.showDetails
 
-    Card(
-        modifier = modifier
-            .height(if (details.value && settings.value.detailsOnDoubleTap) 230.dp else 130.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onDoubleTap = {
-                        if (settings.value.detailsOnDoubleTap) {
-                            details.value = !details.value
-                            setShowDetails?.invoke(details.value, index)
-                        }
-                    },
-                    onTap = {
-                        setShowSearch?.invoke(false)
-                        setExpanded?.invoke(false)
-                    },
-                )
-            },
-        backgroundColor = colour,
-    ) {
 
-        if (settings.value.showVideo) {
-          /*  Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter
-            ) {*/
-            VideoPlayer(
-                Uri.parse(
-                    path + getCardResources(
-
-                        content.weatherCode.toInt(),
-                        content.isNightIcon
-                    ).video
-                )
-            )
-            /* }*/
-        }
-        Column() {
-            Row() {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.35f)
-                        .align(Alignment.CenterVertically)
-                ) {
-                    Column(modifier = Modifier.align(Alignment.Center)) {
-                        Icon(
-                            painter = painterResource(
-                                id = getCardResources(
-                                    content.weatherCode.toInt(),
-                                    content.isNightIcon
-                                ).icon
-                            ),
-                            contentDescription = content.weatherDescription,
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .size(70.dp, 70.dp),
-                            tint = MaterialTheme.colors.onCard
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(130.dp)
-                ) {
-                    Text(
-                        text = "${content.temperature}\u00b0${
-                        if (content.units == IMPERIAL_UNITS) stringResource(
-                            R.string.fahrenheit_letter
-                        ) else ""
-                        }",
-                        color = MaterialTheme.colors.onCard,
-                        modifier = Modifier
-                            .padding(start = 15.dp)
-                            .align(Alignment.TopStart),
-                        style = MaterialTheme.typography.h2
-                    )
-
-                    Column(modifier = Modifier.align(Alignment.BottomStart)) {
-                        Text(
-                            text = content.location.uppercase(),
-                            color = MaterialTheme.colors.onCard,
-                            modifier = Modifier
-                                .padding(start = 20.dp, end = 10.dp)
-                                .horizontalScroll(state = ScrollState(0)),
-                            style = MaterialTheme.typography.h5
-                        )
-                        Text(
-                            text = "${content.country}${if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else ""}",
-                            color = MaterialTheme.colors.onCard,
-                            modifier = Modifier
-                                .padding(end = 10.dp, start = 20.dp, bottom = 10.dp)
-                                .horizontalScroll(state = ScrollState(0)),
-                            style = MaterialTheme.typography.h6,
-                        )
-                    }
-                    Button(
-                        onClick = {
-                            deleteCard?.invoke(index)
+        Card(
+            modifier = modifier
+                .height(if (details.value && settings.value.detailsOnDoubleTap) 230.dp else 130.dp)
+                .pointerInput("${details.value}$index") {
+                    detectTapGestures(
+                        onDoubleTap = {
+                            if (settings.value.detailsOnDoubleTap) {
+                                details.value = !details.value
+                                setShowDetails?.invoke(details.value, index)
+                            }
                         },
-                        shape = CircleShape,
-                        contentPadding = PaddingValues(10.dp),
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(10.dp)
-                            .size(35.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_closebutton_cross),
-                            contentDescription = stringResource(id = R.string.deleteWeatherCard),
-                            modifier = Modifier.size(12.dp, 12.dp)
-                        )
-                    }
-                }
+                        onTap = {
+                            setShowSearch?.invoke(false)
+                            setExpanded?.invoke(false)
+                        },
+                    )
+                },
+
+            backgroundColor = colour,
+        ) {
+            if (settings.value.showVideo) {
+
+                VideoPlayer(
+                    Uri.parse(
+                        path + getCardResources(
+                            content.weatherCode.toInt(),
+                            content.isNightIcon
+                        ).video
+                    )
+                )
             }
 
-            if (details.value && settings.value.detailsOnDoubleTap) Row(modifier = Modifier.fillMaxWidth()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.33f)
-                        .padding(start = 20.dp)
-                ) {
-                    Column() {
-                        WeatherDetails(
-                            value = "${content.humidity}%",
-                            iconId = R.drawable.ic_droplet,
-                            description = R.string.humidity
-                        )
-                        WeatherDetails(
-                            value = "${content.pressure}\n${stringResource(R.string.millibars)}",
-                            iconId = R.drawable.ic_pressure,
-                            description = R.string.pressure
-                        )
+            Column() {
+                Row() {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.35f)
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Column(modifier = Modifier.align(Alignment.Center)) {
+                            Icon(
+                                painter = painterResource(
+                                    id = getCardResources(
+                                        content.weatherCode.toInt(),
+                                        content.isNightIcon
+                                    ).icon
+                                ),
+                                contentDescription = content.weatherDescription,
+                                modifier = Modifier
+                                    .padding(20.dp)
+                                    .size(70.dp, 70.dp),
+                                tint = MaterialTheme.colors.onCard
+                            )
+                        }
                     }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .padding(start = 24.dp)
-                ) {
-                    Column() {
-                        WeatherDetails(
-                            value = content.uvIndex,
-                            iconId = R.drawable.ic_sun_uv,
-                            description = R.string.uvIndex
-                        )
-                        WeatherDetails(
-                            value = "${content.windSpeed}\n${
-                            if (content.units == IMPERIAL_UNITS) stringResource(
-                                R.string.miles
-                            ) else stringResource(R.string.kilometers)
-                            }${stringResource(R.string.perHour)}",
-                            iconId = R.drawable.ic_wind,
-                            description = R.string.windSpeed
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp)
-                ) {
-                    Column() {
-                        WeatherDetails(
-                            value = "${content.feelsLike}\u00b0${
-                            if (content.units == IMPERIAL_UNITS) stringResource(
-                                R.string.fahrenheit_letter
-                            ) else stringResource(R.string.celsius_letter)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(130.dp)
+                    ) {
+                        Text(
+                            text = "${content.temperature}\u00b0${
+                                if (content.units == IMPERIAL_UNITS) stringResource(
+                                    R.string.fahrenheit_letter
+                                ) else ""
                             }",
-                            iconId = R.drawable.ic_temp_feels_like, description = R.string.feelsLike
+                            color = MaterialTheme.colors.onCard,
+                            modifier = Modifier
+                                .padding(start = 15.dp)
+                                .align(Alignment.TopStart),
+                            style = MaterialTheme.typography.h2
                         )
-                        WeatherDetails(
-                            value = "${content.cloudCover}%",
-                            iconId = R.drawable.ic_overcast, description = R.string.cloudCover
-                        )
+
+                        Column(modifier = Modifier.align(Alignment.BottomStart)) {
+                            Text(
+                                text = content.location.uppercase(),
+                                color = MaterialTheme.colors.onCard,
+                                modifier = Modifier
+                                    .padding(start = 20.dp, end = 10.dp)
+                                    .horizontalScroll(state = ScrollState(0)),
+                                style = MaterialTheme.typography.h5
+                            )
+                            Text(
+                                text = "${content.country}${if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else ""}",
+                                color = MaterialTheme.colors.onCard,
+                                modifier = Modifier
+                                    .padding(end = 10.dp, start = 20.dp, bottom = 10.dp)
+                                    .horizontalScroll(state = ScrollState(0)),
+                                style = MaterialTheme.typography.h6,
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                deleteCard?.invoke(index)
+                            },
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(10.dp),
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(10.dp)
+                                .size(35.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_closebutton_cross),
+                                contentDescription = stringResource(id = R.string.deleteWeatherCard),
+                                modifier = Modifier.size(12.dp, 12.dp)
+                            )
+                        }
+                    }
+                }
+
+                if (details.value && settings.value.detailsOnDoubleTap) Row(modifier = Modifier.fillMaxWidth()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.33f)
+                            .padding(start = 20.dp)
+                    ) {
+                        Column() {
+                            WeatherDetails(
+                                value = "${content.humidity}%",
+                                iconId = R.drawable.ic_droplet,
+                                description = R.string.humidity
+                            )
+                            WeatherDetails(
+                                value = "${content.pressure}\n${stringResource(R.string.millibars)}",
+                                iconId = R.drawable.ic_pressure,
+                                description = R.string.pressure
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .padding(start = 24.dp)
+                    ) {
+                        Column() {
+                            WeatherDetails(
+                                value = content.uvIndex,
+                                iconId = R.drawable.ic_sun_uv,
+                                description = R.string.uvIndex
+                            )
+                            WeatherDetails(
+                                value = "${content.windSpeed}\n${
+                                    if (content.units == IMPERIAL_UNITS) stringResource(
+                                        R.string.miles
+                                    ) else stringResource(R.string.kilometers)
+                                }${stringResource(R.string.perHour)}",
+                                iconId = R.drawable.ic_wind,
+                                description = R.string.windSpeed
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp)
+                    ) {
+                        Column() {
+                            WeatherDetails(
+                                value = "${content.feelsLike}\u00b0${
+                                    if (content.units == IMPERIAL_UNITS) stringResource(
+                                        R.string.fahrenheit_letter
+                                    ) else stringResource(R.string.celsius_letter)
+                                }",
+                                iconId = R.drawable.ic_temp_feels_like,
+                                description = R.string.feelsLike
+                            )
+                            WeatherDetails(
+                                value = "${content.cloudCover}%",
+                                iconId = R.drawable.ic_overcast, description = R.string.cloudCover
+                            )
+                        }
                     }
                 }
             }
         }
     }
-}
+
 
 @Composable
 fun WeatherDetails(

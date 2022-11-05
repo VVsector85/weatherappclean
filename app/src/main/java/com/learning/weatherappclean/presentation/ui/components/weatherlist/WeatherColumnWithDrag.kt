@@ -39,7 +39,8 @@ fun WeatherColumnWithDrag(
             settings = settings,
             setShowDetails = setShowDetails,
             setShowSearch = setShowSearch,
-            setExpanded = setExpanded
+            setExpanded = setExpanded,
+
 
         )
     }

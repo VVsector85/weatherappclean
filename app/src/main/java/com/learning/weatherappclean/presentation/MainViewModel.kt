@@ -1,5 +1,6 @@
 package com.learning.weatherappclean.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.weatherappclean.data.model.ErrorType
@@ -220,6 +221,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun setShowDetails(boolean: Boolean, index: Int) {
+
+        if (index >= weatherCardsList.value.size) {
+            Log.d("my_tag", "$index index out of bounds")
+            return
+        }
         val list = weatherCardsList.value
         list[index].showDetails = boolean
         weatherCardsList.value = list

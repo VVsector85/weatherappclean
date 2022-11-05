@@ -3,6 +3,7 @@ package com.learning.weatherappclean.presentation.ui.components.dragdrop
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
@@ -51,6 +52,7 @@ class DragDropState internal constructor(
         }
 
     fun onDragStart(offset: Offset) {
+
         state.layoutInfo.visibleItemsInfo
             .firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
             ?.also {
@@ -123,3 +125,4 @@ class DragDropState internal constructor(
         } ?: 0f
     }
 }
+
