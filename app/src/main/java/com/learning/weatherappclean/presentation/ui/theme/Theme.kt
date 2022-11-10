@@ -51,7 +51,10 @@ val Colors.autocomplete: Color
     get() = if (isLight) AutocompleteDay else AutocompleteNight
 val Colors.onAutocomplete: Color
     get() = if (isLight) OnAutocompleteDay else OnAutocompleteNight
-
+val Colors.dismissGreen: Color
+    get() = if (isLight) DismissGreenDay else DismissGreenNight
+val Colors.dismissRed: Color
+    get() = if (isLight) DismissRedDay else DismissRedNight
 @Composable
 fun WeatherAppCleanTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

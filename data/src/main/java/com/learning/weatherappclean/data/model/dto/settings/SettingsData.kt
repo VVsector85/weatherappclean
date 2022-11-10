@@ -8,7 +8,8 @@ data class SettingsData(
     val newCardFirst: Boolean,
     val detailsOnDoubleTap: Boolean,
     val dragAndDropCards: Boolean,
-    val showVideo: Boolean
+    val showVideo: Boolean,
+    val swipeToDismiss: Boolean
 )
 
 internal fun SettingsData.mapToDomain(): Settings =
@@ -17,5 +18,6 @@ internal fun SettingsData.mapToDomain(): Settings =
         newCardFirst = newCardFirst,
         detailsOnDoubleTap = detailsOnDoubleTap,
         dragAndDropCards = dragAndDropCards,
-        showVideo = showVideo
+        showVideo = showVideo,
+        swipeToDismiss = swipeToDismiss
     )

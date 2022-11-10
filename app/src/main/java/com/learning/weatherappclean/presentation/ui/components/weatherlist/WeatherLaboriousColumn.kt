@@ -3,7 +3,6 @@ package com.learning.weatherappclean.presentation.ui.components.weatherlist
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -53,13 +52,13 @@ fun WeatherLaboriousColumn(
         weatherCardList.forEachIndexed() { index, value ->
             val offsetY = remember { mutableStateOf(0f) }
             CardWeather(
-                modifier = Modifier.offset { IntOffset(0,offsetY.value.roundToInt()) }
-
-                    .draggable(orientation = Orientation.Vertical,
-                    state = rememberDraggableState { delta ->
-                        offsetY.value += delta
-                    }
-                )
+                modifier = Modifier.offset { IntOffset(0, offsetY.value.roundToInt()) }
+                    .draggable(
+                        orientation = Orientation.Vertical,
+                        state = rememberDraggableState { delta ->
+                            offsetY.value += delta
+                        }
+                    )
                     .fillMaxWidth(0.9f)
                     .padding(bottom = 20.dp),
 

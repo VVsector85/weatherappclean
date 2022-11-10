@@ -4,7 +4,6 @@ import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -48,7 +47,6 @@ fun LazyListState.getVisibleItemInfoFor(absoluteIndex: Int): LazyListItemInfo? {
 
 val LazyListItemInfo.offsetEnd: Int
     get() = this.offset + this.size
-
 
 @ExperimentalFoundationApi
 @Composable

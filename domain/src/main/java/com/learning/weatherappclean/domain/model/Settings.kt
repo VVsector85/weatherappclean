@@ -5,5 +5,6 @@ data class Settings(
     var newCardFirst: Boolean,
     var detailsOnDoubleTap: Boolean,
     var dragAndDropCards: Boolean,
-    var showVideo: Boolean
+    var showVideo: Boolean,
+    var swipeToDismiss: Boolean
 )

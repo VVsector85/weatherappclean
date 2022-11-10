@@ -11,6 +11,8 @@
     <string name="dragAndDropDescription">Allow swapping weather cards by dragging them (available in portrait screen orientation)</string>
     <string name="showVideo">Show weather animation</string>
     <string name="showVideoDescription">Show weather animation on the cards</string>
+    <string name="swipeToDismiss">Swipe to dismiss</string>
+    <string name="swipeToDismissDescription">Allows to delete weather cards with swipe gesture</string>
     <string name="noCardsLoaded">"No weather cards were loaded.\n Tap \"Try again\" to load cards"</string>
     <string name="noItemsToShow">No items to show.\nAdd locations</string>
     <string name="howIsTheWeather">How is the weather in…</string>

@@ -28,6 +28,6 @@ class SharedPrefsSettingsStorage(context: Context) : SettingsStorage {
         private const val SHARED_PREFS_SETTINGS = "shared_prefs_weather_settings"
         private const val KEY_SETTINGS = "settings"
         private const val DEFAULT_SETTINGS =
-            """{"imperialUnits":false,"newCardFirst":true,"detailsOnDoubleTap":true,"dragAndDropCards":true,"showVideo":false }"""
+            """{"imperialUnits":false,"newCardFirst":true,"detailsOnDoubleTap":true,"dragAndDropCards":true,"showVideo":false,"swipeToDismiss":false }"""
     }
 }

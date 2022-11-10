@@ -44,7 +44,7 @@ fun WeatherGrid(
             space = 20.dp,
             alignment = Alignment.CenterHorizontally
         ),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.spacedBy(space = 20.dp),
         userScrollEnabled = true,
         state = gridState
     ) {
@@ -52,7 +52,7 @@ fun WeatherGrid(
         items(weatherCardList.size) { index ->
             CardWeather(
                 modifier = Modifier
-                    .fillMaxWidth(0.9f),
+                    .fillMaxWidth(1f),
                 content = weatherCardList[index],
                 index = index,
                 deleteCard = deleteCard,

@@ -202,6 +202,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun deleteCard(index: Int) {
+        if (index >= weatherCardsList.value.size) {
+            Log.d("my_tag", "$index index out of bounds")
+            return
+        }
         val tempCardList = weatherCardsList.value.toMutableList()
         tempCardList.removeAt(index)
         if (tempCardList.isEmpty()) noRequests.value = true
@@ -216,6 +220,7 @@ class MainViewModel @Inject constructor(
             Settings::dragAndDropCards -> settings.update { it.copy(dragAndDropCards = value) }
             Settings::detailsOnDoubleTap -> settings.update { it.copy(detailsOnDoubleTap = value) }
             Settings::showVideo -> settings.update { it.copy(showVideo = value) }
+            Settings::swipeToDismiss -> settings.update { it.copy(swipeToDismiss = value) }
         }
         saveSettingsUseCase(settings.value)
     }

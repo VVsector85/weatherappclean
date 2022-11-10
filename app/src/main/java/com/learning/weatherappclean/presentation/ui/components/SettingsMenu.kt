@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
@@ -39,55 +41,71 @@ fun SettingsMenu(
     val checkedStateShowDetails = remember { mutableStateOf(settings.value.detailsOnDoubleTap) }
     val checkedStateDragAndDrop = remember { mutableStateOf(settings.value.dragAndDropCards) }
     val checkedStateShowVideo = remember { mutableStateOf(settings.value.showVideo) }
+    val checkedStateSwipeToDismiss = remember { mutableStateOf(settings.value.swipeToDismiss) }
+    val state = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
     ) {
         Text(
             modifier = Modifier
-                .padding(bottom = 15.dp)
+                .padding(vertical = 10.dp)
                 .align(Alignment.CenterHorizontally),
             text = stringResource(id = R.string.settings),
             style = MaterialTheme.typography.h4
         )
         Divider(thickness = 3.dp)
-        MenuSwitchItem(
-            text = stringResource(id = R.string.imperial),
-            description = stringResource(id = R.string.imperialDescription),
-            checkedState = checkedStateUnits,
-            saveSettings = saveSettings,
-            property = Settings::imperialUnits,
-            action = refreshCards
-        )
-        MenuSwitchItem(
-            text = stringResource(id = R.string.addAtTop),
-            description = stringResource(id = R.string.addAtTopDescription),
-            checkedState = checkedStateAtTop,
-            saveSettings = saveSettings,
-            property = Settings::newCardFirst
-        )
-        MenuSwitchItem(
-            text = stringResource(id = R.string.showDetails),
-            description = stringResource(id = R.string.showDetailsDescription),
-            checkedState = checkedStateShowDetails,
-            saveSettings = saveSettings,
-            property = Settings::detailsOnDoubleTap
-        )
-        MenuSwitchItem(
-            text = stringResource(id = R.string.dragAndDrop),
-            description = stringResource(id = R.string.dragAndDropDescription),
-            checkedState = checkedStateDragAndDrop,
-            saveSettings = saveSettings,
-            property = Settings::dragAndDropCards
-        )
-        MenuSwitchItem(
-            text = stringResource(id = R.string.showVideo),
-            description = stringResource(id = R.string.showVideoDescription),
-            checkedState = checkedStateShowVideo,
-            saveSettings = saveSettings,
-            property = Settings::showVideo
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(15.dp)
+                .verticalScroll(state = state, enabled = true)
+        ) {
+
+            MenuSwitchItem(
+                text = stringResource(id = R.string.imperial),
+                description = stringResource(id = R.string.imperialDescription),
+                checkedState = checkedStateUnits,
+                saveSettings = saveSettings,
+                property = Settings::imperialUnits,
+                action = refreshCards
+            )
+            MenuSwitchItem(
+                text = stringResource(id = R.string.addAtTop),
+                description = stringResource(id = R.string.addAtTopDescription),
+                checkedState = checkedStateAtTop,
+                saveSettings = saveSettings,
+                property = Settings::newCardFirst
+            )
+            MenuSwitchItem(
+                text = stringResource(id = R.string.showDetails),
+                description = stringResource(id = R.string.showDetailsDescription),
+                checkedState = checkedStateShowDetails,
+                saveSettings = saveSettings,
+                property = Settings::detailsOnDoubleTap
+            )
+            MenuSwitchItem(
+                text = stringResource(id = R.string.dragAndDrop),
+                description = stringResource(id = R.string.dragAndDropDescription),
+                checkedState = checkedStateDragAndDrop,
+                saveSettings = saveSettings,
+                property = Settings::dragAndDropCards
+            )
+            MenuSwitchItem(
+                text = stringResource(id = R.string.showVideo),
+                description = stringResource(id = R.string.showVideoDescription),
+                checkedState = checkedStateShowVideo,
+                saveSettings = saveSettings,
+                property = Settings::showVideo
+            )
+            MenuSwitchItem(
+                text = stringResource(id = R.string.swipeToDismiss),
+                description = stringResource(id = R.string.swipeToDismissDescription),
+                checkedState = checkedStateSwipeToDismiss,
+                saveSettings = saveSettings,
+                property = Settings::swipeToDismiss
+            )
+        }
     }
 }
 
@@ -146,7 +164,8 @@ fun SettingsMenuPreview() {
                     newCardFirst = true,
                     detailsOnDoubleTap = true,
                     dragAndDropCards = true,
-                    showVideo = false
+                    showVideo = false,
+                    swipeToDismiss = false
                 )
             ).collectAsState()
         )

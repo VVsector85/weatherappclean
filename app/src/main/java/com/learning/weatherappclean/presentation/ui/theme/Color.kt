@@ -11,14 +11,20 @@ val PrimaryNight = Color(0xFF222222)
 val OnErrorDay = Color(0xFFB71C1C)
 val OnErrorNight = Color(0xFFE64A19)
 
-val ColdDay = Color(0xFF2D9BF0)
-val ColdNight = Color(0xFF1565C0)
+val ColdDay = Color(0xF02D9BF0)
+val ColdNight = Color(0xF01565C0)
 
-val WarmDay = Color(0xFFF8B305)
-val WarmNight = Color(0xA4FDA335)
+val WarmDay = Color(0xF0F8B305)
+val WarmNight = Color(0xF0CE8935)
 
-val HotDay = Color(0xFFF24726)
-val HotNight = Color(0xFF913333)
+val HotDay = Color(0xF0F24726)
+val HotNight = Color(0xF0913333)
+
+val DismissGreenDay = Color(0xFF31C739)
+val DismissGreenNight = Color(0xFF37B13D)
+
+val DismissRedDay = Color(0xFFAF270F)
+val DismissRedNight = Color(0xFF911717)
 
 val BackgroundDay = Color(0xFFEEEEEE)
 val BackgroundNight = Color(0xFF000000)

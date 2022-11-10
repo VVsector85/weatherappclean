@@ -41,7 +41,7 @@ fun WeatherList(
     swapSections: ((Int, Int) -> Unit)? = null,
     stopScrollToFirst: (() -> Unit)? = null,
 
-    ) {
+) {
 
     SwipeRefresh(
         modifier = Modifier.padding(padding),
@@ -60,19 +60,17 @@ fun WeatherList(
                 noRequests = noRequests
             )
 
-
             if (isLandscape || !settings.value.dragAndDropCards)
-                 WeatherGrid(
-                     weatherCardList = weatherCardList,
-                     scrollToFirst = scrollToFirst,
-                     settings = settings,
-                     setShowDetails = setShowDetails,
-                     stopScrollToFirst = stopScrollToFirst,
-                     deleteCard = deleteCard,
-                     setExpanded = setExpanded,
-                     setShowSearch = setShowSearch,
-                 )
-
+                WeatherGrid(
+                    weatherCardList = weatherCardList,
+                    scrollToFirst = scrollToFirst,
+                    settings = settings,
+                    setShowDetails = setShowDetails,
+                    stopScrollToFirst = stopScrollToFirst,
+                    deleteCard = deleteCard,
+                    setExpanded = setExpanded,
+                    setShowSearch = setShowSearch,
+                )
 
            /* WeatherLaboriousColumn(
                 weatherCardList = weatherCardList,
@@ -85,9 +83,7 @@ fun WeatherList(
                 setShowSearch = setShowSearch,
             )*/
 
-            else
-
-            {
+            else {
                 WeatherColumnWithDrag(
                     weatherCardList = weatherCardList,
                     deleteCard = deleteCard,
@@ -99,10 +95,7 @@ fun WeatherList(
                     settings = settings,
                     setShowDetails = setShowDetails,
                 )
-
             }
-
-
         }
     }
 }
@@ -119,7 +112,8 @@ fun WeatherListPreview() {
                     newCardFirst = true,
                     detailsOnDoubleTap = true,
                     dragAndDropCards = true,
-                    showVideo = false
+                    showVideo = false,
+                    swipeToDismiss = false
                 )
             ).collectAsState(),
             errorMessage = MutableStateFlow(ErrorMessageProvider()).collectAsState(),

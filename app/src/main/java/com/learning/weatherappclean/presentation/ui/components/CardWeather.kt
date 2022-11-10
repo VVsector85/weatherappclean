@@ -1,7 +1,7 @@
 package com.learning.weatherappclean.presentation.ui.components
 
 import android.net.Uri
-
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,12 +17,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,15 +53,18 @@ import com.learning.weatherappclean.domain.model.Settings
 import com.learning.weatherappclean.domain.model.WeatherCard
 import com.learning.weatherappclean.presentation.ui.theme.WeatherAppCleanTheme
 import com.learning.weatherappclean.presentation.ui.theme.cold
+import com.learning.weatherappclean.presentation.ui.theme.dismissGreen
+import com.learning.weatherappclean.presentation.ui.theme.dismissRed
 import com.learning.weatherappclean.presentation.ui.theme.hot
 import com.learning.weatherappclean.presentation.ui.theme.onCard
 import com.learning.weatherappclean.presentation.ui.theme.warm
 import com.learning.weatherappclean.util.Constants.IMPERIAL_UNITS
 import com.learning.weatherappclean.util.getCardResources
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlin.math.abs
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun CardWeather(
     modifier: Modifier,
     content: WeatherCard,
@@ -61,8 +75,7 @@ fun CardWeather(
     setShowSearch: ((Boolean) -> Unit?)? = null,
     setExpanded: ((Boolean) -> Unit)? = null,
 
-
-) {
+    ) {
 
     val colour = when (content.cardColorOption) {
         CardColorOption.BLUE -> MaterialTheme.colors.cold
@@ -71,18 +84,16 @@ fun CardWeather(
         else -> Color.LightGray
     }
     val path = "android.resource://${LocalContext.current.packageName}/"
-
     val details = remember {
         mutableStateOf(content.showDetails)
     }
 
-        details.value = content.showDetails
-
-
+    @Composable
+    fun DrawCard() {
         Card(
             modifier = modifier
                 .height(if (details.value && settings.value.detailsOnDoubleTap) 230.dp else 130.dp)
-                .pointerInput("${details.value}$index") {
+                .pointerInput(Unit) {
                     detectTapGestures(
                         onDoubleTap = {
                             if (settings.value.detailsOnDoubleTap) {
@@ -99,6 +110,7 @@ fun CardWeather(
 
             backgroundColor = colour,
         ) {
+
             if (settings.value.showVideo) {
 
                 VideoPlayer(
@@ -170,7 +182,7 @@ fun CardWeather(
                                 style = MaterialTheme.typography.h6,
                             )
                         }
-                        Button(
+                        if (!settings.value.swipeToDismiss) Button(
                             onClick = {
                                 deleteCard?.invoke(index)
                             },
@@ -248,7 +260,8 @@ fun CardWeather(
                             )
                             WeatherDetails(
                                 value = "${content.cloudCover}%",
-                                iconId = R.drawable.ic_overcast, description = R.string.cloudCover
+                                iconId = R.drawable.ic_overcast,
+                                description = R.string.cloudCover
                             )
                         }
                     }
@@ -257,6 +270,65 @@ fun CardWeather(
         }
     }
 
+    if (settings.value.swipeToDismiss) {
+        val threshold = 0.4f
+
+        val dismissState = remember {
+            DismissState(DismissValue.Default) { true }
+        }
+        if (dismissState.currentValue == DismissValue.DismissedToStart) {
+            deleteCard?.invoke(index)
+        }
+        SwipeToDismiss(
+            state = dismissState,
+            directions = setOf(DismissDirection.EndToStart),
+            background = {
+
+                if (abs(dismissState.offset.value) > 0f) {
+                    val color by animateColorAsState(
+                        targetValue = if (abs(dismissState.progress.fraction) > threshold) {
+                            MaterialTheme.colors.dismissRed
+                        } else {
+                            MaterialTheme.colors.dismissGreen
+                        }
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.deleteWeatherCard),
+                                tint = color,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .size(40.dp)
+                            )
+                            CircularProgressIndicator(
+                                progress = dismissState.progress.fraction / threshold,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .size(80.dp),
+                                color = color
+                            )
+                        }
+                    }
+                }
+            },
+            dismissThresholds = {
+                FractionalThreshold(threshold)
+            },
+            dismissContent = {
+                DrawCard()
+            }
+        )
+    } else DrawCard()
+}
 
 @Composable
 fun WeatherDetails(
@@ -309,7 +381,8 @@ fun CardWeatherPreview(
                     newCardFirst = true,
                     detailsOnDoubleTap = true,
                     dragAndDropCards = true,
-                    showVideo = false
+                    showVideo = false,
+                    swipeToDismiss = false
                 )
             ).collectAsState(),
         )

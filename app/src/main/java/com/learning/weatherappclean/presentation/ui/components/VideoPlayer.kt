@@ -38,7 +38,7 @@ fun VideoPlayer(uri: Uri) {
     AndroidView(factory = { playerView })
 
     LaunchedEffect(uri) {
-        launch{
+        launch {
             Log.d("my_tag", "Launched effect")
             exoPlayer.apply {
                 val defaultDataSourceFactory = DefaultDataSource.Factory(context)
