@@ -35,14 +35,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 fun TextLocation(
     modifier: Modifier,
     textSearch: State<String>,
-    setExpanded: ((Boolean) -> Unit)? = null,
+    disableTextField: State<Boolean>,
     addCard: ((String, AutocompletePrediction?) -> Unit)? = null,
     setSearchText: ((String) -> Unit)? = null
 
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -56,7 +55,6 @@ fun TextLocation(
         keyboardActions = KeyboardActions(
             onSearch = {
                 keyboardController?.hide()
-                setExpanded?.invoke(false)
                 addCard?.invoke(textSearch.value, null)
             }
         ),
@@ -65,6 +63,7 @@ fun TextLocation(
             keyboardType = KeyboardType.Text
         ),
         value = textSearch.value,
+        enabled = !disableTextField.value,
         onValueChange = { setSearchText?.invoke(it) },
         maxLines = 3,
         textStyle = MaterialTheme.typography.h5,
@@ -108,7 +107,8 @@ fun TextLocationPreview() {
     WeatherAppCleanTheme {
         TextLocation(
             modifier = Modifier,
-            textSearch = MutableStateFlow("Some text").collectAsState()
+            textSearch = MutableStateFlow("Some text").collectAsState(),
+            disableTextField = MutableStateFlow(false).collectAsState()
         )
     }
 }

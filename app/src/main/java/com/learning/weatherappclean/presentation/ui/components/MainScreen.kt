@@ -134,8 +134,8 @@ fun MainScreen(vm: MainViewModel) {
                         .fillMaxWidth(if (isLandscape) 0.75f else 0.9f)
                         .height(60.dp),
                     addCard = vm::addCard,
-                    setExpanded = vm::setExpanded,
                     setSearchText = vm::setSearchText,
+                    disableTextField = isLoading,
                     textSearch = searchText
                 ) else if (!isLandscape)
                 Text(

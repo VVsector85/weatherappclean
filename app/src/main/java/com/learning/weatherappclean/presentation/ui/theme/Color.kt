@@ -18,13 +18,13 @@ val WarmDay = Color(0xF0F8B305)
 val WarmNight = Color(0xF0CE8935)
 
 val HotDay = Color(0xF0F24726)
-val HotNight = Color(0xF0913333)
+val HotNight = Color(0xF0C03131)
 
-val DismissGreenDay = Color(0xFF31C739)
-val DismissGreenNight = Color(0xFF37B13D)
+val DismissGreenDay = Color(0xFF2EA334)
+val DismissGreenNight = Color(0xFF1B8520)
 
 val DismissRedDay = Color(0xFFAF270F)
-val DismissRedNight = Color(0xFF911717)
+val DismissRedNight = Color(0xFFB42525)
 
 val BackgroundDay = Color(0xFFEEEEEE)
 val BackgroundNight = Color(0xFF000000)

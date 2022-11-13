@@ -2,9 +2,8 @@ package com.learning.weatherappclean.presentation.ui.components
 
 import android.net.Uri
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.ScrollState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,12 +36,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -74,8 +75,7 @@ fun CardWeather(
     setShowDetails: ((Boolean, Int) -> Unit)? = null,
     setShowSearch: ((Boolean) -> Unit?)? = null,
     setExpanded: ((Boolean) -> Unit)? = null,
-
-    ) {
+) {
 
     val colour = when (content.cardColorOption) {
         CardColorOption.BLUE -> MaterialTheme.colors.cold
@@ -110,9 +110,7 @@ fun CardWeather(
 
             backgroundColor = colour,
         ) {
-
             if (settings.value.showVideo) {
-
                 VideoPlayer(
                     Uri.parse(
                         path + getCardResources(
@@ -122,7 +120,6 @@ fun CardWeather(
                     )
                 )
             }
-
             Column() {
                 Row() {
                     Box(
@@ -153,9 +150,9 @@ fun CardWeather(
                     ) {
                         Text(
                             text = "${content.temperature}\u00b0${
-                                if (content.units == IMPERIAL_UNITS) stringResource(
-                                    R.string.fahrenheit_letter
-                                ) else ""
+                            if (content.units == IMPERIAL_UNITS) stringResource(
+                                R.string.fahrenheit_letter
+                            ) else ""
                             }",
                             color = MaterialTheme.colors.onCard,
                             modifier = Modifier
@@ -169,17 +166,24 @@ fun CardWeather(
                                 text = content.location.uppercase(),
                                 color = MaterialTheme.colors.onCard,
                                 modifier = Modifier
-                                    .padding(start = 20.dp, end = 10.dp)
-                                    .horizontalScroll(state = ScrollState(0)),
-                                style = MaterialTheme.typography.h5
+                                    .padding(start = 20.dp, end = 10.dp),
+                                // .horizontalScroll(state = ScrollState(0)),
+                                style = MaterialTheme.typography.h5,
+                                maxLines = 1,
+                                softWrap = true,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = "${content.country}${if (details.value && settings.value.detailsOnDoubleTap) ", ${content.region}" else ""}",
                                 color = MaterialTheme.colors.onCard,
                                 modifier = Modifier
-                                    .padding(end = 10.dp, start = 20.dp, bottom = 10.dp)
-                                    .horizontalScroll(state = ScrollState(0)),
+                                    .padding(end = 10.dp, start = 20.dp, bottom = 10.dp),
+                                // .horizontalScroll(state = ScrollState(0)),
                                 style = MaterialTheme.typography.h6,
+                                maxLines = 1,
+                                softWrap = true,
+                                overflow = TextOverflow.Ellipsis
+
                             )
                         }
                         if (!settings.value.swipeToDismiss) Button(
@@ -234,9 +238,9 @@ fun CardWeather(
                             )
                             WeatherDetails(
                                 value = "${content.windSpeed}\n${
-                                    if (content.units == IMPERIAL_UNITS) stringResource(
-                                        R.string.miles
-                                    ) else stringResource(R.string.kilometers)
+                                if (content.units == IMPERIAL_UNITS) stringResource(
+                                    R.string.miles
+                                ) else stringResource(R.string.kilometers)
                                 }${stringResource(R.string.perHour)}",
                                 iconId = R.drawable.ic_wind,
                                 description = R.string.windSpeed
@@ -251,9 +255,9 @@ fun CardWeather(
                         Column() {
                             WeatherDetails(
                                 value = "${content.feelsLike}\u00b0${
-                                    if (content.units == IMPERIAL_UNITS) stringResource(
-                                        R.string.fahrenheit_letter
-                                    ) else stringResource(R.string.celsius_letter)
+                                if (content.units == IMPERIAL_UNITS) stringResource(
+                                    R.string.fahrenheit_letter
+                                ) else stringResource(R.string.celsius_letter)
                                 }",
                                 iconId = R.drawable.ic_temp_feels_like,
                                 description = R.string.feelsLike
@@ -271,8 +275,7 @@ fun CardWeather(
     }
 
     if (settings.value.swipeToDismiss) {
-        val threshold = 0.4f
-
+        val threshold = 0.55f
         val dismissState = remember {
             DismissState(DismissValue.Default) { true }
         }
@@ -283,7 +286,6 @@ fun CardWeather(
             state = dismissState,
             directions = setOf(DismissDirection.EndToStart),
             background = {
-
                 if (abs(dismissState.offset.value) > 0f) {
                     val color by animateColorAsState(
                         targetValue = if (abs(dismissState.progress.fraction) > threshold) {
@@ -292,6 +294,7 @@ fun CardWeather(
                             MaterialTheme.colors.dismissGreen
                         }
                     )
+                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default)0.7f else 1f)
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -300,6 +303,7 @@ fun CardWeather(
                         Box(
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
+                                .padding(10.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
@@ -307,7 +311,8 @@ fun CardWeather(
                                 tint = color,
                                 modifier = Modifier
                                     .align(Alignment.Center)
-                                    .size(40.dp)
+                                    .size(55.dp)
+                                    .scale(scale)
                             )
                             CircularProgressIndicator(
                                 progress = dismissState.progress.fraction / threshold,
